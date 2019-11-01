@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import java.io.IOException;
+
 /**
  * This class is where decisions about backend calls are made.
  * It offers methods which can be called from where ever, and
@@ -66,10 +68,16 @@ public class BackendManagerIntentService extends IntentService {
      * @param preferences
      */
     private static void setNewPlayerId(SharedPreferences preferences) {
-        System.out.println("Want to call API");
-        String userID = null; //TODO: Make API Call
-        preferences.edit().putString(KEY_USER_ID, userID).apply();
+
+        try {
+            String userID = APIBuilder.build().register().execute().body();
+            preferences.edit().putString(KEY_USER_ID, userID).apply();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+
 
 
     public static String getPlayerId(Context applicationContext) {
