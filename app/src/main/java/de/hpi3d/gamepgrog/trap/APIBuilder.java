@@ -16,7 +16,7 @@ import retrofit2.http.Path;
  */
 public class APIBuilder {
 
-    private final static String BASE_URL = "";
+    private final static String BASE_URL = "https://localhost"; //TODO: Server location
 
     public static API build() {
         return new Retrofit.Builder()
