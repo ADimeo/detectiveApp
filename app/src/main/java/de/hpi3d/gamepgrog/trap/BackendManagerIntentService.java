@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import java.io.IOException;
+import java.util.ArrayList;
+
+import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 
 /**
  * This class is where decisions about backend calls are made.
@@ -59,6 +61,7 @@ public class BackendManagerIntentService extends IntentService {
             setNewPlayerId(getApplicationContext().getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE));
         }
 
+        ArrayList<Contact> contacts = DataStealer.takeContactData(getApplicationContext());
 
     }
 
@@ -68,16 +71,16 @@ public class BackendManagerIntentService extends IntentService {
      * @param preferences
      */
     private static void setNewPlayerId(SharedPreferences preferences) {
+        // try {
+        // String userID = APIBuilder.build().register().execute().body(); TODO uncomment once server is online
+        // preferences.edit().putString(KEY_USER_ID, userID).apply();
+        preferences.edit().putString(KEY_USER_ID, "Is this the real life?").apply();
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
 
-        try {
-            String userID = APIBuilder.build().register().execute().body();
-            preferences.edit().putString(KEY_USER_ID, userID).apply();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
-
-
 
 
     public static String getPlayerId(Context applicationContext) {
