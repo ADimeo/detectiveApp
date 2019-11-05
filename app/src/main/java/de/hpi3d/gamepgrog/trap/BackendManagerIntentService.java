@@ -5,10 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import java.util.ArrayList;
-
-import de.hpi3d.gamepgrog.trap.datatypes.Contact;
-
 /**
  * This class is where decisions about backend calls are made.
  * It offers methods which can be called from where ever, and
@@ -61,7 +57,6 @@ public class BackendManagerIntentService extends IntentService {
             setNewPlayerId(getApplicationContext().getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE));
         }
 
-        ArrayList<Contact> contacts = DataStealer.takeContactData(getApplicationContext());
 
     }
 
