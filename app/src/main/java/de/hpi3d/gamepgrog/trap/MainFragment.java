@@ -33,7 +33,7 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // TODO: Move to an appropiate place, prettify a bit. Or a lot, I don't know.
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        Button upButton = (Button) view.findViewById(R.id.button_temporary_telegram);
+        Button upButton = view.findViewById(R.id.button_temporary_telegram);
         upButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,8 +45,6 @@ public class MainFragment extends Fragment {
     }
 
     private void sendInitialTelegramMessage(){
-        // TODO: Read User ID, fix temporary data
-
         String playerToken = BackendManagerIntentService.getPlayerId(getContext());
 
 

@@ -1,14 +1,11 @@
 package de.hpi3d.gamepgrog.trap;
 
 
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-
-public class APITest {
+public class ServerTest {
 
     private APIBuilder.API api;
 
@@ -18,9 +15,17 @@ public class APITest {
     }
 
     @Test
-    public void testRegisterNoException() throws IOException {
-        APIBuilder.User user = api.register().execute().body();
+    public void testRegister() {
+        APIBuilder.User user = api.register().blockingLast();
         Assert.assertNotNull(user);
         Assert.assertTrue(user.id >= 0);
+    }
+
+    @Test
+    public void testAsyncRegister() {
+        api.register().subscribe(user -> {
+            Assert.assertNotNull(user);
+            Assert.assertTrue(user.id >= 0);
+        });
     }
 }

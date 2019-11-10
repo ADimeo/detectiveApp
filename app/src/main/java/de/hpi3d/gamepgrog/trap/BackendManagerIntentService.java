@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /**
  * This class is where decisions about backend calls are made.
  * It offers methods which can be called from where ever, and
@@ -52,8 +56,8 @@ public class BackendManagerIntentService extends IntentService {
      */
     private void registerPlayerIfUnregistered() {
         System.out.println("Want to test if player is registered"); // TODO: Remove
-        String playerId = getPlayerId(getApplicationContext());
-        if (null == playerId) {
+        int playerId = getPlayerId(getApplicationContext());
+        if (-1 == playerId) {
             setNewPlayerId(getApplicationContext().getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE));
         }
 
@@ -61,20 +65,22 @@ public class BackendManagerIntentService extends IntentService {
     }
 
     /**
-     * Calls the API and sets a new player ID.
+     * Calls the APIBuilder and sets a new player ID.
      *
      * @param preferences
      */
-    private static void setNewPlayerId(SharedPreferences preferences) {
-        System.out.println("Want to call API");
-        String userID = null; //TODO: Make API Call
-        preferences.edit().putString(KEY_USER_ID, userID).apply();
+    private static void setNewPlayerId(final SharedPreferences preferences) {
+        APIBuilder.build().register().subscribe(user -> {
+            if (user != null) {
+                preferences.edit().putInt(KEY_USER_ID, user.id).apply();
+            }
+        });
     }
 
 
-    public static String getPlayerId(Context applicationContext) {
+    public static int getPlayerId(Context applicationContext) {
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        return preferences.getString(KEY_USER_ID, null);
+        return preferences.getInt(KEY_USER_ID, -1);
     }
 
 
