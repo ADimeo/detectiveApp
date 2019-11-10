@@ -16,7 +16,7 @@ import retrofit2.http.Path;
  */
 public class APIBuilder {
 
-    private final static String BASE_URL = "";
+    private final static String BASE_URL = "http://localhost:5000";
 
     public static API build() {
         return new Retrofit.Builder()
@@ -27,8 +27,8 @@ public class APIBuilder {
     }
 
     interface API {
-        @GET("user")
-        Call<String> register();
+        @GET("user/create")
+        Call<User> register();
 
         @GET("user/{userid}/list-clues")
         Call<List<Clue>> listClues(@Path("userid") String userid);
@@ -38,6 +38,10 @@ public class APIBuilder {
 
         @GET("user/{userid}/personalized-clue/{clue}")
         Call<PersonalizedClue> personalizedClueFrom(@Path("clue") Clue clue);
+    }
+
+    class User {
+        public int id;
     }
 
     class Clue {
