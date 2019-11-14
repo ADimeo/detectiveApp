@@ -51,7 +51,6 @@ public class BackendManagerIntentService extends IntentService {
      * This method executes network calls, and should not be called from the main thread.
      */
     private void registerPlayerIfUnregistered() {
-        System.out.println("Want to test if player is registered"); // TODO: Remove
         String playerId = getPlayerId(getApplicationContext());
         if (null == playerId) {
             setNewPlayerId(getApplicationContext().getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE));
@@ -77,7 +76,11 @@ public class BackendManagerIntentService extends IntentService {
 
     }
 
-
+    /**
+     * Returns player ID if set, otherwise null.
+     * @param applicationContext to access SharedPreferences
+     * @return playerID or null
+     */
     public static String getPlayerId(Context applicationContext) {
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         return preferences.getString(KEY_USER_ID, null);

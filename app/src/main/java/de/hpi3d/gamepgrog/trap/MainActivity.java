@@ -20,15 +20,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String playerId =  BackendManagerIntentService.getPlayerId(this);
+        if(null == playerId){
+            Intent registerPlayer = new Intent(this, BackendManagerIntentService.class);
+            registerPlayer.putExtra(BackendManagerIntentService.KEY_MANAGE_TYPE, BackendManagerIntentService.MANAGE_PLAYER_REGISTRATION);
+            startService(registerPlayer);
+        }
         setContentView(R.layout.activity_main);
 
-
-        Intent registerPlayer = new Intent(this, BackendManagerIntentService.class);
-        registerPlayer.putExtra(BackendManagerIntentService.KEY_MANAGE_TYPE, BackendManagerIntentService.MANAGE_PLAYER_REGISTRATION);
-        startService(registerPlayer);
-
     }
-
 
     /**
      * Requests permission to read contacts. Unsure where to put this, feel free to move it
