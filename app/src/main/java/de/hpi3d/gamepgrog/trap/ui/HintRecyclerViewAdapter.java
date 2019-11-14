@@ -1,4 +1,4 @@
-package de.hpi3d.gamepgrog.trap;
+package de.hpi3d.gamepgrog.trap.ui;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +8,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
+import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.Hint;
 
 

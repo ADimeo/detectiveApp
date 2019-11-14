@@ -1,4 +1,4 @@
-package de.hpi3d.gamepgrog.trap;
+package de.hpi3d.gamepgrog.trap.ui;
 
 import android.Manifest;
 import android.content.Intent;
@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import de.hpi3d.gamepgrog.trap.BackendManagerIntentService;
+import de.hpi3d.gamepgrog.trap.DataStealer;
+import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 
 public class MainActivity extends AppCompatActivity {

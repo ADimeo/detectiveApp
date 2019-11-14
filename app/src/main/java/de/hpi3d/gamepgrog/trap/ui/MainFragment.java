@@ -1,4 +1,4 @@
-package de.hpi3d.gamepgrog.trap;
+package de.hpi3d.gamepgrog.trap.ui;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
+import de.hpi3d.gamepgrog.trap.BackendManagerIntentService;
+import de.hpi3d.gamepgrog.trap.R;
 
 
 /**

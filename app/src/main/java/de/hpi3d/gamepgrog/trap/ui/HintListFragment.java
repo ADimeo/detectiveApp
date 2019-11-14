@@ -1,4 +1,4 @@
-package de.hpi3d.gamepgrog.trap;
+package de.hpi3d.gamepgrog.trap.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,27 +7,30 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.Hint;
 
 
-public class HintFragment extends Fragment {
+public class HintListFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+    public static final String KEY__HINT_LIST = "hint_key_list";
+    private ArrayList<Hint> currentHints;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public HintFragment() {
+    public HintListFragment() {
+        currentHints = new ArrayList<>();
     }
 
 
@@ -38,6 +41,20 @@ public class HintFragment extends Fragment {
             // TODO Read arguments we are given
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+        // Remove once there's a way to get hints from server
+        ArrayList<Hint> dummyList = new ArrayList<>();
+        for(int i = 0; i<20; i++){
+            dummyList.add(new Hint("This is hint " + i));
+        }
+        this.setHints(dummyList);
+
+    }
+
+
+    public void setHints(ArrayList<Hint> newHints){
+
+        this.currentHints = newHints;
     }
 
     @Override
@@ -45,10 +62,6 @@ public class HintFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hint_list, container, false);
 
-        List<Hint> dummyList = new ArrayList<>();
-        for(int i = 0; i<20; i++){
-            dummyList.add(new Hint("This is hint " + i));
-       }
 
         // TODO take from local variable instead
 
@@ -61,7 +74,7 @@ public class HintFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new HintRecyclerViewAdapter(dummyList));
+            recyclerView.setAdapter(new HintRecyclerViewAdapter(currentHints));
         }
         return view;
     }
