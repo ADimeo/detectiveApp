@@ -45,7 +45,7 @@ public class MainFragment extends Fragment {
     }
 
     private void sendInitialTelegramMessage(){
-        String playerToken = BackendManagerIntentService.getPlayerId(getContext());
+        String playerToken = Integer.toString(BackendManagerIntentService.getPlayerId(getContext()));
 
 
         final String TELEGRAM_BASE_URL = "https://telegram.me/";
