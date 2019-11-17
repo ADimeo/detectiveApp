@@ -1,4 +1,4 @@
-package de.hpi3d.gamepgrog.trap;
+package de.hpi3d.gamepgrog.trap.ui;
 
 import android.Manifest;
 import android.content.Intent;
@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import de.hpi3d.gamepgrog.trap.BackendManagerIntentService;
+import de.hpi3d.gamepgrog.trap.DataStealer;
+import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,15 +23,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        int playerId =  BackendManagerIntentService.getPlayerId(this);
+        if(-1 == playerId){
+            Intent registerPlayer = new Intent(this, BackendManagerIntentService.class);
+            registerPlayer.putExtra(BackendManagerIntentService.KEY_MANAGE_TYPE, BackendManagerIntentService.MANAGE_PLAYER_REGISTRATION);
+            startService(registerPlayer);
+        }
         setContentView(R.layout.activity_main);
 
-
-        Intent registerPlayer = new Intent(this, BackendManagerIntentService.class);
-        registerPlayer.putExtra(BackendManagerIntentService.KEY_MANAGE_TYPE, BackendManagerIntentService.MANAGE_PLAYER_REGISTRATION);
-        startService(registerPlayer);
-
     }
-
 
     /**
      * Requests permission to read contacts. Unsure where to put this, feel free to move it

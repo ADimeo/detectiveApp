@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainFragment">
+    tools:context=".ui.MainFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout
@@ -11,18 +11,11 @@
         android:layout_height="match_parent">
 
 
-
-   <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment" />
-
-    <Button
-        android:id="@+id/button_temporary_telegram"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hihey, telegram me"
-        />
+        <Button
+            android:id="@+id/button_temporary_telegram"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_contact_abbot" />
     </LinearLayout>
 
 </FrameLayout>

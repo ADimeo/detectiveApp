@@ -5,10 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 /**
  * This class is where decisions about backend calls are made.
  * It offers methods which can be called from where ever, and
@@ -55,7 +51,6 @@ public class BackendManagerIntentService extends IntentService {
      * This method executes network calls, and should not be called from the main thread.
      */
     private void registerPlayerIfUnregistered() {
-        System.out.println("Want to test if player is registered"); // TODO: Remove
         int playerId = getPlayerId(getApplicationContext());
         if (-1 == playerId) {
             setNewPlayerId(getApplicationContext().getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE));
@@ -77,7 +72,11 @@ public class BackendManagerIntentService extends IntentService {
         });
     }
 
-
+    /**
+     * Returns player ID if set, otherwise -1.
+     * @param applicationContext to access SharedPreferences
+     * @return playerID or -1
+     */
     public static int getPlayerId(Context applicationContext) {
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         return preferences.getInt(KEY_USER_ID, -1);
