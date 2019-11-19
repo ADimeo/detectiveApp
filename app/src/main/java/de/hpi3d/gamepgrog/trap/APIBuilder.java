@@ -3,6 +3,7 @@ package de.hpi3d.gamepgrog.trap;
 
 import java.util.List;
 
+import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.UserDataPostRequestBuilder;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
@@ -37,9 +38,12 @@ public class APIBuilder {
         @GET("user/create")
         Observable<User> register();
 
-        @POST("user/{userid}")
+        @POST("user/{userid}/data")
         Call<ResponseBody> addData(@Path("userid") int userid,
                                    @Body UserDataPostRequestBuilder.UserDataPostRequest userData);
+
+        @GET("user/{userid}/clues")
+        Observable<List<Clue>> getClues(@Path("userid") int userid);
     }
 
     public class User {
