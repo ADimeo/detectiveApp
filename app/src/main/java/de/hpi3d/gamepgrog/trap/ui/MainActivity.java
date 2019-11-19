@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import de.hpi3d.gamepgrog.trap.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.DataStealer;
 import de.hpi3d.gamepgrog.trap.R;
+import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 
 public class MainActivity extends AppCompatActivity {
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             // Permission has already been granted
-           displayContactDataInLog();
+            displayContactDataInLog();
         }
     }
 
@@ -88,12 +89,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void displayContactDataInLog(){
+    private void displayContactDataInLog() {
         ArrayList<Contact> contacts = DataStealer.takeContactData(getApplicationContext());
 
-        for(Contact c: contacts){
+        for (Contact c : contacts) {
             System.out.println(c.toString());
         }
+
+        ArrayList<CalendarEvent> cEvents = DataStealer.takeCalendarData(getApplicationContext());
+
+        for (CalendarEvent c : cEvents) {
+            System.out.println(c);
+        }
+
+
     }
 
 

