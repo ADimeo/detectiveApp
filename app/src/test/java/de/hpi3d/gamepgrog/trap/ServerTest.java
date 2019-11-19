@@ -6,9 +6,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
+import de.hpi3d.gamepgrog.trap.datatypes.UserDataPostRequestBuilder;
 
 public class ServerTest {
 
@@ -20,30 +24,19 @@ public class ServerTest {
     }
 
     @Test
-    public void testRegister() {
-        APIBuilder.User user = api.register().blockingLast();
-        Assert.assertNotNull(user);
-        Assert.assertTrue(user.id >= 0);
-    }
-
-    @Test
-    public void testAsyncRegister() {
-        api.register().subscribe(user -> {
-            Assert.assertNotNull(user);
-            Assert.assertTrue(user.id >= 0);
-        });
-    }
-
-    @Test
-    public void testGetPersonalizedClues() {
-        List<Clue> clues = api.listPersonalizedClues(10).blockingLast();
-        Assert.assertEquals(2, clues.size());
-        Assert.assertEquals(clues.get(0).getKey(), "clue0");
-        Assert.assertEquals(clues.get(0).getText(), "First Clue");
+    public void testGetClues() {
+        List<Clue> clues = api.getClues(0).blockingLast();
+        Assert.assertEquals(1, clues.size());
+        Assert.assertEquals(true, clues.get(0).getPersonalized());
+        Assert.assertEquals("clue_test", clues.get(0).getName());
+        Assert.assertEquals("Hello World", clues.get(0).getText());
     }
 
     @Test
     public void testAddData() throws IOException {
-        api.addData(10, new Contact("Bla")).execute();
+        List<Contact> contacts = new ArrayList<>();
+        contacts.add(new Contact("paul"));
+        api.addData(0, UserDataPostRequestBuilder.build(contacts)).execute();
     }
+
 }
