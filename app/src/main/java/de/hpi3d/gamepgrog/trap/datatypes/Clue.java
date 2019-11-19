@@ -10,12 +10,12 @@ import androidx.annotation.NonNull;
 Sent to app by server, displayed in a list.
 Please remember to change the Parcelable implementation when adding/removing variables.
  */
-public class Hint implements Parcelable {
+public class Clue implements Parcelable {
 
 
     private String hintText;
 
-    public Hint(String hintText) {
+    public Clue(String hintText) {
         this.hintText = hintText;
     }
 
@@ -47,7 +47,7 @@ public class Hint implements Parcelable {
     }
 
 
-    Hint(Parcel in) {
+    Clue(Parcel in) {
         this.hintText = in.readString();
 
     }
@@ -66,12 +66,12 @@ public class Hint implements Parcelable {
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public Hint createFromParcel(Parcel in){
-            return new Hint(in);
+        public Clue createFromParcel(Parcel in){
+            return new Clue(in);
         }
 
-        public Hint[] newArray(int size){
-            return new Hint[size];
+        public Clue[] newArray(int size){
+            return new Clue[size];
         }
     };
 }
