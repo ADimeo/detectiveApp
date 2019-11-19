@@ -7,13 +7,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import de.hpi3d.gamepgrog.trap.CustomApplication;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
+import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
+import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
 
 
 public class ClueListFragment extends Fragment {
@@ -42,17 +46,26 @@ public class ClueListFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
 
+
+        DaoSession daoSession = ((CustomApplication) getActivity().getApplication()).getDaoSession();
+        ClueDao clueDao = daoSession.getClueDao();
+
+        Random r = new Random();
+
+        Clue clue = new Clue("This is a hint! It's number is " + r.nextInt(100));
+        clueDao.insert(clue);
+
         // Remove once there's a way to get hints from server
-        ArrayList<Clue> dummyList = new ArrayList<>();
-        for(int i = 0; i<20; i++){
-            dummyList.add(new Clue("This is clue " + i));
-        }
+
+        ArrayList<Clue> dummyList = new ArrayList<>(clueDao.queryBuilder().list());
+
+
         this.setClue(dummyList);
 
     }
 
 
-    public void setClue(ArrayList<Clue> newClues){
+    public void setClue(ArrayList<Clue> newClues) {
 
         this.currentClues = newClues;
     }

@@ -3,6 +3,10 @@ package de.hpi3d.gamepgrog.trap.datatypes;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
+
 import androidx.annotation.NonNull;
 
 /*
@@ -10,24 +14,27 @@ import androidx.annotation.NonNull;
 Sent to app by server, displayed in a list.
 Please remember to change the Parcelable implementation when adding/removing variables.
  */
+@Entity
 public class Clue implements Parcelable {
 
+    @Id(autoincrement = true)
+    private Long id;
 
-    private String hintText;
+    private String clueText;
 
-    public Clue(String hintText) {
-        this.hintText = hintText;
+    public Clue(String clueText) {
+        this.clueText = clueText;
     }
 
 
-    public String getHintText() {
-        return hintText;
+    public String getClueText() {
+        return clueText;
     }
 
     @NonNull
     @Override
     public String toString() {
-        return hintText;
+        return clueText;
     }
 
 
@@ -48,8 +55,20 @@ public class Clue implements Parcelable {
 
 
     Clue(Parcel in) {
-        this.hintText = in.readString();
+        this.clueText = in.readString();
 
+    }
+
+
+    @Generated(hash = 178786675)
+    public Clue(Long id, String clueText) {
+        this.id = id;
+        this.clueText = clueText;
+    }
+
+
+    @Generated(hash = 1330280195)
+    public Clue() {
     }
 
     /**
@@ -61,8 +80,23 @@ public class Clue implements Parcelable {
      */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(hintText);
+        dest.writeString(clueText);
 
+    }
+
+
+    public Long getId() {
+        return this.id;
+    }
+
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
+    public void setClueText(String clueText) {
+        this.clueText = clueText;
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
