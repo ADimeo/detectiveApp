@@ -1,8 +1,5 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -15,55 +12,27 @@ Sent to app by server, displayed in a list.
 Please remember to change the Parcelable implementation when adding/removing variables.
  */
 @Entity
-public class Clue implements Parcelable {
+public class Clue {
 
     @Id(autoincrement = true)
     private Long id;
 
-    private String clueText;
 
-    public Clue(String clueText) {
-        this.clueText = clueText;
+    private boolean personalized;
+    private String text;
+    private String name;
+
+    public Clue(String text) {
+        this.text = text;
     }
 
 
-    public String getClueText() {
-        return clueText;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return clueText;
-    }
-
-
-    /**
-     * Describe the kinds of special objects contained in this Parcelable
-     * instance's marshaled representation. For example, if the object will
-     * include a file descriptor in the output of {@link #writeToParcel(Parcel, int)},
-     * the return value of this method must include the
-     * {@link #CONTENTS_FILE_DESCRIPTOR} bit.
-     *
-     * @return a bitmask indicating the set of special object types marshaled
-     * by this Parcelable object instance.
-     */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-
-    Clue(Parcel in) {
-        this.clueText = in.readString();
-
-    }
-
-
-    @Generated(hash = 178786675)
-    public Clue(Long id, String clueText) {
+    @Generated(hash = 1213786884)
+    public Clue(Long id, boolean personalized, String text, String name) {
         this.id = id;
-        this.clueText = clueText;
+        this.personalized = personalized;
+        this.text = text;
+        this.name = name;
     }
 
 
@@ -71,17 +40,15 @@ public class Clue implements Parcelable {
     public Clue() {
     }
 
-    /**
-     * Flatten this object in to a Parcel.
-     *
-     * @param dest  The Parcel in which the object should be written.
-     * @param flags Additional flags about how the object should be written.
-     *              May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
-     */
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(clueText);
 
+    public String getText() {
+        return text;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return text;
     }
 
 
@@ -95,17 +62,27 @@ public class Clue implements Parcelable {
     }
 
 
-    public void setClueText(String clueText) {
-        this.clueText = clueText;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public Clue createFromParcel(Parcel in){
-            return new Clue(in);
-        }
 
-        public Clue[] newArray(int size){
-            return new Clue[size];
-        }
-    };
+    public boolean getPersonalized() {
+        return this.personalized;
+    }
+
+
+    public void setPersonalized(boolean personalized) {
+        this.personalized = personalized;
+    }
+
+
+    public String getName() {
+        return this.name;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

@@ -33,7 +33,7 @@ public class ClueRecyclerViewAdapter extends RecyclerView.Adapter<ClueRecyclerVi
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.clue = clues.get(position);
-        holder.clueView.setText(clues.get(position).getClueText());
+        holder.clueView.setText(clues.get(position).getText());
     }
 
     @Override
