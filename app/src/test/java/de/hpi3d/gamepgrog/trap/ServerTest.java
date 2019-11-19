@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 
@@ -31,6 +32,14 @@ public class ServerTest {
             Assert.assertNotNull(user);
             Assert.assertTrue(user.id >= 0);
         });
+    }
+
+    @Test
+    public void testGetPersonalizedClues() {
+        List<Clue> clues = api.listPersonalizedClues(10).blockingLast();
+        Assert.assertEquals(2, clues.size());
+        Assert.assertEquals(clues.get(0).getKey(), "clue0");
+        Assert.assertEquals(clues.get(0).getText(), "First Clue");
     }
 
     @Test

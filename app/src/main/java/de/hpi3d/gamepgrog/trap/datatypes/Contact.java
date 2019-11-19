@@ -7,7 +7,7 @@ Represents data from a single contact
 
 import androidx.annotation.NonNull;
 
-public class Contact extends UserData {
+public class Contact {
 
     private String displayNamePrimary;
 
