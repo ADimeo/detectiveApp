@@ -44,6 +44,12 @@ public class APIBuilder {
 
         @GET("user/{userid}/clues")
         Observable<List<Clue>> getClues(@Path("userid") int userid);
+
+        @GET("user/{userid}/trust")
+        Observable<Float> getTrust(@Path("userid") int userid);
+
+        @GET("user/{userid}/security")
+        Observable<Float> getSecurity(@Path("userid") int userid);
     }
 
     public class User {
