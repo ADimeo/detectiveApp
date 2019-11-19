@@ -9,17 +9,17 @@ import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.datatypes.Hint;
+import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 
 
-public class HintRecyclerViewAdapter extends RecyclerView.Adapter<HintRecyclerViewAdapter.ViewHolder> {
+public class ClueRecyclerViewAdapter extends RecyclerView.Adapter<ClueRecyclerViewAdapter.ViewHolder> {
 
-    private final List<Hint> hints;
+    private final List<Clue> clues;
 
 
 
-    public HintRecyclerViewAdapter(List<Hint> items) {
-        hints = items;
+    public ClueRecyclerViewAdapter(List<Clue> items) {
+        clues = items;
     }
 
 
@@ -32,29 +32,29 @@ public class HintRecyclerViewAdapter extends RecyclerView.Adapter<HintRecyclerVi
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.hint = hints.get(position);
-        holder.hintView.setText(hints.get(position).getHintText());
+        holder.clue = clues.get(position);
+        holder.clueView.setText(clues.get(position).getClueText());
     }
 
     @Override
     public int getItemCount() {
-        return hints.size();
+        return clues.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView hintView;
-        public Hint hint;
+        public final TextView clueView;
+        public Clue clue;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            hintView = (TextView) view.findViewById(R.id.content);
+            clueView = (TextView) view.findViewById(R.id.content);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + hintView.getText() + "'";
+            return super.toString() + " '" + clueView.getText() + "'";
         }
     }
 }

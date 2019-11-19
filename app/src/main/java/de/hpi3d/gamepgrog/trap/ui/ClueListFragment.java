@@ -7,30 +7,34 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import de.hpi3d.gamepgrog.trap.CustomApplication;
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.datatypes.Hint;
+import de.hpi3d.gamepgrog.trap.datatypes.Clue;
+import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
+import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
 
 
-public class HintListFragment extends Fragment {
+public class ClueListFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     public static final String KEY__HINT_LIST = "hint_key_list";
-    private ArrayList<Hint> currentHints;
+    private ArrayList<Clue> currentClues;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public HintListFragment() {
-        currentHints = new ArrayList<>();
+    public ClueListFragment() {
+        currentClues = new ArrayList<>();
     }
 
 
@@ -42,19 +46,28 @@ public class HintListFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
 
+
+        DaoSession daoSession = ((CustomApplication) getActivity().getApplication()).getDaoSession();
+        ClueDao clueDao = daoSession.getClueDao();
+
+        Random r = new Random();
+
+        Clue clue = new Clue("This is a hint! It's number is " + r.nextInt(100));
+        clueDao.insert(clue);
+
         // Remove once there's a way to get hints from server
-        ArrayList<Hint> dummyList = new ArrayList<>();
-        for(int i = 0; i<20; i++){
-            dummyList.add(new Hint("This is hint " + i));
-        }
-        this.setHints(dummyList);
+
+        ArrayList<Clue> dummyList = new ArrayList<>(clueDao.queryBuilder().list());
+
+
+        this.setClue(dummyList);
 
     }
 
 
-    public void setHints(ArrayList<Hint> newHints){
+    public void setClue(ArrayList<Clue> newClues) {
 
-        this.currentHints = newHints;
+        this.currentClues = newClues;
     }
 
     @Override
@@ -74,7 +87,7 @@ public class HintListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new HintRecyclerViewAdapter(currentHints));
+            recyclerView.setAdapter(new ClueRecyclerViewAdapter(currentClues));
         }
         return view;
     }

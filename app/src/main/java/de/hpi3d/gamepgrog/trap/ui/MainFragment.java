@@ -51,7 +51,7 @@ public class MainFragment extends Fragment {
 
 
         final String TELEGRAM_BASE_URL = "https://telegram.me/";
-        final String BOT_URL = "/MicroTransactionBot"; // TODO: Add name of our bot
+        final String BOT_URL = "/AndyAbbot";
         final String USER_TOKEN_URL = "?start=" + playerToken;
 
 
