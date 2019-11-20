@@ -23,7 +23,7 @@ import retrofit2.http.Path;
  */
 public class APIBuilder {
 
-    private final static String BASE_URL = "http://localhost:5000";
+    private final static String BASE_URL = "http://78.47.11.229:5000";
 
     public static API build() {
         return new Retrofit.Builder()
