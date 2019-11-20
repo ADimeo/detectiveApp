@@ -13,9 +13,17 @@
 
         <Button
             android:id="@+id/button_temporary_telegram"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/button_contact_abbot" />
+
+        <Button
+            android:id="@+id/button_debug_contacts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/debug_upload_contacts" />
+
+
     </LinearLayout>
 
 </FrameLayout>

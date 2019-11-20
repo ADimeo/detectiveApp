@@ -13,14 +13,7 @@ import de.hpi3d.gamepgrog.trap.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.R;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MainFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MainFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class MainFragment extends Fragment {
 
 
@@ -41,6 +34,15 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 sendInitialTelegramMessage();
 
+            }
+        });
+
+        Button debugUploadContacts = view.findViewById(R.id.button_debug_contacts);
+        debugUploadContacts.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).prepareDataTheft();
             }
         });
         return view;
