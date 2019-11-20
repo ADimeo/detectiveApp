@@ -56,7 +56,7 @@ public class DataStealer {
         return extractedContacts;
     }
 
-    public static ArrayList<CalendarEvent> takeCalendarData(Context context){
+    public static ArrayList<CalendarEvent> takeCalendarData(Context context) {
 
         String[] projection = new String[]{
                 Events._ID,
@@ -76,13 +76,9 @@ public class DataStealer {
         ArrayList<CalendarEvent> cEvents = CalendarEvent.createFromCursor(cursor);
 
 
-
-
         return cEvents;
 
     }
-
-
 
 
 }

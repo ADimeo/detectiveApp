@@ -42,7 +42,7 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).prepareContactDataTheft();
+                ((MainActivity) getActivity()).prepareDataTheft();
             }
         });
         return view;
