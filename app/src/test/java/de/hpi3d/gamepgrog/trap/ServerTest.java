@@ -7,12 +7,11 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
-import de.hpi3d.gamepgrog.trap.datatypes.UserDataPostRequestBuilder;
+import de.hpi3d.gamepgrog.trap.datatypes.UserDataPostRequestFactory;
 
 public class ServerTest {
 
@@ -36,7 +35,7 @@ public class ServerTest {
     public void testAddData() throws IOException {
         List<Contact> contacts = new ArrayList<>();
         contacts.add(new Contact("paul"));
-        api.addData(0, UserDataPostRequestBuilder.build(contacts)).execute();
+        api.addData(0, UserDataPostRequestFactory.buildWithContacts(contacts)).execute();
     }
 
 }

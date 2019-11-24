@@ -4,10 +4,9 @@ package de.hpi3d.gamepgrog.trap;
 import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
-import de.hpi3d.gamepgrog.trap.datatypes.UserDataPostRequestBuilder;
+import de.hpi3d.gamepgrog.trap.datatypes.UserDataPostRequestFactory;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -39,8 +38,8 @@ public class APIBuilder {
         Observable<User> register();
 
         @POST("user/{userid}/data")
-        Call<ResponseBody> addData(@Path("userid") int userid,
-                                   @Body UserDataPostRequestBuilder.UserDataPostRequest userData);
+        Observable<ResponseBody> addData(@Path("userid") int userid,
+                                   @Body UserDataPostRequestFactory.UserDataPostRequest userData);
 
         @GET("user/{userid}/clues")
         Observable<List<Clue>> getClues(@Path("userid") int userid);

