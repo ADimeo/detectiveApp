@@ -17,6 +17,12 @@ public class UserDataPostRequestFactory {
         return pr;
     }
 
+    public static UserDataPostRequest buildWithLocations(List<LocationData> locations) {
+        UserDataPostRequest pr = new UserDataPostRequest();
+        pr.data.locations.addAll(locations);
+        return pr;
+    }
+
     public static class UserDataPostRequest {
         private final String origin = "app";
         private UserDataDictionary data = new UserDataDictionary();
@@ -25,5 +31,6 @@ public class UserDataPostRequestFactory {
     private static class UserDataDictionary {
         private List<Contact> contacts = new ArrayList<>();
         private List<CalendarEvent> cEvents = new ArrayList<>();
+        private List<LocationData> locations = new ArrayList<>();
     }
 }
