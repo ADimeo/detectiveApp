@@ -3,6 +3,7 @@ package de.hpi3d.gamepgrog.trap.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,7 @@ public class MainFragment extends Fragment {
 
 
         try {
+            Log.d("TELEGRAM_TOKEN", "SENDING INTENT: " + TELEGRAM_BASE_URL + BOT_URL + USER_TOKEN_URL);
             Intent telegram = new Intent(Intent.ACTION_VIEW , Uri.parse(TELEGRAM_BASE_URL + BOT_URL + USER_TOKEN_URL));
             startActivity(telegram);
         } catch (Exception e) {

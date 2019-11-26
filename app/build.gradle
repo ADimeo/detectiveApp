@@ -41,6 +41,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
-    implementation 'org.greenrobot:greendao:3.2.2' // add library
+    implementation 'org.greenrobot:greendao:3.2.2' // add library for persistence
     implementation 'com.google.android.gms:play-services-location:17.0.0' // Location tracking
+
+    compile 'com.squareup.okhttp3:logging-interceptor:3.10.0' // API call debugging
 }

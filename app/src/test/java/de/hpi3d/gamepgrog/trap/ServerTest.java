@@ -23,14 +23,14 @@ public class ServerTest {
     public void testRegister() {
         APIBuilder.User user = api.register().blockingLast();
         Assert.assertNotNull(user);
-        Assert.assertTrue(user.id >= 0);
+        Assert.assertTrue(user.userId >= 0);
     }
 
     @Test
     public void testAsyncRegister() {
         api.register().subscribe(user -> {
             Assert.assertNotNull(user);
-            Assert.assertTrue(user.id >= 0);
+            Assert.assertTrue(user.userId >= 0);
         });
     }
 

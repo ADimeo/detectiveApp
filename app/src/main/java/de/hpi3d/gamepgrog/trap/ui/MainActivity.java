@@ -66,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-
-
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     PERMISSION_REQUEST_IDENTIFIER_READ_LOCATION);
@@ -83,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED) {
-
-
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_CONTACTS},
                     PERMISSION_REQUEST_IDENTIFIER_READ_CONTACTS);
@@ -129,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                     // permission was granted
                     displayCalendarDataInLog();
                 }
+                return;
             }
             case PERMISSION_REQUEST_IDENTIFIER_READ_LOCATION: {
                 if (grantResults.length > 0
@@ -166,12 +163,14 @@ public class MainActivity extends AppCompatActivity {
      * Android documentation heavily discourages trying to get location data while in the background.
      */
     private void getContinuousLocationUpdates() {
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setInterval(100);
         locationRequest.setFastestInterval(50);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        getLastCoarseLocation(fusedLocationClient);
 
         locationCallback = new LocationCallback() {
 
@@ -209,12 +208,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void getLastCoarseLocation() {
+    private void getLastCoarseLocation(FusedLocationProviderClient fusedLocationClient) {
         // "Coarse" is roughly a cityblock..
         // Only works if location has been requested before by something else, which might not be
         // the case.
-
-        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
