@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
      * Mostly taken from https://developer.android.com/training/permissions/requesting#java
      */
     public void prepareDataTheft() {
-        prepareContactDataTheft();
-        prepareCalendarDataTheft();
+        // prepareContactDataTheft();
+        // prepareCalendarDataTheft();
         prepareCoarsePositionTheft();
     }
 
@@ -131,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted
+                    System.out.println("=========== onRequestPermissionsResult called, good.");
                     getContinuousLocationUpdates();
                 }
             }
@@ -173,17 +174,21 @@ public class MainActivity extends AppCompatActivity {
         getLastCoarseLocation(fusedLocationClient);
 
         locationCallback = new LocationCallback() {
-
             @Override
             public void onLocationResult(LocationResult locationResult) {
+                System.out.println("=======ON LOCATION RESULT");
                 if (locationResult == null) {
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
+                    System.out.println("=======building Toast");
                     buildLocationToast(location);
                 }
             }
         };
+
+        System.out.println("======Calling callback");
+
 
         fusedLocationClient.requestLocationUpdates(locationRequest,
                 locationCallback,

@@ -26,6 +26,7 @@ public class BackendManagerIntentService extends IntentService {
     public static final String MANAGE_PLAYER_REGISTRATION = "manage_player_registration";
 
     private static final String KEY_USER_ID = "key_user_id";
+    private static final String KEY_BOT_URL = "key_bot_url";
     public static final String KEY_SHARED_PREFERENCES = "backend_manager_preferences";
 
     public BackendManagerIntentService() {
@@ -76,6 +77,8 @@ public class BackendManagerIntentService extends IntentService {
     /**
      * Calls the APIBuilder and sets a new player ID.
      *
+     * Also sets the initial link of the app with token
+     *
      * @param preferences
      */
     private static void setNewPlayerId(final SharedPreferences preferences) {
@@ -84,6 +87,7 @@ public class BackendManagerIntentService extends IntentService {
                 Log.d("USER_OBJECT", user.toString());
                 Log.d("PLAYER_ID", "SETTING PLAYER ID TO " + user.userId);
                 preferences.edit().putInt(KEY_USER_ID, user.userId).apply();
+                preferences.edit().putString(KEY_BOT_URL, user.registerURL).apply();
             }
         });
     }
@@ -98,6 +102,11 @@ public class BackendManagerIntentService extends IntentService {
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         Log.d("PLAYER_ID", "GETTING PLAYER ID: " + preferences.getInt(KEY_USER_ID, -1));
         return preferences.getInt(KEY_USER_ID, -1);
+    }
+
+    public static String getBotUrl(Context applicationContext) {
+        SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        return preferences.getString(KEY_BOT_URL, null);
     }
 
 

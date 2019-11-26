@@ -3,7 +3,6 @@ package de.hpi3d.gamepgrog.trap.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +13,12 @@ import de.hpi3d.gamepgrog.trap.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.R;
 
 
-
 public class MainFragment extends Fragment {
-
 
 
     public MainFragment() {
         // Required empty public constructor
     }
-
 
 
     @Override
@@ -49,18 +45,12 @@ public class MainFragment extends Fragment {
         return view;
     }
 
-    private void sendInitialTelegramMessage(){
-        String playerToken = Integer.toString(BackendManagerIntentService.getPlayerId(getContext()));
-
-
-        final String TELEGRAM_BASE_URL = "https://telegram.me/";
-        final String BOT_URL = "/AndyAbbot";
-        final String USER_TOKEN_URL = "?start=" + playerToken;
+    private void sendInitialTelegramMessage() {
+        final String BOT_URL = BackendManagerIntentService.getBotUrl(getContext());
 
 
         try {
-            Log.d("TELEGRAM_TOKEN", "SENDING INTENT: " + TELEGRAM_BASE_URL + BOT_URL + USER_TOKEN_URL);
-            Intent telegram = new Intent(Intent.ACTION_VIEW , Uri.parse(TELEGRAM_BASE_URL + BOT_URL + USER_TOKEN_URL));
+            Intent telegram = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + BOT_URL));
             startActivity(telegram);
         } catch (Exception e) {
             e.printStackTrace();
