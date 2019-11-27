@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
             startService(registerPlayer);
         }
         setContentView(R.layout.activity_main);
-
     }
 
     /**
