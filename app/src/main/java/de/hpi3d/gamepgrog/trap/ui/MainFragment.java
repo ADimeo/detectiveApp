@@ -9,13 +9,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import de.hpi3d.gamepgrog.trap.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.R;
 
 
-
 public class MainFragment extends Fragment {
 
+    private Button upButton;
 
 
     public MainFragment() {
@@ -23,42 +24,41 @@ public class MainFragment extends Fragment {
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: Move to an appropiate place, prettify a bit. Or a lot, I don't know.
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        Button upButton = view.findViewById(R.id.button_temporary_telegram);
-        upButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendInitialTelegramMessage();
-
-            }
+        upButton = view.findViewById(R.id.button_temporary_telegram);
+        upButton.setOnClickListener((View v) -> {
+            sendInitialTelegramMessage();
         });
 
-        Button debugUploadContacts = view.findViewById(R.id.button_debug_contacts);
-        debugUploadContacts.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) getActivity()).prepareDataTheft();
-            }
+        Button debugUploadContacts = view.findViewById(R.id.button_debug_contacts);
+        debugUploadContacts.setOnClickListener((View v) -> {
+            ((MainActivity) getActivity()).prepareDataTheft();
         });
         return view;
     }
 
-    private void sendInitialTelegramMessage(){
-        String playerToken = Integer.toString(BackendManagerIntentService.getPlayerId(getContext()));
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FragmentActivity activity = getActivity();
+        Intent testButtonStatus = new Intent(activity, BackendManagerIntentService.class);
+        testButtonStatus.putExtra(BackendManagerIntentService.KEY_MANAGE_TYPE, BackendManagerIntentService.MANAGE_TELEGRAM_BUTTON_STATUS);
+
+        activity.startService(testButtonStatus);
 
 
-        final String TELEGRAM_BASE_URL = "https://telegram.me/";
-        final String BOT_URL = "/AndyAbbot";
-        final String USER_TOKEN_URL = "?start=" + playerToken;
+        boolean playerHasStartedConversation = BackendManagerIntentService.getHasPlayerStartedConversation(getContext());
+        upButton.setEnabled(!playerHasStartedConversation);
+    }
 
-
+    private void sendInitialTelegramMessage() {
+        final String BOT_URL = BackendManagerIntentService.getBotUrl(getContext());
         try {
-            Intent telegram = new Intent(Intent.ACTION_VIEW , Uri.parse(TELEGRAM_BASE_URL + BOT_URL + USER_TOKEN_URL));
+            Intent telegram = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + BOT_URL));
             startActivity(telegram);
         } catch (Exception e) {
             e.printStackTrace();
