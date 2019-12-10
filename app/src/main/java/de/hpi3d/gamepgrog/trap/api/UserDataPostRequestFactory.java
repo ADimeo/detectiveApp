@@ -1,7 +1,11 @@
-package de.hpi3d.gamepgrog.trap.datatypes;
+package de.hpi3d.gamepgrog.trap.api;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
+import de.hpi3d.gamepgrog.trap.datatypes.Contact;
+import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 
 public class UserDataPostRequestFactory {
 

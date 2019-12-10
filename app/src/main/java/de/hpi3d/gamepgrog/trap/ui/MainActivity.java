@@ -11,22 +11,20 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import de.hpi3d.gamepgrog.trap.APIBuilder;
-import de.hpi3d.gamepgrog.trap.BackendManagerIntentService;
+import de.hpi3d.gamepgrog.trap.api.ApiBuilder;
+import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.DataStealer;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
-import de.hpi3d.gamepgrog.trap.datatypes.UserDataPostRequestFactory;
+import de.hpi3d.gamepgrog.trap.api.UserDataPostRequestFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_IDENTIFIER_READ_LOCATION = 103;
 
 
-    private APIBuilder.API server;
+    private ApiBuilder.API server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_main);
 
-        server = APIBuilder.build();
+        server = ApiBuilder.build();
     }
 
     /**

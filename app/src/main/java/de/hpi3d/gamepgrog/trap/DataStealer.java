@@ -33,7 +33,7 @@ public class DataStealer {
      * Reads out data from contacts on the device and returns them.
      * Currently only reads names of contacts. Can be expanded to read more data.
      * <p>
-     * For additional info regarding the used APIBuilder see
+     * For additional info regarding the used ApiBuilder see
      * https://developer.android.com/guide/topics/providers/contacts-provider.html
      *
      * @param context to access contentResolver

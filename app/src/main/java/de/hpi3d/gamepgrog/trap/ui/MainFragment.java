@@ -10,7 +10,7 @@ import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import de.hpi3d.gamepgrog.trap.BackendManagerIntentService;
+import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.R;
 
 

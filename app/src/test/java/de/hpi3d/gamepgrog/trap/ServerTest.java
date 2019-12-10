@@ -9,17 +9,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hpi3d.gamepgrog.trap.api.ApiBuilder;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
-import de.hpi3d.gamepgrog.trap.datatypes.UserDataPostRequestFactory;
+import de.hpi3d.gamepgrog.trap.api.UserDataPostRequestFactory;
 
 public class ServerTest {
 
-    private APIBuilder.API api;
+    private ApiBuilder.API api;
 
     @Before
     public void setUp() {
-        api = APIBuilder.build();
+        api = ApiBuilder.build();
     }
 
     @Test

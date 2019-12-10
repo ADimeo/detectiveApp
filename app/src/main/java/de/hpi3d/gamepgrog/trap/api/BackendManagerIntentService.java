@@ -1,4 +1,4 @@
-package de.hpi3d.gamepgrog.trap;
+package de.hpi3d.gamepgrog.trap.api;
 
 import android.app.IntentService;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import de.hpi3d.gamepgrog.trap.CustomApplication;
 import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
 import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
 
@@ -81,7 +82,7 @@ public class BackendManagerIntentService extends IntentService {
             return;
         }
 
-        APIBuilder.build().getUserStatus(playerID).subscribe(user -> {
+        ApiBuilder.build().getUserStatus(playerID).subscribe(user -> {
             if (user != null && user.telegramHandle != null) {
                 setHasPlayerStartedConversation(context, true);
 
@@ -93,7 +94,7 @@ public class BackendManagerIntentService extends IntentService {
 
     private void downloadAllClues() {
         int playerId = getPlayerId(getApplicationContext());
-        APIBuilder.build().getClues(playerId).subscribe(clueList -> {
+        ApiBuilder.build().getClues(playerId).subscribe(clueList -> {
 
             DaoSession daoSession = ((CustomApplication) getApplication()).getDaoSession();
             ClueDao clueDao = daoSession.getClueDao();
@@ -103,14 +104,14 @@ public class BackendManagerIntentService extends IntentService {
     }
 
     /**
-     * Calls the APIBuilder and sets a new player ID.
+     * Calls the ApiBuilder and sets a new player ID.
      * <p>
      * Also sets the initial link of the app with token
      *
      * @param preferences
      */
     private static void setNewPlayerId(final SharedPreferences preferences) {
-        APIBuilder.build().register().subscribe(user -> {
+        ApiBuilder.build().register().subscribe(user -> {
             if (user != null) {
                 Log.d("USER_OBJECT", user.toString());
                 Log.d("PLAYER_ID", "SETTING PLAYER ID TO " + user.userId);
