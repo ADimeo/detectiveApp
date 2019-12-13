@@ -2,8 +2,9 @@
     <string name="app_name">Detective Game</string>
 
 
-    <string name="debug_upload_contacts">Upload Contacts</string>
+    <string name="debug_upload_contacts">Steal</string>
     <string name="button_contact_abbot">Contact Andy Abbot</string>
     <string name="title_hints_received">Known Secrets</string>
+    <string name="debug_safety_mode">Safety mode</string>
 
 </resources>

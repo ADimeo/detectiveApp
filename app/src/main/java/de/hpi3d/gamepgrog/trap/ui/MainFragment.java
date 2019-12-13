@@ -7,11 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Switch;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.R;
+import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
 
 
 public class MainFragment extends Fragment {
@@ -37,7 +38,17 @@ public class MainFragment extends Fragment {
         debugUploadContacts.setOnClickListener((View v) -> {
             ((MainActivity) getActivity()).prepareDataTheft();
         });
+
+        Switch safetySwitch = view.findViewById(R.id.switch_safety);
+        safetySwitch.setChecked(BackendManagerIntentService.isInSafetyMode(getContext()));
+
+        safetySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            BackendManagerIntentService.setSafetyMode(isChecked, getContext());
+        });
+
         return view;
+
+
     }
 
 

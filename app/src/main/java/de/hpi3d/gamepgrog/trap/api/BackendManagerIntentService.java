@@ -172,6 +172,13 @@ public class BackendManagerIntentService extends IntentService {
     }
 
 
+    public static void setSafetyMode(boolean safety, Context applicationContext) {
+        Log.d("SAFETY MODE", "SAFETY IS " + safety);
+        SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        preferences.edit().putBoolean(KEY_SAFETY_MODE, safety).apply();
+    }
+
+
     public static boolean isInSafetyMode(Context applicationContext) {
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         return preferences.getBoolean(KEY_SAFETY_MODE, true);
