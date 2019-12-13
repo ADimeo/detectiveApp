@@ -1,6 +1,8 @@
 package de.hpi3d.gamepgrog.trap.api;
 
 
+import android.content.Context;
+
 import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
@@ -26,14 +28,21 @@ import retrofit2.http.Path;
 public class ApiBuilder {
 
     private final static String BASE_URL = "http://78.47.11.229:5000";
+    private static OkHttpClient client = null;
 
-    public static API build() {
+
+    public static API build(Context context) {
+        if (BackendManagerIntentService.isInSafetyMode(context)) {
+            throw new SecurityException("APPLICATION IS IN SAFETY MODE; UPLOADS ARE NOT ALLOWED");
+        }
+
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .build();
-
+        if (client == null) {
+            client = new OkHttpClient.Builder()
+                    .addInterceptor(interceptor)
+                    .build();
+        }
         return new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -42,6 +51,7 @@ public class ApiBuilder {
                 .build()
                 .create(API.class);
     }
+
 
     public interface API {
         @GET("user/create")

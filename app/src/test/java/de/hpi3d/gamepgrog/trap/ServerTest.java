@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.api.ApiBuilder;
+import de.hpi3d.gamepgrog.trap.api.UserDataPostRequestFactory;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
-import de.hpi3d.gamepgrog.trap.api.UserDataPostRequestFactory;
 
 public class ServerTest {
 
@@ -38,5 +38,4 @@ public class ServerTest {
         contacts.add(new Contact("paul"));
         api.addData(0, UserDataPostRequestFactory.buildWithContacts(contacts)).execute();
     }
-
 }

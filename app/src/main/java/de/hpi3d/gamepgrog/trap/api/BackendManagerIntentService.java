@@ -16,6 +16,8 @@ import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
  * makes decisions/finds out the games state.
  * Based on that it may or may not call the backend.
  * <p>
+ * Also functions as ad hoc storage for lots of stuff.
+ * <p>
  * Methods in this class may be blocking.
  */
 
@@ -31,6 +33,8 @@ public class BackendManagerIntentService extends IntentService {
     private static final String KEY_BOT_URL = "key_bot_url";
     public static final String KEY_SHARED_PREFERENCES = "backend_manager_preferences";
     public static final String KEY_CONVERSATION_HAS_STARTED = "key_conversation_has_started";
+    public static final String KEY_SAFETY_MODE = "key_safety_mode";
+
 
     public BackendManagerIntentService() {
         super("BackendManagerIntentService");
@@ -66,7 +70,7 @@ public class BackendManagerIntentService extends IntentService {
         Log.d("REGISTER", "REGISTERING PLAYER IF UNREGISTERED");
         int playerId = getPlayerId(getApplicationContext());
         if (-1 == playerId) {
-            setNewPlayerId(getApplicationContext().getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE));
+            setNewPlayerId(getApplicationContext());
         }
     }
 
@@ -82,19 +86,21 @@ public class BackendManagerIntentService extends IntentService {
             return;
         }
 
-        ApiBuilder.build().getUserStatus(playerID).subscribe(user -> {
-            if (user != null && user.telegramHandle != null) {
-                setHasPlayerStartedConversation(context, true);
 
-            }
+        if (!isInSafetyMode(context)) {
+            ApiBuilder.build(context).getUserStatus(playerID).subscribe(user -> {
+                if (user != null && user.telegramHandle != null) {
+                    setHasPlayerStartedConversation(context, true);
+                }
+            });
+        }
 
-        });
 
     }
 
-    private void downloadAllClues() {
+    private void downloadAllClues(Context context) {
         int playerId = getPlayerId(getApplicationContext());
-        ApiBuilder.build().getClues(playerId).subscribe(clueList -> {
+        ApiBuilder.build(context).getClues(playerId).subscribe(clueList -> {
 
             DaoSession daoSession = ((CustomApplication) getApplication()).getDaoSession();
             ClueDao clueDao = daoSession.getClueDao();
@@ -108,10 +114,11 @@ public class BackendManagerIntentService extends IntentService {
      * <p>
      * Also sets the initial link of the app with token
      *
-     * @param preferences
+     * @param context
      */
-    private static void setNewPlayerId(final SharedPreferences preferences) {
-        ApiBuilder.build().register().subscribe(user -> {
+    private static void setNewPlayerId(final Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        ApiBuilder.build(context).register().subscribe(user -> {
             if (user != null) {
                 Log.d("USER_OBJECT", user.toString());
                 Log.d("PLAYER_ID", "SETTING PLAYER ID TO " + user.userId);
@@ -161,6 +168,13 @@ public class BackendManagerIntentService extends IntentService {
         Log.d("SETTING_STUFF", "SETTING PLAYER STARTED CONVERSATION TO " + conversationStarted);
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         preferences.edit().putBoolean(KEY_CONVERSATION_HAS_STARTED, conversationStarted).apply();
+
+    }
+
+
+    public static boolean isInSafetyMode(Context applicationContext) {
+        SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        return preferences.getBoolean(KEY_SAFETY_MODE, true);
 
     }
 

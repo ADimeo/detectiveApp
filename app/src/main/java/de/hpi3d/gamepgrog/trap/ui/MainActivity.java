@@ -3,28 +3,24 @@ package de.hpi3d.gamepgrog.trap.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import de.hpi3d.gamepgrog.trap.api.ApiBuilder;
-import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.DataStealer;
 import de.hpi3d.gamepgrog.trap.R;
+import de.hpi3d.gamepgrog.trap.api.ApiBuilder;
+import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
+import de.hpi3d.gamepgrog.trap.api.OfflineAPI;
+import de.hpi3d.gamepgrog.trap.api.UserDataPostRequestFactory;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
-import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
-import de.hpi3d.gamepgrog.trap.api.UserDataPostRequestFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,7 +43,13 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_main);
 
-        server = ApiBuilder.build();
+
+        if (BackendManagerIntentService.isInSafetyMode(getApplicationContext())) {
+            server = new OfflineAPI();
+        } else {
+            server = ApiBuilder.build(getApplicationContext());
+        }
+
     }
 
     /**
@@ -181,6 +183,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+   /* Needs higher API level. How to refactor?
+
     private void sendLocationData(List<Location> locations) {
         int userid = getUserId();
         List<LocationData> locationsData = locations
@@ -189,5 +193,5 @@ public class MainActivity extends AppCompatActivity {
                 .collect(Collectors.toList());
         server.addData(userid, UserDataPostRequestFactory.buildWithLocations(locationsData))
                 .subscribe();
-    }
+    }*/
 }
