@@ -12,7 +12,7 @@ import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 
 public interface IApp {
 
-    int PERMISSIONS_CALENDAR = 1, PERMISSION_CONTACTS = 2, PERMISSION_LOCATION = 4;
+    int PERMISSION_CALENDAR = 1, PERMISSION_CONTACTS = 2, PERMISSION_LOCATION = 4;
 
     /**
      * Registers a new User if none was present
@@ -20,18 +20,27 @@ public interface IApp {
      */
     String CALL_REGISTER_OR_GET_USER = "register";
 
-    /** returns UserStatus */
+    /**
+     * returns UserStatus
+     */
     String CALL_USER_STATUS = "user_status";
 
-    /** no response. Posts given Data (UserDataPostRequest) to the Api */
+    /**
+     * no response. Posts given Data (UserDataPostRequest) to the Api
+     */
     String CALL_ADD_DATA = "add_data";
 
-    /** Returns Clue[] */
+    /**
+     * Returns Clue[]
+     */
     String CALL_CLUES = "clues";
 
     boolean hasPermission(int permission);
+
     List<CalendarEvent> getCalendarEvents() throws NoPermissionsException;
+
     List<Contact> getContacts() throws NoPermissionsException;
+
     List<LocationData> getLocation() throws NoPermissionsException;
 
     // TODO Replace Parcable with ...

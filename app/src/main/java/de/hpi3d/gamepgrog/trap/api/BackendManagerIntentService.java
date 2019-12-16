@@ -52,7 +52,6 @@ public class BackendManagerIntentService extends IntentService {
                 registerPlayerIfUnregistered();
                 break;
             case MANAGE_TELEGRAM_BUTTON_STATUS:
-
                 updatePlayerConversationStatus();
                 break;
         }

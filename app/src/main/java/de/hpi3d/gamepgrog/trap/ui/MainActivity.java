@@ -4,11 +4,14 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -21,8 +24,11 @@ import de.hpi3d.gamepgrog.trap.api.OfflineAPI;
 import de.hpi3d.gamepgrog.trap.api.UserDataPostRequestFactory;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
+import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
+import de.hpi3d.gamepgrog.trap.gamelogic.IApp;
+import de.hpi3d.gamepgrog.trap.gamelogic.NoPermissionsException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IApp {
 
 
     private static final int PERMISSION_REQUEST_IDENTIFIER_READ_CONTACTS = 101;
@@ -175,6 +181,53 @@ public class MainActivity extends AppCompatActivity {
         return BackendManagerIntentService.getPlayerId(this);
     }
 
+
+    @Override
+    public boolean hasPermission(int permission) {
+        String permissionToTest;
+        switch (permission) {
+            case IApp.PERMISSION_CALENDAR:
+                permissionToTest = Manifest.permission.READ_CALENDAR;
+                break;
+            case IApp.PERMISSION_CONTACTS:
+                permissionToTest = Manifest.permission.READ_CONTACTS;
+                break;
+            case IApp.PERMISSION_LOCATION:
+                permissionToTest = Manifest.permission.ACCESS_COARSE_LOCATION;
+                break;
+            default:
+                throw new IllegalArgumentException("int does not symbolise any permission");
+        }
+
+
+        return (ContextCompat.checkSelfPermission(this, permissionToTest)
+                == PackageManager.PERMISSION_GRANTED);
+    }
+
+    @Override
+    public List<CalendarEvent> getCalendarEvents() throws NoPermissionsException {
+        return null;
+    }
+
+    @Override
+    public List<Contact> getContacts() throws NoPermissionsException {
+        return null;
+    }
+
+    @Override
+    public List<LocationData> getLocation() throws NoPermissionsException {
+        return null;
+    }
+
+    @Override
+    public void executeApiCall(String call, Consumer<Parcelable> callback) {
+
+    }
+
+    @Override
+    public void executeApiCall(String call, UserDataPostRequestFactory.UserDataPostRequest pr, Runnable callback) {
+
+    }
 
     private void getContinuousLocationUpdates() {
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
