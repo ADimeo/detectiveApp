@@ -43,6 +43,8 @@ public interface IApp {
 
     List<LocationData> getLocation() throws NoPermissionsException;
 
+    String getLanguage();
+
     // TODO Replace Parcable with ...
     void executeApiCall(String call, Consumer<Parcelable> callback);
 

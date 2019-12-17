@@ -11,6 +11,7 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -227,6 +228,11 @@ public class MainActivity extends AppCompatActivity implements IApp {
     @Override
     public void executeApiCall(String call, UserDataPostRequestFactory.UserDataPostRequest pr, Runnable callback) {
 
+    }
+
+    @Override
+    public String getLanguage() {
+        return Locale.getDefault().getLanguage();
     }
 
     private void getContinuousLocationUpdates() {
