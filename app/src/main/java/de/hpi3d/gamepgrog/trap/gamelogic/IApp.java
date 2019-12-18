@@ -41,6 +41,14 @@ public interface IApp {
 
     List<Contact> getContacts() throws NoPermissionsException;
 
+
+    /**
+     * Returns current location of the device, if applicable. May return null if no location
+     * can be detected. This may be due to location being turned off on the device.
+     *
+     * @return
+     * @throws NoPermissionsException
+     */
     List<LocationData> getLocation() throws NoPermissionsException;
 
     String getLanguage();

