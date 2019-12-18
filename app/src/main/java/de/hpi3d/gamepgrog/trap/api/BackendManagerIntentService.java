@@ -28,6 +28,7 @@ public class BackendManagerIntentService extends IntentService {
 
     public static final String MANAGE_PLAYER_REGISTRATION = "manage_player_registration";
     public static final String MANAGE_TELEGRAM_BUTTON_STATUS = "manage_telegram_button_status";
+    public static final String MANAGE_CLUE_DOWNLOAD = "manage_clue_download";
 
     private static final String KEY_USER_ID = "key_user_id";
     private static final String KEY_BOT_URL = "key_bot_url";
@@ -54,6 +55,8 @@ public class BackendManagerIntentService extends IntentService {
             case MANAGE_TELEGRAM_BUTTON_STATUS:
                 updatePlayerConversationStatus();
                 break;
+            case MANAGE_CLUE_DOWNLOAD:
+                downloadAndSaveAllClues();
         }
     }
 
@@ -97,15 +100,17 @@ public class BackendManagerIntentService extends IntentService {
 
     }
 
-    private void downloadAllClues(Context context) {
+    private void downloadAndSaveAllClues() {
+        Context context = getBaseContext();
         int playerId = getPlayerId(getApplicationContext());
-        ApiBuilder.build(context).getClues(playerId).subscribe(clueList -> {
 
-            DaoSession daoSession = ((CustomApplication) getApplication()).getDaoSession();
-            ClueDao clueDao = daoSession.getClueDao();
 
-            clueDao.insertOrReplaceInTx(clueList);
-        });
+            ApiBuilder.build(context).getClues(playerId).subscribe(clueList -> {
+                DaoSession daoSession = ((CustomApplication) getApplication()).getDaoSession();
+                ClueDao clueDao = daoSession.getClueDao();
+                clueDao.insertOrReplaceInTx(clueList);
+            });
+
     }
 
     /**

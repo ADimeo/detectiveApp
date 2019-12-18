@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -49,19 +48,17 @@ public class ClueListFragment extends Fragment {
 
         DaoSession daoSession = ((CustomApplication) getActivity().getApplication()).getDaoSession();
         ClueDao clueDao = daoSession.getClueDao();
-
+ /*  
         Random r = new Random();
 
         Clue clue = new Clue("This is a hint! It's number is " + r.nextInt(100));
         clueDao.insert(clue);
-
+*/
         // Remove once there's a way to get hints from server
 
-        ArrayList<Clue> dummyList = new ArrayList<>(clueDao.queryBuilder().list());
 
-
-        this.setClue(dummyList);
-
+        ArrayList<Clue> clueList = new ArrayList<>(clueDao.queryBuilder().list());
+        this.setClue(clueList);
     }
 
 
