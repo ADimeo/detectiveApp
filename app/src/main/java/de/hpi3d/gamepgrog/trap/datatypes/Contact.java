@@ -19,12 +19,17 @@ import androidx.annotation.NonNull;
 
 public class Contact {
 
+    private static final int CURSORFLAG_ADDRESS = 0;
+    private static final int CURSORFLAG_PHONE = 1;
+    private static final int CURSORFLAG_BIRTHDAY = 4;
+
     private long ID;
     private String displayNamePrimary;
     private String homeAddress;
     private String email; // Not implemented yet
     private String organisation; // Not implemented yet
     private String birthday; // Birthday only for now
+    private ArrayList<String> phoneNumbers; // Could be expanded to include type of number (phone/mobile) and label
 
 
     public Contact(long Id, String primaryName) {
@@ -50,32 +55,16 @@ public class Contact {
         this.displayNamePrimary = displayNamePrimary;
     }
 
-    public String getHomeAddress() {
-        return homeAddress;
+
+    public void addPhoneNumber(String phoneNumber) {
+        if (phoneNumbers == null) {
+            phoneNumbers = new ArrayList<>();
+        }
+        phoneNumbers.add(phoneNumber);
     }
 
     public void setHomeAddress(String homeAddress) {
         this.homeAddress = homeAddress;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getOrganisation() {
-        return organisation;
-    }
-
-    public void setOrganisation(String organisation) {
-        this.organisation = organisation;
-    }
-
-    public String getBirthday() {
-        return birthday;
     }
 
     public void setBirthday(String birthday) {
@@ -92,6 +81,7 @@ public class Contact {
      * @return contacts with additional data
      */
     public static ArrayList<Contact> enrichContacts(ArrayList<Contact> unenrichedContacts, Context context) {
+        // Build query parameters
         int numberOfContacts = unenrichedContacts.size();
         LongSparseArray<Contact> contactsById = new LongSparseArray<>();
 
@@ -99,7 +89,6 @@ public class Contact {
         String[] selectionArgsForUserIds = new String[numberOfContacts];
 
         for (int i = 0; i < numberOfContacts; i++) {
-
             Contact c = unenrichedContacts.get(i);
             long contactID = c.getID();
 
@@ -107,13 +96,26 @@ public class Contact {
             selectionArgsForUserIds[i] = Long.toString(contactID);
         }
 
+        // Actual queries and enrichment
+
 
         Cursor cursor = prepareCursor(CURSORFLAG_BIRTHDAY, context, selectionForUserIds, selectionArgsForUserIds);
-        enrichBirthdays(contactsById, cursor);
+        if (cursor.moveToFirst()) {
+            enrichBirthdays(contactsById, cursor);
+        }
+        cursor.close();
+
+        cursor = prepareCursor(CURSORFLAG_PHONE, context, selectionForUserIds, selectionArgsForUserIds);
+        if (cursor.moveToFirst()) {
+            enrichPhoneNumbers(contactsById, cursor);
+        }
         cursor.close();
 
         cursor = prepareCursor(CURSORFLAG_ADDRESS, context, selectionForUserIds, selectionArgsForUserIds);
-        enrichAddresses(contactsById, cursor);
+        if (cursor.moveToFirst()) {
+            enrichAddresses(contactsById, cursor);
+        }
+        cursor.close();
 
 
         ArrayList<Contact> enrichedContacts = new ArrayList<Contact>(numberOfContacts);
@@ -156,10 +158,21 @@ public class Contact {
         return contactsById;
     }
 
+    private static LongSparseArray<Contact> enrichPhoneNumbers(LongSparseArray<Contact> contactsById, Cursor cursor) {
+        do {
+            int positionOfContactId = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID);
+            int positionOfNumber = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
 
-    private static final int CURSORFLAG_ADDRESS = 0;
-    private static final int CURSORFLAG_BIRTHDAY = 4;
+            long contactKey = cursor.getLong(positionOfContactId);
+            String number = cursor.getString(positionOfNumber);
 
+            Contact contactToEnrich = contactsById.get(contactKey);
+            contactToEnrich.addPhoneNumber(number);
+
+        } while (cursor.moveToNext());
+
+        return contactsById;
+    }
 
     private static Cursor prepareCursor(int flag, Context context, String idSelection, String[] idSelectionArgs) {
         Uri CONTENT_URI = ContactsContract.Data.CONTENT_URI;
@@ -198,6 +211,19 @@ public class Contact {
                                 String.valueOf(ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY),
                                 ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE},
                         idSelectionArgs);
+                break;
+            case CURSORFLAG_PHONE:
+                projection = new String[]{
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER};
+
+                selection = ContactsContract.Data.MIMETYPE + " = ? AND "
+                        + idSelection;
+
+                selectionArgs = ArrayUtils.concat(
+                        new String[]{ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE},
+                        idSelectionArgs
+                );
                 break;
         }
 

