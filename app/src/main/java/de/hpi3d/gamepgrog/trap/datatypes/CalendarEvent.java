@@ -1,13 +1,16 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
 import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.CalendarContract;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 
-public class CalendarEvent {
+public class CalendarEvent implements Parcelable {
 
     private long id;
     private String title;
@@ -16,7 +19,7 @@ public class CalendarEvent {
     private long endInUTCMilliseconds;
 
 
-    CalendarEvent(long id, String title, String eventLocation, long startInUTCMilliseconds, long endInUTCMilliseconds) {
+    public CalendarEvent(long id, String title, String eventLocation, long startInUTCMilliseconds, long endInUTCMilliseconds) {
         this.id = id;
         this.title = title;
         this.eventLocation = eventLocation;
@@ -32,6 +35,26 @@ public class CalendarEvent {
         this.endInUTCMilliseconds = -1;
     }
 
+
+    private CalendarEvent(Parcel in) {
+        id = in.readLong();
+        title = in.readString();
+        eventLocation = in.readString();
+        startInUTCMilliseconds = in.readLong();
+        endInUTCMilliseconds = in.readLong();
+    }
+
+    public static final Creator<CalendarEvent> CREATOR = new Creator<CalendarEvent>() {
+        @Override
+        public CalendarEvent createFromParcel(Parcel in) {
+            return new CalendarEvent(in);
+        }
+
+        @Override
+        public CalendarEvent[] newArray(int size) {
+            return new CalendarEvent[size];
+        }
+    };
 
     public static ArrayList<CalendarEvent> createFromCursor(Cursor cursor) {
 
@@ -87,5 +110,36 @@ public class CalendarEvent {
 
     public void setEndInUTCMilliseconds(long endInUTCMilliseconds) {
         this.endInUTCMilliseconds = endInUTCMilliseconds;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(title);
+        dest.writeString(eventLocation);
+        dest.writeLong(startInUTCMilliseconds);
+        dest.writeLong(endInUTCMilliseconds);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CalendarEvent that = (CalendarEvent) o;
+        return id == that.id &&
+                startInUTCMilliseconds == that.startInUTCMilliseconds &&
+                endInUTCMilliseconds == that.endInUTCMilliseconds &&
+                Objects.equals(title, that.title) &&
+                Objects.equals(eventLocation, that.eventLocation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, eventLocation, startInUTCMilliseconds, endInUTCMilliseconds);
     }
 }
