@@ -32,11 +32,7 @@ public class ApiBuilder {
     private static OkHttpClient client = null;
 
 
-    public static API build(Context context) {
-        if (BackendManagerIntentService.isInSafetyMode(context)) {
-            throw new SecurityException("APPLICATION IS IN SAFETY MODE; UPLOADS ARE NOT ALLOWED");
-        }
-
+    public static API build() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         if (client == null) {

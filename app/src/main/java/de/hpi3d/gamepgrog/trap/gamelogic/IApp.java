@@ -14,14 +14,9 @@ import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 
 public interface IApp {
 
-    int PERMISSION_CALENDAR = 1, PERMISSION_CONTACTS = 2, PERMISSION_LOCATION = 4;
+    void setPermission(String permission, Consumer<Boolean> callback);
 
-    /**
-     * Returns Clue[]
-     */
-    String CALL_CLUES = "clues";
-
-    boolean hasPermission(int permission);
+    boolean hasPermission(String permission);
 
     List<CalendarEvent> getCalendarEvents() throws NoPermissionsException;
 

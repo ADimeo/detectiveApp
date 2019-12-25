@@ -51,7 +51,7 @@ public class BackendManagerIntentService extends IntentService {
 
     public BackendManagerIntentService() {
         super("BackendManagerIntentService");
-        api = ApiBuilder.build(getApplicationContext());
+        api = ApiBuilder.build();
     }
 
 
@@ -154,9 +154,9 @@ public class BackendManagerIntentService extends IntentService {
 
         if (receiver != null) {
             if (value == null) {
-                receiver.send(-1, Bundle.EMPTY);
+                receiver.send(-1, new Bundle());
             } else {
-                Bundle b = Bundle.EMPTY;
+                Bundle b = new Bundle();
                 b.putParcelable("value", value);
                 receiver.send(0, b);
             }
@@ -172,7 +172,7 @@ public class BackendManagerIntentService extends IntentService {
      */
     private static void setNewPlayerId(final Context context) {
         SharedPreferences preferences = context.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        ApiBuilder.build(context).register().subscribe(user -> {
+        ApiBuilder.build().register().subscribe(user -> {
             if (user != null) {
                 Log.d("USER_OBJECT", user.toString());
                 Log.d("PLAYER_ID", "SETTING PLAYER ID TO " + user.userId);
@@ -239,8 +239,8 @@ public class BackendManagerIntentService extends IntentService {
 
     public static boolean isInSafetyMode(Context applicationContext) {
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        return preferences.getBoolean(KEY_SAFETY_MODE, true);
-
+//        return preferences.getBoolean(KEY_SAFETY_MODE, true);
+        return false;
     }
 
 }

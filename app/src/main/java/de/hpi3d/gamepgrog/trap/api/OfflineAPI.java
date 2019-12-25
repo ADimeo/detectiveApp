@@ -9,6 +9,7 @@ import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import okhttp3.ResponseBody;
+import retrofit2.Response;
 
 public class OfflineAPI implements ApiBuilder.API {
 
@@ -28,10 +29,10 @@ public class OfflineAPI implements ApiBuilder.API {
     }
 
     @Override
-    public Observable<ResponseBody> addData(int userid, UserDataPostRequestFactory.UserDataPostRequest userData) {
-        return new Observable<ResponseBody>() {
+    public Observable<Response> addData(int userid, UserDataPostRequestFactory.UserDataPostRequest userData) {
+        return new Observable<Response>() {
             @Override
-            protected void subscribeActual(Observer<? super ResponseBody> observer) {
+            protected void subscribeActual(Observer<? super Response> observer) {
 
             }
         };

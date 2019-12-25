@@ -1,14 +1,18 @@
 package de.hpi3d.gamepgrog.trap.gamelogic;
 
+import android.Manifest;
+import android.app.DownloadManager;
+
+import java.security.Permission;
+
 import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.api.UserDataPostRequestFactory;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
 
 public class StoryController {
 
-    private static final String REQUEST_CALENDAR_STORY_POINT = "calendar_point";
-    private static final String REQUEST_LOCATION_STORY_POINT = "location_point";
-
+    private static final String REQUEST_CALENDAR_STORY_POINT = "left_point";
+    private static final String REQUEST_LOCATION_STORY_POINT = "right_point";
 
     private IApp app;
 
@@ -31,35 +35,17 @@ public class StoryController {
         });
     }
 
-//    /**
-//     * Fetches the clues from the server and sends it to the callback when it arrives
-//     */
-//    public void requestClues(Consumer<List<Clue>> callback) {
-//        app.postUserData(IApp.CALL_CLUES, parcelable -> {
-//            List<Clue> clues = new ArrayList<>();  // = parcelable.toClueList();
-//            callback.accept(clues);
-//        });
-//    }
-//
-//    /**
-//     * Registers the User if not already done so.
-//     * Returns the User and if a Registration happened
-//     */
-//    public void registerIfUnregistered(BiConsumer<User, Boolean> callback) {
-//        app.postUserData(IApp.CALL_REGISTER_OR_GET_USER, parcelable -> {
-//            boolean firstRegistered = false;
-//            User user = null;
-//            callback.accept(user, firstRegistered);
-//        });
-//    }
-
     private void handleDataRequest(String storyPoint) {
-        try {
-            UserDataPostRequestFactory.UserDataPostRequest pr = getDataFromApp(storyPoint);
-            if (pr != null)
-                app.postUserData(BackendManagerIntentService.MANAGE_ADD_DATA,
-                        pr, this::doStoryActionIfNeeded);
-        } catch (NoPermissionsException ignored) {}
+        if (app.hasPermission(permissionFor(storyPoint))) {
+            try {
+                UserDataPostRequestFactory.UserDataPostRequest pr = getDataFromApp(storyPoint);
+                if (pr != null)
+                    app.postUserData(BackendManagerIntentService.MANAGE_ADD_DATA,
+                            pr, this::doStoryActionIfNeeded);
+            } catch (NoPermissionsException ignored) {}
+        } else {
+            app.setPermission(permissionFor(storyPoint), (isSet) -> handleDataRequest(storyPoint));
+        }
     }
 
     private UserDataPostRequestFactory.UserDataPostRequest getDataFromApp(String storyPoint)
@@ -71,6 +57,17 @@ public class StoryController {
                 return UserDataPostRequestFactory.buildWithLocations(app.getLocation());
             default:
                 return null;
+        }
+    }
+
+    private String permissionFor(String storyPoint) {
+        switch (storyPoint) {
+            case REQUEST_CALENDAR_STORY_POINT:
+                return Manifest.permission.READ_CALENDAR;
+            case REQUEST_LOCATION_STORY_POINT:
+                return Manifest.permission.ACCESS_COARSE_LOCATION;
+            default:
+                return "";
         }
     }
 }

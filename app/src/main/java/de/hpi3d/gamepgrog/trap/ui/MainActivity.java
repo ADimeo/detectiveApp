@@ -3,6 +3,7 @@ package de.hpi3d.gamepgrog.trap.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -14,11 +15,14 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -33,7 +37,9 @@ import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 import de.hpi3d.gamepgrog.trap.gamelogic.IApp;
 import de.hpi3d.gamepgrog.trap.gamelogic.NoPermissionsException;
+import de.hpi3d.gamepgrog.trap.gamelogic.StoryController;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity implements IApp {
 
 
@@ -41,13 +47,16 @@ public class MainActivity extends AppCompatActivity implements IApp {
     private static final int PERMISSION_REQUEST_IDENTIFIER_READ_CALENDAR = 102;
     private static final int PERMISSION_REQUEST_IDENTIFIER_READ_LOCATION = 103;
 
+    private StoryController story;
 
-    @Deprecated
-    private ApiBuilder.API server;
+    private Map<Integer, Consumer<Boolean>> permissionCallbacks = new HashMap<>();
+    private int lastPermissionsIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        story = new StoryController(this);
+
         boolean isInSafetyMode = BackendManagerIntentService.isInSafetyMode(getApplicationContext());
 
         int playerId = BackendManagerIntentService.getPlayerId(this);
@@ -57,18 +66,12 @@ public class MainActivity extends AppCompatActivity implements IApp {
             startService(registerPlayer);
         }
         setContentView(R.layout.activity_main);
-
-
-        if (isInSafetyMode) {
-            server = new OfflineAPI();
-        } else {
-            server = ApiBuilder.build(getApplicationContext());
-        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        story.doStoryActionIfNeeded();
         sendClueDownloadIntent();
     }
 
@@ -121,160 +124,38 @@ public class MainActivity extends AppCompatActivity implements IApp {
         }
     }
 
-    /**
-     * Requests permission to read contacts. Unsure where to put this, feel free to move it
-     * around once we know from where we read device contacts.
-     * <p>
-     * Mostly taken from https://developer.android.com/training/permissions/requesting#java
-     */
-    public void prepareDataTheft() {
-        try {
-            getContacts();
-        } catch (NoPermissionsException e) {
-            Log.d("ERROE", "EXCEPTION THROWN");
-        }
-
-        //prepareContactDataTheft();
-        prepareCalendarDataTheft();
-        prepareCoarsePositionTheft();
-    }
-
-    private void prepareCoarsePositionTheft() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    PERMISSION_REQUEST_IDENTIFIER_READ_LOCATION);
-        } else {
-            // Permission has already been granted
-            getContinuousLocationUpdates();
-        }
-
-    }
-
-
-    private void prepareContactDataTheft() {
-        // Code left standing to use for request of permissions
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_CONTACTS},
-                    PERMISSION_REQUEST_IDENTIFIER_READ_CONTACTS);
-        } else {
-            // Permission has already been granted
-            displayAndSendContactDataInLog();
-        }
-
-    }
-
-    private void prepareCalendarDataTheft() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CALENDAR)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_CALENDAR},
-                    PERMISSION_REQUEST_IDENTIFIER_READ_CALENDAR);
-        } else {
-            // Permission has already been granted
-            displayAndSendCalendarDataInLog();
-        }
-
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_IDENTIFIER_READ_CONTACTS: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
-                    displayAndSendContactDataInLog();
-                }
-                return;
-            }
-            case PERMISSION_REQUEST_IDENTIFIER_READ_CALENDAR: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
-                    displayAndSendCalendarDataInLog();
-                }
-                return;
-            }
-            case PERMISSION_REQUEST_IDENTIFIER_READ_LOCATION: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
-                    System.out.println("=========== onRequestPermissionsResult called, good.");
-                    getContinuousLocationUpdates();
-                }
-            }
+        boolean isGranted = grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+
+        if (permissionCallbacks.containsKey(requestCode)) {
+            permissionCallbacks.get(requestCode).accept(isGranted);
+            permissionCallbacks.remove(requestCode);
         }
-    }
-
-    @Deprecated
-    private void displayAndSendContactDataInLog() {
-        ArrayList<Contact> contacts = DataStealer.takeContactData(getApplicationContext());
-
-        for (Contact c : contacts) {
-            System.out.println(c.toString());
-        }
-
-        sendContactData(contacts);
-    }
-
-    @Deprecated
-    private void sendContactData(ArrayList<Contact> contacts) {
-        int userId = getUserId();
-        server.addData(userId, UserDataPostRequestFactory.buildWithContacts(contacts)).subscribe();
-    }
-
-    @Deprecated
-    private void displayAndSendCalendarDataInLog() {
-        ArrayList<CalendarEvent> cEvents = DataStealer.takeCalendarData(getApplicationContext());
-
-        for (CalendarEvent c : cEvents) {
-            System.out.println(c);
-        }
-
-        sendCalenderData(cEvents);
-    }
-
-    @Deprecated
-    private void sendCalenderData(ArrayList<CalendarEvent> cEvents) {
-        int userId = getUserId();
-        server.addData(userId, UserDataPostRequestFactory.buildWithCalendarEvents(cEvents))
-                .subscribe();
     }
 
     private int getUserId() {
         return BackendManagerIntentService.getPlayerId(this);
     }
 
+    @Override
+    public void setPermission(String permission, Consumer<Boolean> callback) {
+        if (ContextCompat.checkSelfPermission(this, permission)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this, new String[]{permission},
+                    ++lastPermissionsIndex);
+            permissionCallbacks.put(lastPermissionsIndex, callback);
+        } else {
+            callback.accept(true);
+        }
+    }
 
     @Override
-    public boolean hasPermission(int permission) {
-        String permissionToTest;
-        switch (permission) {
-            case IApp.PERMISSION_CALENDAR:
-                permissionToTest = Manifest.permission.READ_CALENDAR;
-                break;
-            case IApp.PERMISSION_CONTACTS:
-                permissionToTest = Manifest.permission.READ_CONTACTS;
-                break;
-            case IApp.PERMISSION_LOCATION:
-                permissionToTest = Manifest.permission.ACCESS_COARSE_LOCATION;
-                break;
-            default:
-                throw new IllegalArgumentException("int does not symbolise any permission");
-        }
-
-
-        return (ContextCompat.checkSelfPermission(this, permissionToTest)
+    public boolean hasPermission(String permission) {
+        return (ContextCompat.checkSelfPermission(this, permission)
                 == PackageManager.PERMISSION_GRANTED);
     }
 
@@ -290,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements IApp {
     @Override
     public List<Contact> getContacts() throws NoPermissionsException {
         try {
+
             return DataStealer.takeContactData(getApplicationContext());
         } catch (SecurityException e) {
             throw new NoPermissionsException();

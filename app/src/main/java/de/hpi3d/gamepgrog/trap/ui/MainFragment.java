@@ -35,9 +35,6 @@ public class MainFragment extends Fragment {
 
 
         Button debugUploadContacts = view.findViewById(R.id.button_debug_contacts);
-        debugUploadContacts.setOnClickListener((View v) -> {
-            ((MainActivity) getActivity()).prepareDataTheft();
-        });
 
         Switch safetySwitch = view.findViewById(R.id.switch_safety);
         safetySwitch.setChecked(BackendManagerIntentService.isInSafetyMode(getContext()));
