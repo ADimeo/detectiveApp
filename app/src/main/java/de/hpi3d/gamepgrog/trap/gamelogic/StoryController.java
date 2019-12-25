@@ -1,13 +1,7 @@
 package de.hpi3d.gamepgrog.trap.gamelogic;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-
+import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.api.UserDataPostRequestFactory;
-import de.hpi3d.gamepgrog.trap.datatypes.Clue;
-import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
 
 public class StoryController {
@@ -29,41 +23,43 @@ public class StoryController {
      * Check again if action is needed
      */
     public void doStoryActionIfNeeded() {
-        app.executeApiCall(IApp.CALL_USER_STATUS, parcelable -> {
-            UserStatus status = null;
-            handleDataRequest(status.currentStoryPoint);
+        app.executeApiCall(BackendManagerIntentService.MANAGE_GET_USER_STATUS,
+                (code, bundle) -> {
+            UserStatus status = bundle.getParcelable("value");
+            if (status != null)
+                handleDataRequest(status.currentStoryPoint);
         });
     }
 
-    /**
-     * Fetches the clues from the server and sends it to the callback when it arrives
-     */
-    public void requestClues(Consumer<List<Clue>> callback) {
-        app.executeApiCall(IApp.CALL_CLUES, parcelable -> {
-            List<Clue> clues = new ArrayList<>();  // = parcelable.toClueList();
-            callback.accept(clues);
-        });
-    }
-
-    /**
-     * Registers the User if not already done so.
-     * Returns the User and if a Registration happened
-     */
-    public void registerIfUnregistered(BiConsumer<User, Boolean> callback) {
-        app.executeApiCall(IApp.CALL_REGISTER_OR_GET_USER, parcelable -> {
-            boolean firstRegistered = false;
-            User user = null;
-            callback.accept(user, firstRegistered);
-        });
-    }
+//    /**
+//     * Fetches the clues from the server and sends it to the callback when it arrives
+//     */
+//    public void requestClues(Consumer<List<Clue>> callback) {
+//        app.postUserData(IApp.CALL_CLUES, parcelable -> {
+//            List<Clue> clues = new ArrayList<>();  // = parcelable.toClueList();
+//            callback.accept(clues);
+//        });
+//    }
+//
+//    /**
+//     * Registers the User if not already done so.
+//     * Returns the User and if a Registration happened
+//     */
+//    public void registerIfUnregistered(BiConsumer<User, Boolean> callback) {
+//        app.postUserData(IApp.CALL_REGISTER_OR_GET_USER, parcelable -> {
+//            boolean firstRegistered = false;
+//            User user = null;
+//            callback.accept(user, firstRegistered);
+//        });
+//    }
 
     private void handleDataRequest(String storyPoint) {
         try {
             UserDataPostRequestFactory.UserDataPostRequest pr = getDataFromApp(storyPoint);
-            app.executeApiCall(IApp.CALL_ADD_DATA, pr, this::doStoryActionIfNeeded);
-        } catch (NoPermissionsException e) {
-            // TODO What to do here?
-        }
+            if (pr != null)
+                app.postUserData(BackendManagerIntentService.MANAGE_ADD_DATA,
+                        pr, this::doStoryActionIfNeeded);
+        } catch (NoPermissionsException ignored) {}
     }
 
     private UserDataPostRequestFactory.UserDataPostRequest getDataFromApp(String storyPoint)
@@ -74,7 +70,7 @@ public class StoryController {
             case REQUEST_LOCATION_STORY_POINT:
                 return UserDataPostRequestFactory.buildWithLocations(app.getLocation());
             default:
-                throw new IllegalStateException("You should have never come here!");
+                return null;
         }
     }
 }

