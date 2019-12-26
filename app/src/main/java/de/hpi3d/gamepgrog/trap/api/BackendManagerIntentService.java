@@ -40,6 +40,7 @@ public class BackendManagerIntentService extends IntentService {
     public static final String MANAGE_CLUE_DOWNLOAD = "manage_clue_download";
     public static final String MANAGE_GET_USER_STATUS = "manage_get_user_status";
     public static final String MANAGE_ADD_DATA = "manage_add_data";
+    public static final String MANAGE_NEEDS_DATA = "manage_needs_data";
 
     private static final String KEY_USER_ID = "key_user_id";
     private static final String KEY_BOT_URL = "key_bot_url";
@@ -78,6 +79,8 @@ public class BackendManagerIntentService extends IntentService {
             case MANAGE_GET_USER_STATUS:
                 loadUserStatus(intent);
                 break;
+            case MANAGE_NEEDS_DATA:
+                needsUserData(intent);
         }
     }
 
@@ -130,6 +133,25 @@ public class BackendManagerIntentService extends IntentService {
             clueDao.insertOrReplaceInTx(clueList);
         });
 
+    }
+
+    private void needsUserData(Intent intent) {
+        ResultReceiver receiver = intent.getParcelableExtra("receiver");
+        Bundle b = new Bundle();
+        int code = -1;
+
+        try {
+            Response<ResponseBody> res = api.needsData(getPlayerId()).execute();
+            if (res.body() != null) {
+                b.putString("value", res.body().string());
+                code = 0;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (receiver != null) {
+            receiver.send(code, b);
+        }
     }
 
     private void uploadUserData(Intent intent) {

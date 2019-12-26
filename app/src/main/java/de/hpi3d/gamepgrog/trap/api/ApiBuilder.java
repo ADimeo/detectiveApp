@@ -55,6 +55,9 @@ public class ApiBuilder {
         @GET("user/{userid}")
         Observable<UserStatus> getUserStatus(@Path("userid") long userid);
 
+        @GET("user/{userid}/needs_data")
+        Call<ResponseBody> needsData(@Path("userid") long userid);
+
         @POST("user/{userid}/data")
         Call<ResponseBody> addData(@Path("userid") int userid,
                                    @Body UserDataPostRequestFactory.UserDataPostRequest userData);
