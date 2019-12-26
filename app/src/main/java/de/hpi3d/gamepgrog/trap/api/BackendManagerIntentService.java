@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.os.ResultReceiver;
 import android.util.Log;
 
+import java.io.IOException;
 import java.util.function.BiConsumer;
 
 import de.hpi3d.gamepgrog.trap.CustomApplication;
@@ -136,11 +137,16 @@ public class BackendManagerIntentService extends IntentService {
         ResultReceiver receiver = intent.getParcelableExtra("receiver");
 
         if (pr != null) {
-            Response res = api.addData(getPlayerId(), pr).blockingLast();
+            Response res = null;
+            try {
+                res = api.addData(getPlayerId(), pr).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             int code = res != null ? res.code() : -1;
 
             if (receiver != null)
-                receiver.send(code, Bundle.EMPTY);
+                receiver.send(code, new Bundle());
         }
     }
 
