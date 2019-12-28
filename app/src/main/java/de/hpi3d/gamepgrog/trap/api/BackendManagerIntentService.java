@@ -41,9 +41,11 @@ public class BackendManagerIntentService extends IntentService {
     public static final String MANAGE_GET_USER_STATUS = "manage_get_user_status";
     public static final String MANAGE_ADD_DATA = "manage_add_data";
     public static final String MANAGE_NEEDS_DATA = "manage_needs_data";
+    public static final String MANAGE_FB_TOKEN = "manage_fb_token";
 
     private static final String KEY_USER_ID = "key_user_id";
     private static final String KEY_BOT_URL = "key_bot_url";
+    private static final String KEY_FB_TOKEN = "key_fb_token";
     public static final String KEY_SHARED_PREFERENCES = "backend_manager_preferences";
     public static final String KEY_CONVERSATION_HAS_STARTED = "key_conversation_has_started";
     public static final String KEY_SAFETY_MODE = "key_safety_mode";
@@ -81,6 +83,9 @@ public class BackendManagerIntentService extends IntentService {
                 break;
             case MANAGE_NEEDS_DATA:
                 needsUserData(intent);
+                break;
+            case MANAGE_FB_TOKEN:
+                sendFBToken(intent);
         }
     }
 
@@ -156,7 +161,6 @@ public class BackendManagerIntentService extends IntentService {
 
     private void uploadUserData(Intent intent) {
         UserDataPostRequestFactory.UserDataPostRequest pr = intent.getParcelableExtra("postRequest");
-        ResultReceiver receiver = intent.getParcelableExtra("receiver");
 
         if (pr != null) {
             Response res = null;
@@ -165,16 +169,37 @@ public class BackendManagerIntentService extends IntentService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            int code = res != null ? res.code() : -1;
-
-            if (receiver != null)
-                receiver.send(code, new Bundle());
+            sendToReceiver(intent, res);
         }
     }
 
     private void loadUserStatus(Intent intent) {
         UserStatus status = api.getUserStatus(getPlayerId()).blockingLast();
         sendToReceiver(intent, status);
+    }
+
+    private void sendFBToken(Intent intent) {
+        String token = intent.getStringExtra("token");
+
+        if (token != null && !token.equals("")) {
+            setPlayerFBToken(getApplicationContext(), token);
+            Response res = null;
+            try {
+                res = api.sendFBToken(getPlayerId(), token).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            sendToReceiver(intent, res);
+        }
+    }
+
+    private void sendToReceiver(Intent intent, Response res) {
+        ResultReceiver receiver = intent.getParcelableExtra("receiver");
+
+        if (receiver != null) {
+            int code = res != null ? res.code() : -1;
+            receiver.send(code, new Bundle());
+        }
     }
 
     private void sendToReceiver(Intent intent, Parcelable value) {
@@ -226,6 +251,14 @@ public class BackendManagerIntentService extends IntentService {
         return preferences.getInt(KEY_USER_ID, -1);
     }
 
+    public static void setPlayerFBToken(Context context, String token) {
+        // TODO save token in Preferences
+    }
+
+    public static String getPlayerFBToken(Context context) {
+        // TODO get token from Preferences
+        return "";
+    }
 
     /**
      * Returns the saved URL used by the app to open the communication channel of the bot

@@ -55,6 +55,9 @@ public class ApiBuilder {
         @GET("user/{userid}")
         Observable<UserStatus> getUserStatus(@Path("userid") long userid);
 
+        @GET("user/{userid}/fbtoken/{token}")
+        Call<ResponseBody> sendFBToken(@Path("userid") long userid, @Path("token") String token);
+
         @GET("user/{userid}/needs_data")
         Call<ResponseBody> needsData(@Path("userid") long userid);
 

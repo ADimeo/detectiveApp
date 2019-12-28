@@ -6,10 +6,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +23,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -60,13 +66,27 @@ public class MainActivity extends AppCompatActivity implements IApp {
             startService(registerPlayer);
         }
         setContentView(R.layout.activity_main);
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("Firebase", "getInstanceId failed", task.getException());
+                        return;
+                    }
+
+                    // Get new Instance ID token
+                    String token = task.getResult().getToken();
+
+                    // Log and toast
+                    Log.d("Firebase", token);
+                });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        story.doStoryActionIfNeeded();
-        sendClueDownloadIntent();
+//        story.doStoryActionIfNeeded();
+//        sendClueDownloadIntent();
     }
 
     private void sendClueDownloadIntent() {
@@ -132,6 +152,10 @@ public class MainActivity extends AppCompatActivity implements IApp {
 
     private int getUserId() {
         return BackendManagerIntentService.getPlayerId(this);
+    }
+
+    public void sendNewFBToken(String token) {
+
     }
 
     @Override
