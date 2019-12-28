@@ -5,15 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.os.ResultReceiver;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import de.hpi3d.gamepgrog.trap.CustomApplication;
+import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
+import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
 import okhttp3.ResponseBody;
@@ -304,4 +309,63 @@ public class BackendManagerIntentService extends IntentService {
         return false;
     }
 
+    public static BackendIntent buildIntent(Context context) {
+        return new BackendIntent(context, new Intent(context, BackendManagerIntentService.class));
+    }
+
+    public static class BackendIntent {
+        private Context context;
+        private Intent intent;
+
+        private BackendIntent(Context context, Intent intent) {
+            this.context = context;
+            this.intent = intent;
+        }
+
+        public BackendIntent modify(Consumer<Intent> consumer) {
+            if (intent != null)
+                consumer.accept(intent);
+            return this;
+        }
+
+        public BackendIntent onReceive(BiConsumer<Integer, Bundle> receiver) {
+            if (intent != null) {
+                intent.putExtra("receiver", new ResultReceiver(new Handler()) {
+                    @Override
+                    protected void onReceiveResult(int resultCode, Bundle resultData) {
+                        receiver.accept(resultCode, resultData);
+                    }
+                });
+            }
+            return this;
+        }
+
+        public BackendIntent onReceive(Runnable callback) {
+            return onReceive((code, bundle) -> callback.run());
+        }
+
+        public BackendIntent put(String key, Parcelable value) {
+            if (intent != null)
+                intent.putExtra(key, value);
+            return this;
+        }
+
+        public BackendIntent put(String key, String value) {
+            if (intent != null)
+                intent.putExtra(key, value);
+            return this;
+        }
+
+        public BackendIntent type(String type) {
+            return put(KEY_MANAGE_TYPE, type);
+        }
+
+        public void start() {
+            context.startService(intent);
+        }
+
+        public Intent build() {
+            return intent;
+        }
+    }
 }

@@ -16,7 +16,10 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import de.hpi3d.gamepgrog.trap.ui.MainActivity;
+import java.util.function.BiConsumer;
+
+import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
+
 
 public class ServerMessageService extends FirebaseMessagingService {
 
@@ -29,6 +32,15 @@ public class ServerMessageService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(@NonNull String s) {
+        setNewToken(getApplicationContext(), s);
+    }
+
+    public static void setNewToken(Context c, @NonNull String s) {
+        BackendManagerIntentService
+                .buildIntent(c)
+                .type(BackendManagerIntentService.MANAGE_FB_TOKEN)
+                .start();
+        // TODO store new Token
     }
 
 //    private void sendNotification(String messageBody) {

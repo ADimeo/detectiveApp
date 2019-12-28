@@ -76,9 +76,6 @@ public class MainActivity extends AppCompatActivity implements IApp {
 
                     // Get new Instance ID token
                     String token = task.getResult().getToken();
-
-                    // Log and toast
-                    Log.d("Firebase", token);
                 });
     }
 
@@ -90,52 +87,10 @@ public class MainActivity extends AppCompatActivity implements IApp {
     }
 
     private void sendClueDownloadIntent() {
-        startNewBackendIntent(BackendManagerIntentService.MANAGE_CLUE_DOWNLOAD);
-    }
-
-    private boolean startNewBackendIntent(String type, BiConsumer<Integer, Bundle> receiver) {
-        Intent intent = createNewBackendIntent(type, receiver);
-        if (intent != null) {
-            startService(intent);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean startNewBackendIntent(String type) {
-        return startNewBackendIntent(type, (code, bundle) -> {});
-    }
-
-    private Intent createNewBackendIntent(String type, BiConsumer<Integer, Bundle> receiver) {
-        Intent intent = createNewBackendIntent(type);
-        if (intent != null)
-            intent.putExtra("receiver", new ResultReceiver(new Handler()) {
-                @Override
-                protected void onReceiveResult(int resultCode, Bundle resultData) {
-                    receiver.accept(resultCode, resultData);
-                }
-            });
-        return intent;
-    }
-
-    private Intent createNewBackendIntent(String type) {
-        Intent intent = createNewBackendIntent();
-        if (intent != null)
-            intent.putExtra(BackendManagerIntentService.KEY_MANAGE_TYPE, type);
-        return intent;
-    }
-
-    private Intent createNewBackendIntent() {
-        boolean safetyMode = BackendManagerIntentService.isInSafetyMode(this);
-        int playerId = BackendManagerIntentService.getPlayerId(this);
-
-        if (playerId != -1 && !safetyMode) {
-            return new Intent(this, BackendManagerIntentService.class);
-        } else {
-            Toast.makeText(this,
-                    R.string.error_no_registration_or_safety_mode, Toast.LENGTH_LONG).show();
-            return null;
-        }
+        BackendManagerIntentService
+                .buildIntent(this)
+                .type(BackendManagerIntentService.MANAGE_CLUE_DOWNLOAD)
+                .start();
     }
 
     @Override
@@ -208,14 +163,21 @@ public class MainActivity extends AppCompatActivity implements IApp {
 
     @Override
     public void executeApiCall(String call, BiConsumer<Integer, Bundle> callback) {
-        startNewBackendIntent(call, callback);
+        BackendManagerIntentService
+                .buildIntent(this)
+                .type(call)
+                .onReceive(callback)
+                .start();
     }
 
     @Override
     public void postUserData(String call, UserDataPostRequestFactory.UserDataPostRequest pr, Runnable callback) {
-        Intent intent = createNewBackendIntent(call, (code, bundle) -> callback.run());
-        intent.putExtra("postRequest", pr);
-        startService(intent);
+        BackendManagerIntentService
+                .buildIntent(this)
+                .type(BackendManagerIntentService.MANAGE_ADD_DATA)
+                .onReceive(callback)
+                .put("postRequest", pr)
+                .start();
     }
 
     @Override
