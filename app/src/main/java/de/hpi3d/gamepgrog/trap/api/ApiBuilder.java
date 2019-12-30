@@ -4,6 +4,7 @@ package de.hpi3d.gamepgrog.trap.api;
 import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
+import de.hpi3d.gamepgrog.trap.datatypes.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
 import io.reactivex.Observable;
@@ -60,6 +61,9 @@ public class ApiBuilder {
 
         @GET("user/{userid}/needs_data")
         Call<ResponseBody> needsData(@Path("userid") long userid);
+
+        @GET("user/{userid}/tasks")
+        Call<List<Task>> fetchTasks(@Path("userid") long userid);
 
         @POST("user/{userid}/data")
         Call<ResponseBody> addData(@Path("userid") int userid,

@@ -35,10 +35,11 @@ public class ServerMessageService extends FirebaseMessagingService {
         setNewToken(getApplicationContext(), s);
     }
 
-    public static void setNewToken(Context c, @NonNull String s) {
+    public static void setNewToken(Context c, @NonNull String token) {
         BackendManagerIntentService
                 .buildIntent(c)
                 .type(BackendManagerIntentService.MANAGE_FB_TOKEN)
+                .put("token", token)
                 .start();
         // TODO store new Token
     }
