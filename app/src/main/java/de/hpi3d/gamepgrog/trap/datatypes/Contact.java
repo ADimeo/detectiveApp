@@ -19,7 +19,7 @@ import androidx.annotation.NonNull;
 /**
  * Represents data from a single contact
  **/
-public class Contact implements Parcelable {
+public class Contact extends ApiDataType {
 
     private long ID;
     private String displayNamePrimary;
@@ -33,32 +33,36 @@ public class Contact implements Parcelable {
         displayNamePrimary = primaryName;
     }
 
-
     public Contact(String primaryName) {
         displayNamePrimary = primaryName;
     }
 
-
-    private Contact(Parcel in) {
-        ID = in.readLong();
-        displayNamePrimary = in.readString();
-        homeAddress = in.readString();
-        email = in.readString();
-        organisation = in.readString();
-        birthday = in.readString();
+    @Override
+    public Parcel toParcel() {
+        Parcel p = Parcel.obtain();
+        p.writeLong(ID);
+        p.writeString(displayNamePrimary);
+        p.writeString(homeAddress);
+        p.writeString(email);
+        p.writeString(organisation);
+        p.writeString(birthday);
+        return p;
     }
 
-    public static final Creator<Contact> CREATOR = new Creator<Contact>() {
-        @Override
-        public Contact createFromParcel(Parcel in) {
-            return new Contact(in);
-        }
+    @Override
+    protected void fromParcel(Parcel p) {
+        ID = p.readLong();
+        displayNamePrimary = p.readString();
+        homeAddress = p.readString();
+        email = p.readString();
+        organisation = p.readString();
+        birthday = p.readString();
+    }
 
-        @Override
-        public Contact[] newArray(int size) {
-            return new Contact[size];
-        }
-    };
+    @Override
+    public String getTypeName() {
+        return "contact";
+    }
 
     public long getID() {
         return ID;
@@ -258,27 +262,10 @@ public class Contact implements Parcelable {
         return builder.toString();
     }
 
-
     @NonNull
     @Override
     public String toString() {
         return ID + " ||| " + displayNamePrimary + " ||| " + birthday + " ||| " + homeAddress;
-    }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(ID);
-        dest.writeString(displayNamePrimary);
-        dest.writeString(homeAddress);
-        dest.writeString(email);
-        dest.writeString(organisation);
-        dest.writeString(birthday);
     }
 
     @Override

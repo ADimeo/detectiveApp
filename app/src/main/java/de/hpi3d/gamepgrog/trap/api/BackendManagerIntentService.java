@@ -9,16 +9,13 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.os.ResultReceiver;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import de.hpi3d.gamepgrog.trap.CustomApplication;
-import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
-import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
 import okhttp3.ResponseBody;
@@ -165,7 +162,7 @@ public class BackendManagerIntentService extends IntentService {
     }
 
     private void uploadUserData(Intent intent) {
-        UserDataPostRequestFactory.UserDataPostRequest pr = intent.getParcelableExtra("postRequest");
+        UserData.UserDataPostRequest pr = intent.getParcelableExtra("postRequest");
 
         if (pr != null) {
             Response res = null;

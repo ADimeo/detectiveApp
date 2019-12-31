@@ -10,12 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.hpi3d.gamepgrog.trap.api.UserDataPostRequestFactory;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
@@ -40,7 +38,7 @@ public class ParcelableTest {
     private Contact contact;
     private LocationData location;
     private UserStatus userStatus;
-    private UserDataPostRequestFactory.UserDataPostRequest pr;
+    private UserData.UserDataPostRequest pr;
 
     @Before
     public void setup() {
@@ -51,7 +49,7 @@ public class ParcelableTest {
         location = new LocationData(9128370918L, 126721L, 281728L);
         userStatus = new UserStatus(1209L, "Start", "@Mickey",
                 "start");
-        pr = UserDataPostRequestFactory.buildWithContacts(Arrays.asList(
+        pr = UserData.buildWithContacts(Arrays.asList(
                 new Contact(1, "a"),
                 new Contact(2, "b"),
                 new Contact(3, "c")
@@ -93,13 +91,10 @@ public class ParcelableTest {
         Assert.assertEquals(userStatus, parsed);
     }
 
-//    Cannot be tested yet, since MockParcel does not support nested Parcelables
-//    @Test
-//    public void testPostRequest() {
-//        UserDataPostRequestFactory.UserDataPostRequest parsed = copyWithParcel(pr, UserDataPostRequestFactory.UserDataPostRequest.CREATOR);
-//        Assert.assertNotNull(parsed);
-//        Assert.assertEquals(pr, parsed);
-//    }
+    @Test
+    public void testPostRequest() {
+        UserData data = new UserData();
+    }
 
     private <T extends Parcelable> T copyWithParcel(T original, Parcelable.Creator<T> creator) {
         Parcel parcel = MockParcel.obtain();

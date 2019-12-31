@@ -2,18 +2,13 @@ package de.hpi3d.gamepgrog.trap.datatypes;
 
 import android.database.Cursor;
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.provider.CalendarContract;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import androidx.annotation.NonNull;
-
-import de.hpi3d.gamepgrog.trap.api.UserDataPostRequestFactory;
 
 public class CalendarEvent extends ApiDataType {
 
@@ -65,11 +60,6 @@ public class CalendarEvent extends ApiDataType {
         endInUTCMilliseconds = p.readLong();
     }
 
-    @Override
-    public void appendToPR(UserDataPostRequestFactory.UserDataPostRequest pr) {
-
-    }
-
     public static ArrayList<CalendarEvent> createFromCursor(Cursor cursor) {
         ArrayList<CalendarEvent> extractedEvents = new ArrayList<>();
 
@@ -83,6 +73,10 @@ public class CalendarEvent extends ApiDataType {
         return extractedEvents;
     }
 
+    @Override
+    public String getTypeName() {
+        return "calendar";
+    }
 
     @NonNull
     @Override

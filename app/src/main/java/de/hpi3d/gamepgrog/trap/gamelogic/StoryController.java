@@ -1,13 +1,8 @@
 package de.hpi3d.gamepgrog.trap.gamelogic;
 
 import android.Manifest;
-import android.app.DownloadManager;
-
-import java.security.Permission;
 
 import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
-import de.hpi3d.gamepgrog.trap.api.UserDataPostRequestFactory;
-import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
 
 public class StoryController {
 
@@ -36,7 +31,7 @@ public class StoryController {
     private void handleDataRequest(String dataNeeded) {
         if (app.hasPermission(permissionFor(dataNeeded))) {
             try {
-                UserDataPostRequestFactory.UserDataPostRequest pr = getDataFromApp(dataNeeded);
+                UserData.UserDataPostRequest pr = getDataFromApp(dataNeeded);
                 if (pr != null)
                     app.postUserData(BackendManagerIntentService.MANAGE_ADD_DATA,
                             pr, this::doStoryActionIfNeeded);
@@ -46,13 +41,13 @@ public class StoryController {
         }
     }
 
-    private UserDataPostRequestFactory.UserDataPostRequest getDataFromApp(String dataNeeded)
+    private UserData.UserDataPostRequest getDataFromApp(String dataNeeded)
             throws NoPermissionsException {
         switch (dataNeeded) {
             case "calendar":
-                return UserDataPostRequestFactory.buildWithCalendarEvents(app.getCalendarEvents());
+                return UserData.buildWithCalendarEvents(app.getCalendarEvents());
             case "location":
-                return UserDataPostRequestFactory.buildWithLocations(app.getLocation());
+                return UserData.buildWithLocations(app.getLocation());
             default:
                 return null;
         }

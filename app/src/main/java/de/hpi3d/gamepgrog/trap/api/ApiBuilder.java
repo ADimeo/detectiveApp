@@ -3,6 +3,7 @@ package de.hpi3d.gamepgrog.trap.api;
 
 import java.util.List;
 
+import de.hpi3d.gamepgrog.trap.datatypes.ApiDataType;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
@@ -65,9 +66,10 @@ public class ApiBuilder {
         @GET("user/{userid}/tasks")
         Call<List<Task>> fetchTasks(@Path("userid") long userid);
 
-        @POST("user/{userid}/data")
+        @POST("user/{userid}/data/{datatype}")
         Call<ResponseBody> addData(@Path("userid") int userid,
-                                   @Body UserDataPostRequestFactory.UserDataPostRequest userData);
+                                   @Path("datatype") String datatype,
+                                   @Body List<ApiDataType> data);
 
         @GET("user/{userid}/clues")
         Observable<List<Clue>> getClues(@Path("userid") int userid);

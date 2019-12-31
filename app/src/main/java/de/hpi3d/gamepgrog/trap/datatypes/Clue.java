@@ -17,11 +17,10 @@ Sent to app by server, displayed in a list.
 Please remember to change the Parcelable implementation when adding/removing variables.
  */
 @Entity
-public class Clue implements Parcelable {
+public class Clue extends ApiDataType {
 
     @Id(autoincrement = true)
     private Long id;
-
 
     private boolean personalized;
     private String text;
@@ -40,96 +39,77 @@ public class Clue implements Parcelable {
         this.name = name;
     }
 
-
     @Generated(hash = 1330280195)
-    public Clue() {
+    public Clue() {}
+
+    @Override
+    public Parcel toParcel() {
+        Parcel p = Parcel.obtain();
+        if (id == null) {
+            p.writeByte((byte) 0);
+        } else {
+            p.writeByte((byte) 1);
+            p.writeLong(id);
+        }
+        p.writeByte((byte) (personalized ? 1 : 0));
+        p.writeString(text);
+        p.writeString(name);
+        return p;
     }
 
-
-    protected Clue(Parcel in) {
-        if (in.readByte() == 0) {
+    @Override
+    protected void fromParcel(Parcel p) {
+        if (p.readByte() == 0) {
             id = null;
         } else {
-            id = in.readLong();
+            id = p.readLong();
         }
-        personalized = in.readByte() != 0;
-        text = in.readString();
-        name = in.readString();
+        personalized = p.readByte() != 0;
+        text = p.readString();
+        name = p.readString();
     }
 
-    public static final Creator<Clue> CREATOR = new Creator<Clue>() {
-        @Override
-        public Clue createFromParcel(Parcel in) {
-            return new Clue(in);
-        }
-
-        @Override
-        public Clue[] newArray(int size) {
-            return new Clue[size];
-        }
-    };
+    @Override
+    public String getTypeName() {
+        return "clue";
+    }
 
     public String getText() {
         return text;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public boolean getPersonalized() {
+        return this.personalized;
+    }
+
+    public void setPersonalized(boolean personalized) {
+        this.personalized = personalized;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @NonNull
     @Override
     public String toString() {
         return text;
-    }
-
-
-    public Long getId() {
-        return this.id;
-    }
-
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-
-    public boolean getPersonalized() {
-        return this.personalized;
-    }
-
-
-    public void setPersonalized(boolean personalized) {
-        this.personalized = personalized;
-    }
-
-
-    public String getName() {
-        return this.name;
-    }
-
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        if (id == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(id);
-        }
-        dest.writeByte((byte) (personalized ? 1 : 0));
-        dest.writeString(text);
-        dest.writeString(name);
     }
 
     @Override
