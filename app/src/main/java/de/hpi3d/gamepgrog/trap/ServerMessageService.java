@@ -18,6 +18,8 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.function.BiConsumer;
 
+import de.hpi3d.gamepgrog.trap.api.ApiService;
+import de.hpi3d.gamepgrog.trap.api.BackendIntent;
 import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
 
 
@@ -36,10 +38,10 @@ public class ServerMessageService extends FirebaseMessagingService {
     }
 
     public static void setNewToken(Context c, @NonNull String token) {
-        BackendManagerIntentService
-                .buildIntent(c)
-                .type(BackendManagerIntentService.MANAGE_FB_TOKEN)
-                .put("token", token)
+        BackendIntent
+                .build(c)
+                .setManager(ApiService.MANAGE_SEND_FB_TOKEN)
+                .put(ApiService.KEY_TOKEN, token)
                 .start();
         // TODO store new Token
     }

@@ -1,58 +1,36 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
 import android.location.Location;
-import android.os.Parcel;
 
-import java.util.Objects;
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
 
-public class LocationData extends ApiDataType {
+@Parcel(Parcel.Serialization.BEAN)
+public class LocationData implements UserData {
 
     private double longitude, latitude;
     private long time;
 
+    @ParcelConstructor
     public LocationData(double longitude, double latitude, long time) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.time = time;
     }
 
-    @Override
-    public Parcel toParcel() {
-        Parcel p = Parcel.obtain();
-        p.writeDouble(longitude);
-        p.writeDouble(latitude);
-        p.writeLong(time);
-        return p;
-    }
-
-    @Override
-    protected void fromParcel(Parcel p) {
-        longitude = p.readDouble();
-        latitude = p.readDouble();
-        time = p.readLong();
-    }
-
-    @Override
-    public String getTypeName() {
-        return "location";
-    }
-
     public static LocationData fromLocation(Location location) {
         return new LocationData(location.getLongitude(), location.getLatitude(), location.getTime());
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LocationData that = (LocationData) o;
-        return Double.compare(that.longitude, longitude) == 0 &&
-                Double.compare(that.latitude, latitude) == 0 &&
-                time == that.time;
+    public double getLongitude() {
+        return longitude;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(longitude, latitude, time);
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public long getTime() {
+        return time;
     }
 }

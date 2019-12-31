@@ -3,10 +3,10 @@ package de.hpi3d.gamepgrog.trap.api;
 
 import java.util.List;
 
-import de.hpi3d.gamepgrog.trap.datatypes.ApiDataType;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
+import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
 import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
@@ -52,10 +52,10 @@ public class ApiBuilder {
 
     public interface API {
         @GET("user/create")
-        Observable<User> register();
+        Call<User> register();
 
         @GET("user/{userid}")
-        Observable<UserStatus> getUserStatus(@Path("userid") long userid);
+        Call<UserStatus> getUserStatus(@Path("userid") long userid);
 
         @GET("user/{userid}/fbtoken/{token}")
         Call<ResponseBody> sendFBToken(@Path("userid") long userid, @Path("token") String token);
@@ -69,10 +69,10 @@ public class ApiBuilder {
         @POST("user/{userid}/data/{datatype}")
         Call<ResponseBody> addData(@Path("userid") int userid,
                                    @Path("datatype") String datatype,
-                                   @Body List<ApiDataType> data);
+                                   @Body List<UserData> data);
 
         @GET("user/{userid}/clues")
-        Observable<List<Clue>> getClues(@Path("userid") int userid);
+        Call<List<Clue>> getClues(@Path("userid") int userid);
     }
 }
 

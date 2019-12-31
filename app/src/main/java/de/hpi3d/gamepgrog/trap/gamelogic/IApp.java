@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
+import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 
 public interface IApp {
 
@@ -34,5 +35,5 @@ public interface IApp {
 
     void executeApiCall(String call, BiConsumer<Integer, Bundle> callback);
 
-    void postUserData(String call, UserData.UserDataPostRequest pr, Runnable callback);
+    void postUserData(String call, UserData data, Runnable callback);
 }

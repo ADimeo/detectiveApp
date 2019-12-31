@@ -23,10 +23,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import de.hpi3d.gamepgrog.trap.DataStealer;
 import de.hpi3d.gamepgrog.trap.R;
+import de.hpi3d.gamepgrog.trap.api.BackendIntent;
 import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
+import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.gamelogic.IApp;
 import de.hpi3d.gamepgrog.trap.gamelogic.NoPermissionsException;
 import de.hpi3d.gamepgrog.trap.gamelogic.StoryController;
@@ -53,9 +55,7 @@ public class MainActivity extends AppCompatActivity implements IApp {
 
         int playerId = BackendManagerIntentService.getPlayerId(this);
         if (-1 == playerId && !isInSafetyMode) {
-            Intent registerPlayer = new Intent(this, BackendManagerIntentService.class);
-            registerPlayer.putExtra(BackendManagerIntentService.KEY_MANAGE_TYPE, BackendManagerIntentService.MANAGE_PLAYER_REGISTRATION);
-            startService(registerPlayer);
+            // TODO register player
         }
         setContentView(R.layout.activity_main);
 
@@ -68,21 +68,20 @@ public class MainActivity extends AppCompatActivity implements IApp {
 
                     // Get new Instance ID token
                     String token = task.getResult().getToken();
+                    // TODO send token ServerMessageService
                 });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        // TODO uncomment following comments
 //        story.doStoryActionIfNeeded();
 //        sendClueDownloadIntent();
     }
 
     private void sendClueDownloadIntent() {
-        BackendManagerIntentService
-                .buildIntent(this)
-                .type(BackendManagerIntentService.MANAGE_CLUE_DOWNLOAD)
-                .start();
+        // TODO imüplement
     }
 
     @Override
@@ -102,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements IApp {
     }
 
     public void sendNewFBToken(String token) {
-
+        // TODO
     }
 
     @Override
@@ -155,22 +154,26 @@ public class MainActivity extends AppCompatActivity implements IApp {
 
     @Override
     public void executeApiCall(String call, BiConsumer<Integer, Bundle> callback) {
-        BackendManagerIntentService
-                .buildIntent(this)
-                .type(call)
-                .onReceive(callback)
+        BackendIntent
+                .build(this)
+                .setManager(call)
+                .putReceiver(callback)
                 .start();
     }
 
     @Override
-    public void postUserData(String call, UserData.UserDataPostRequest pr, Runnable callback) {
-        BackendManagerIntentService
-                .buildIntent(this)
-                .type(BackendManagerIntentService.MANAGE_ADD_DATA)
-                .onReceive(callback)
-                .put("postRequest", pr)
-                .start();
+    public void postUserData(String call, UserData data, Runnable callback) {
     }
+
+//    @Override
+//    public void postUserData(String call, UserData.UserDataPostRequest pr, Runnable callback) {
+//        BackendManagerIntentService
+//                .buildIntent(this)
+//                .type(BackendManagerIntentService.MANAGE_ADD_DATA)
+//                .onReceive(callback)
+//                .put("postRequest", pr)
+//                .start();
+//    }
 
     @Override
     public String getLanguage() {

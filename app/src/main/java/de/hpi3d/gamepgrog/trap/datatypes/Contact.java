@@ -4,8 +4,6 @@ package de.hpi3d.gamepgrog.trap.datatypes;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.util.LongSparseArray;
 
@@ -16,12 +14,16 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
+
 /**
  * Represents data from a single contact
  **/
-public class Contact extends ApiDataType {
+@Parcel(Parcel.Serialization.BEAN)
+public class Contact implements UserData {
 
-    private long ID;
+    private long id;
     private String displayNamePrimary;
     private String homeAddress = "";
     private String email = ""; // Not implemented yet
@@ -29,7 +31,7 @@ public class Contact extends ApiDataType {
     private String birthday = ""; // Birthday only for now
 
     public Contact(long Id, String primaryName) {
-        this.ID = Id;
+        this.id = Id;
         displayNamePrimary = primaryName;
     }
 
@@ -37,35 +39,18 @@ public class Contact extends ApiDataType {
         displayNamePrimary = primaryName;
     }
 
-    @Override
-    public Parcel toParcel() {
-        Parcel p = Parcel.obtain();
-        p.writeLong(ID);
-        p.writeString(displayNamePrimary);
-        p.writeString(homeAddress);
-        p.writeString(email);
-        p.writeString(organisation);
-        p.writeString(birthday);
-        return p;
+    @ParcelConstructor
+    public Contact(long id, String displayNamePrimary, String homeAddress, String email, String organisation, String birthday) {
+        this.id = id;
+        this.displayNamePrimary = displayNamePrimary;
+        this.homeAddress = homeAddress;
+        this.email = email;
+        this.organisation = organisation;
+        this.birthday = birthday;
     }
 
-    @Override
-    protected void fromParcel(Parcel p) {
-        ID = p.readLong();
-        displayNamePrimary = p.readString();
-        homeAddress = p.readString();
-        email = p.readString();
-        organisation = p.readString();
-        birthday = p.readString();
-    }
-
-    @Override
-    public String getTypeName() {
-        return "contact";
-    }
-
-    public long getID() {
-        return ID;
+    public long getId() {
+        return id;
     }
 
     public String getDisplayNamePrimary() {
@@ -110,7 +95,7 @@ public class Contact extends ApiDataType {
 
     /**
      * Adds additional data to all contacts in a list of contacts.
-     * Contacts need to have their ID set. This method then queries the local ContentProviders
+     * Contacts need to have their id set. This method then queries the local ContentProviders
      * for additional data, and returns a list of the same contacts, but with additional fields set.
      *
      * @param unenrichedContacts ArrayList of contacts to enrich
@@ -127,7 +112,7 @@ public class Contact extends ApiDataType {
         for (int i = 0; i < numberOfContacts; i++) {
 
             Contact c = unenrichedContacts.get(i);
-            long contactID = c.getID();
+            long contactID = c.getId();
 
             contactsById.append(contactID, c);
             selectionArgsForUserIds[i] = Long.toString(contactID);
@@ -265,7 +250,7 @@ public class Contact extends ApiDataType {
     @NonNull
     @Override
     public String toString() {
-        return ID + " ||| " + displayNamePrimary + " ||| " + birthday + " ||| " + homeAddress;
+        return id + " ||| " + displayNamePrimary + " ||| " + birthday + " ||| " + homeAddress;
     }
 
     @Override
@@ -273,7 +258,7 @@ public class Contact extends ApiDataType {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Contact contact = (Contact) o;
-        return ID == contact.ID &&
+        return id == contact.id &&
                 Objects.equals(displayNamePrimary, contact.displayNamePrimary) &&
                 Objects.equals(homeAddress, contact.homeAddress) &&
                 Objects.equals(email, contact.email) &&
@@ -283,6 +268,6 @@ public class Contact extends ApiDataType {
 
     @Override
     public int hashCode() {
-        return Objects.hash(ID, displayNamePrimary, homeAddress, email, organisation, birthday);
+        return Objects.hash(id, displayNamePrimary, homeAddress, email, organisation, birthday);
     }
 }
