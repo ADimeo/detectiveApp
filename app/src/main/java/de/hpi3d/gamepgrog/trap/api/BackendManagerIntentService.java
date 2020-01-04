@@ -126,10 +126,19 @@ public class BackendManagerIntentService extends IntentService {
      * @param applicationContext to access SharedPreferences
      * @return playerID or -1
      */
-    public static int getPlayerId(Context applicationContext) {
+    public static int getPlayerId(Context applicationContext) {  // TODO rename to getUserId
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         Log.d("PLAYER_ID", "GETTING PLAYER ID: " + preferences.getInt(KEY_USER_ID, -1));
         return preferences.getInt(KEY_USER_ID, -1);
+    }
+
+    public static void setPlayerId(Context context, int userid) {
+        SharedPreferences prefereces = context.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        prefereces.edit().putInt(KEY_USER_ID, userid).apply();
+    }
+
+    public static boolean hasRegisteredUser(Context context) {
+        return getPlayerId(context) != -1;
     }
 
     public static void setPlayerFBToken(Context context, String token) {

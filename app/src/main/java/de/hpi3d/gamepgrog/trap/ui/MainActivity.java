@@ -32,6 +32,7 @@ import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 import de.hpi3d.gamepgrog.trap.datatypes.Task;
+import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -45,7 +46,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO Storage: Has Player, if not register new Player
+        // TODO Storage: Has Player, if not register new Player and send fb token
+        if (!BackendManagerIntentService.hasRegisteredUser(this)) {
+            registerUserAndSendFBToken();
+        }
 
         ServerMessageService.init(this);
         setContentView(R.layout.activity_main);
@@ -58,11 +62,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void update() {
-        if (hasRegisteredUser()) {
-//            fetchTasks((tasks) -> {
-//                saveTasks(tasks);
-//                showTasks(tasks);
-//            });
+        if (BackendManagerIntentService.hasRegisteredUser(this)) {
+            fetchTasks((tasks) -> {
+                saveTasks(tasks);
+                showTasks(tasks);
+            });
             fetchClues((clues -> {
                 saveClues(clues);
                 showClues(clues);
@@ -101,12 +105,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showTasks(List<Task> tasks) {
-        tasks.forEach(System.out::println);
         // TODO Update UI
     }
 
     private void showClues(List<Clue> clues) {
-        clues.forEach(clue -> Log.d("Activity", clue.toString()));
         // TODO Update UI
     }
 
@@ -116,6 +118,27 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveClues(List<Clue> clues) {
         // TODO
+    }
+
+    private void registerUserAndSendFBToken() {
+        ApiIntent
+                .build(this)
+                .setCall(ApiService.CALL_REGISTER)
+                .putReceiver((code, bundle) -> {
+                    if (code == ApiService.SUCCESS) {
+                        User user = ApiIntent.getResult(bundle);
+
+                        // Save new user id in db
+                        BackendManagerIntentService.setPlayerId(this, user.getUserId());
+
+                        // Get fb token
+                        String token = BackendManagerIntentService.getPlayerFBToken(this);
+
+                        // Send gb token
+                        ServerMessageService.sendNewToken(this, user.getUserId(), token);
+                    }
+                })
+                .start();
     }
 
     @Override
@@ -132,10 +155,6 @@ public class MainActivity extends AppCompatActivity {
 
     private int getUserId() {
         return BackendManagerIntentService.getPlayerId(this);
-    }
-
-    private boolean hasRegisteredUser() {
-        return true;  // TODO
     }
 
 //    public void setPermission(String permission, Consumer<Boolean> callback) {

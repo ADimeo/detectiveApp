@@ -11,6 +11,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
+import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
 
 
 public class ServerMessageService extends FirebaseMessagingService {
@@ -28,12 +29,21 @@ public class ServerMessageService extends FirebaseMessagingService {
     }
 
     public static void setNewToken(Context c, @NonNull String token) {
-//        ApiIntent
-//                .build(c)
-//                .setCall(ApiService.CALL_SEND_FB_TOKEN)
-//                .put(ApiService.KEY_TOKEN, token)
-//                .start();
+        if (BackendManagerIntentService.hasRegisteredUser(c)) {
+            int userid = BackendManagerIntentService.getPlayerId(c);
+            sendNewToken(c, userid, token);
+        }
         // TODO store new Token
+    }
+
+    public static void sendNewToken(Context c, int userid, String token) {
+        ApiIntent
+            .build(c)
+            .setCall(ApiService.CALL_SEND_FB_TOKEN)
+            .put(ApiService.KEY_USER_ID, userid)
+            .put(ApiService.KEY_TOKEN, token)
+            // TODO add receiver, handle errors
+            .start();
     }
 
     public static void init(Context context) {
@@ -46,6 +56,7 @@ public class ServerMessageService extends FirebaseMessagingService {
 
                     // Get new Instance ID token
                     String token = task.getResult().getToken();
+                    Log.d("Firebase", "send new token: " + token);
                     setNewToken(context, token);
                 });
     }
