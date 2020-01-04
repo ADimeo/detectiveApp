@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -27,12 +28,26 @@ public class ServerMessageService extends FirebaseMessagingService {
     }
 
     public static void setNewToken(Context c, @NonNull String token) {
-        ApiIntent
-                .build(c)
-                .setCall(ApiService.CALL_SEND_FB_TOKEN)
-                .put(ApiService.KEY_TOKEN, token)
-                .start();
+//        ApiIntent
+//                .build(c)
+//                .setCall(ApiService.CALL_SEND_FB_TOKEN)
+//                .put(ApiService.KEY_TOKEN, token)
+//                .start();
         // TODO store new Token
+    }
+
+    public static void init(Context context) {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful() || task.getResult() == null) {
+                        Log.w("Firebase", "getInstanceId failed", task.getException());
+                        return;
+                    }
+
+                    // Get new Instance ID token
+                    String token = task.getResult().getToken();
+                    setNewToken(context, token);
+                });
     }
 
 //    private void sendNotification(String messageBody) {

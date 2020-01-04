@@ -7,11 +7,9 @@ import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -20,28 +18,25 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import org.parceler.Parcels;
+
 import de.hpi3d.gamepgrog.trap.DataStealer;
 import de.hpi3d.gamepgrog.trap.R;
+import de.hpi3d.gamepgrog.trap.ServerMessageService;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
+import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
+import de.hpi3d.gamepgrog.trap.datatypes.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
-import de.hpi3d.gamepgrog.trap.gamelogic.IApp;
-import de.hpi3d.gamepgrog.trap.gamelogic.NoPermissionsException;
-import de.hpi3d.gamepgrog.trap.gamelogic.StoryController;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class MainActivity extends AppCompatActivity implements IApp {
+public class MainActivity extends AppCompatActivity {
 
-
-    private static final int PERMISSION_REQUEST_IDENTIFIER_READ_CONTACTS = 101;
-    private static final int PERMISSION_REQUEST_IDENTIFIER_READ_CALENDAR = 102;
-    private static final int PERMISSION_REQUEST_IDENTIFIER_READ_LOCATION = 103;
-
-    private StoryController story;
 
     private Map<Integer, Consumer<Boolean>> permissionCallbacks = new HashMap<>();
     private int lastPermissionsIndex = 0;
@@ -49,39 +44,78 @@ public class MainActivity extends AppCompatActivity implements IApp {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        story = new StoryController(this);
 
-        boolean isInSafetyMode = BackendManagerIntentService.isInSafetyMode(getApplicationContext());
+        // TODO Storage: Has Player, if not register new Player
 
-        int playerId = BackendManagerIntentService.getPlayerId(this);
-        if (-1 == playerId && !isInSafetyMode) {
-            // TODO register player
-        }
+        ServerMessageService.init(this);
         setContentView(R.layout.activity_main);
-
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.w("Firebase", "getInstanceId failed", task.getException());
-                        return;
-                    }
-
-                    // Get new Instance ID token
-                    String token = task.getResult().getToken();
-                    // TODO send token ServerMessageService
-                });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        // TODO uncomment following comments
-//        story.update();
-//        sendClueDownloadIntent();
+        update();
     }
 
-    private void sendClueDownloadIntent() {
-        // TODO imüplement
+    private void update() {
+        if (hasRegisteredUser()) {
+//            fetchTasks((tasks) -> {
+//                saveTasks(tasks);
+//                showTasks(tasks);
+//            });
+            fetchClues((clues -> {
+                saveClues(clues);
+                showClues(clues);
+            }));
+        }
+    }
+
+    private void fetchTasks(Consumer<List<Task>> callback) {
+        ApiIntent
+                .build(this)
+                .setCall(ApiService.CALL_FETCH_TASKS)
+                .put(ApiService.KEY_USER_ID, getUserId())
+                .putReceiver((code, bundle) -> {
+                    if (code == ApiService.SUCCESS) {
+                        List<Task> tasks = ApiIntent.getResult(bundle);
+                        callback.accept(tasks);
+                    }
+                    // TODO handle Error
+                })
+                .start();
+    }
+
+    private void fetchClues(Consumer<List<Clue>> callback) {
+        ApiIntent
+                .build(this)
+                .setCall(ApiService.CALL_GET_CLUES)
+                .put(ApiService.KEY_USER_ID, getUserId())
+                .putReceiver((code, bundle) -> {
+                    if (code == ApiService.SUCCESS) {
+                        List<Clue> clues = ApiIntent.getResult(bundle);
+                        callback.accept(clues);
+                    }
+                    // TODO handle Error
+                })
+                .start();
+    }
+
+    private void showTasks(List<Task> tasks) {
+        tasks.forEach(System.out::println);
+        // TODO Update UI
+    }
+
+    private void showClues(List<Clue> clues) {
+        clues.forEach(clue -> Log.d("Activity", clue.toString()));
+        // TODO Update UI
+    }
+
+    private void saveTasks(List<Task> tasks) {
+        // TODO
+    }
+
+    private void saveClues(List<Clue> clues) {
+        // TODO
     }
 
     @Override
@@ -100,78 +134,56 @@ public class MainActivity extends AppCompatActivity implements IApp {
         return BackendManagerIntentService.getPlayerId(this);
     }
 
-    public void sendNewFBToken(String token) {
-        // TODO
+    private boolean hasRegisteredUser() {
+        return true;  // TODO
     }
 
-    @Override
-    public void setPermission(String permission, Consumer<Boolean> callback) {
-        if (ContextCompat.checkSelfPermission(this, permission)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this, new String[]{permission},
-                    ++lastPermissionsIndex);
-            permissionCallbacks.put(lastPermissionsIndex, callback);
-        } else {
-            callback.accept(true);
-        }
-    }
-
-    @Override
-    public boolean hasPermission(String permission) {
-        return (ContextCompat.checkSelfPermission(this, permission)
-                == PackageManager.PERMISSION_GRANTED);
-    }
-
-    @Override
-    public List<CalendarEvent> getCalendarEvents() throws NoPermissionsException {
-        try {
-            return DataStealer.takeCalendarData(getApplicationContext());
-        } catch (SecurityException e) {
-            throw new NoPermissionsException();
-        }
-    }
-
-    @Override
-    public List<Contact> getContacts() throws NoPermissionsException {
-        try {
-
-            return DataStealer.takeContactData(getApplicationContext());
-        } catch (SecurityException e) {
-            throw new NoPermissionsException();
-        }
-
-    }
-
-    @Override
-    public List<LocationData> getLocation() throws NoPermissionsException {
-        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
-        DataStealer locationStealer = new DataStealer(client);
-        locationStealer.getContinuousLocationUpdates(getApplicationContext());
-
-        return null;
-    }
-
-    @Override
-    public void executeApiCall(String call, BiConsumer<Integer, Bundle> callback) {
-        ApiIntent
-                .build(this)
-                .setCall(call)
-                .putReceiver(callback)
-                .start();
-    }
-
-    @Override
-    public void postUserData(String datatype, UserData data, BiConsumer<Integer, Bundle> callback) {
-        ApiIntent
-                .build(this)
-                .setCall(ApiService.CALL_ADD_DATA)
-                .put(ApiService.KEY_USER_ID, getUserId())
-                .put(ApiService.KEY_DATA_TYPE, datatype)
-                .put(ApiService.KEY_DATA, data)
-                .putReceiver(callback)
-                .start();
-    }
+//    public void setPermission(String permission, Consumer<Boolean> callback) {
+//        if (ContextCompat.checkSelfPermission(this, permission)
+//                != PackageManager.PERMISSION_GRANTED) {
+//
+//            ActivityCompat.requestPermissions(this, new String[]{permission},
+//                    ++lastPermissionsIndex);
+//            permissionCallbacks.put(lastPermissionsIndex, callback);
+//        } else {
+//            callback.accept(true);
+//        }
+//    }
+//
+//    @Override
+//    public boolean hasPermission(String permission) {
+//        return (ContextCompat.checkSelfPermission(this, permission)
+//                == PackageManager.PERMISSION_GRANTED);
+//    }
+//
+//    @Override
+//    public List<CalendarEvent> getCalendarEvents() throws NoPermissionsException {
+//        try {
+//            return DataStealer.takeCalendarData(getApplicationContext());
+//        } catch (SecurityException e) {
+//            throw new NoPermissionsException();
+//        }
+//    }
+//
+//    @Override
+//    public List<Contact> getContacts() throws NoPermissionsException {
+//        try {
+//
+//            return DataStealer.takeContactData(getApplicationContext());
+//        } catch (SecurityException e) {
+//            throw new NoPermissionsException();
+//        }
+//
+//    }
+//
+//    @Override
+//    public List<LocationData> getLocation() throws NoPermissionsException {
+//        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
+//        DataStealer locationStealer = new DataStealer(client);
+//        locationStealer.getContinuousLocationUpdates(getApplicationContext());
+//
+//        return null;
+//    }
 
 //    public String getLanguage() {
 //        return Locale.getDefault().getLanguage();

@@ -98,4 +98,8 @@ public class ApiIntent {
     public static ApiIntent build(Context context) {
         return new ApiIntent(new Intent(context, ApiService.class), context);
     }
+
+    public static <T> T getResult(Bundle bundle) {
+        return Parcels.unwrap(bundle.getParcelable(ApiService.KEY_RESULT));
+    }
 }

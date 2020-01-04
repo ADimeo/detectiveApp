@@ -111,7 +111,7 @@ public class ApiService extends IntentService {
 
     private ApiBuilder.API api;
 
-    ApiService() {
+    public ApiService() {
         super(NAME);
         api = ApiBuilder.build();
     }
