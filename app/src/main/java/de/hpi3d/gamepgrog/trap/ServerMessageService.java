@@ -1,26 +1,15 @@
 package de.hpi3d.gamepgrog.trap;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import java.util.function.BiConsumer;
-
 import de.hpi3d.gamepgrog.trap.api.ApiService;
-import de.hpi3d.gamepgrog.trap.api.BackendIntent;
-import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
+import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 
 
 public class ServerMessageService extends FirebaseMessagingService {
@@ -38,9 +27,9 @@ public class ServerMessageService extends FirebaseMessagingService {
     }
 
     public static void setNewToken(Context c, @NonNull String token) {
-        BackendIntent
+        ApiIntent
                 .build(c)
-                .setManager(ApiService.MANAGE_SEND_FB_TOKEN)
+                .setCall(ApiService.CALL_SEND_FB_TOKEN)
                 .put(ApiService.KEY_TOKEN, token)
                 .start();
         // TODO store new Token

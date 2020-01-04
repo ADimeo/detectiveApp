@@ -60,8 +60,8 @@ public class ApiBuilder {
         @GET("user/{userid}/fbtoken/{token}")
         Call<ResponseBody> sendFBToken(@Path("userid") long userid, @Path("token") String token);
 
-        @GET("user/{userid}/needs_data")
-        Call<ResponseBody> needsData(@Path("userid") long userid);
+        @GET("user/{userid}/task/{taskid}/finished")
+        Call<Boolean> isTaskFinished(@Path("userid") long userid, @Path("taskid") long taskid);
 
         @GET("user/{userid}/tasks")
         Call<List<Task>> fetchTasks(@Path("userid") long userid);

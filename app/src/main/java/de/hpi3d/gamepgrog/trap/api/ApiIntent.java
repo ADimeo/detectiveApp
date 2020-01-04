@@ -11,35 +11,50 @@ import androidx.annotation.Nullable;
 import org.parceler.Parcels;
 
 import java.util.function.BiConsumer;
-import java.util.prefs.BackingStoreException;
 
 import retrofit2.Response;
 
-public class BackendIntent {
+
+/**
+ * Used to send data and start a {@link ApiService}.<br>
+ * Supports method chaining.<br>
+ * Uses {@link Parcels} Lib to transfer objects
+ */
+public class ApiIntent {
 
     private Intent intent;
 
     @Nullable
     private Context context;
 
-    public BackendIntent(Intent intent) {
+    ApiIntent(Intent intent) {
         this.intent = intent;
     }
 
-    private BackendIntent(Intent intent, Context context) {
+    private ApiIntent(Intent intent, Context context) {
         this.intent = intent;
         this.context = context;
     }
 
-    public <T> T getExtra(String key) {
+    // ------------ METHODS FOR THE SERVICE ------------
+
+    <T> T getExtra(String key) {
         return Parcels.unwrap(intent.getParcelableExtra(key));
     }
 
-    public String getManagerName() {
-        return getExtra(ApiService.KEY_MANAGER);
+    String getManagerName() {
+        return getExtra(ApiService.KEY_CALL);
     }
 
-    public <T> BackendIntent sendBack(Response<T> response) {
+    ApiIntent sendBack(int code) {
+        ResultReceiver receiver = intent.getParcelableExtra(ApiService.KEY_RECEIVER);
+        if (receiver != null) {
+            receiver.send(code, new Bundle());
+        }
+        return this;
+    }
+
+    <T> ApiIntent sendBack(Response<T> response) {
         ResultReceiver receiver = intent.getParcelableExtra(ApiService.KEY_RECEIVER);
         if (receiver != null) {
             Bundle b = new Bundle();
@@ -52,16 +67,18 @@ public class BackendIntent {
         return this;
     }
 
-    public <T> BackendIntent put(String key, T value) {
+    // ------------ METHODS FOR THE ACTIVITY ------------
+
+    public <T> ApiIntent put(String key, T value) {
         intent.putExtra(key, Parcels.wrap(value));
         return this;
     }
 
-    public BackendIntent setManager(String manager) {
-        return put(ApiService.KEY_MANAGER, manager);
+    public ApiIntent setCall(String call) {
+        return put(ApiService.KEY_CALL, call);
     }
 
-    public BackendIntent putReceiver(BiConsumer<Integer, Bundle> receiver) {
+    public ApiIntent putReceiver(BiConsumer<Integer, Bundle> receiver) {
         if (intent != null) {
             intent.putExtra(ApiService.KEY_RECEIVER, new ResultReceiver(new Handler()) {
                 @Override
@@ -73,16 +90,12 @@ public class BackendIntent {
         return this;
     }
 
-    public BackendIntent putReceiver(Runnable callback) {
-        return putReceiver((code, bundle) -> callback.run());
-    }
-
     public void start() {
         if (context != null)
             context.startService(intent);
     }
 
-    public static BackendIntent build(Context context) {
-        return new BackendIntent(new Intent(context, ApiService.class), context);
+    public static ApiIntent build(Context context) {
+        return new ApiIntent(new Intent(context, ApiService.class), context);
     }
 }

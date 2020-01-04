@@ -13,27 +13,13 @@ import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 
 public interface IApp {
 
-    void setPermission(String permission, Consumer<Boolean> callback);
+    void setPermission(String datatype, Consumer<Boolean> callback);
 
-    boolean hasPermission(String permission);
+    boolean hasPermission(String datatype);
 
-    List<CalendarEvent> getCalendarEvents() throws NoPermissionsException;
-
-    List<Contact> getContacts() throws NoPermissionsException;
-
-
-    /**
-     * Returns current location of the device, if applicable. May return null if no location
-     * can be detected. This may be due to location being turned off on the device.
-     *
-     * @return
-     * @throws NoPermissionsException
-     */
-    List<LocationData> getLocation() throws NoPermissionsException;
-
-    String getLanguage();
+    void getUserData(String datatype, Consumer<UserData> data) throws NoPermissionsException;
 
     void executeApiCall(String call, BiConsumer<Integer, Bundle> callback);
 
-    void postUserData(String call, UserData data, Runnable callback);
+    void postUserData(String datatype, UserData data, BiConsumer<Integer, Bundle> callback);
 }

@@ -7,13 +7,19 @@ import org.parceler.ParcelConstructor;
 @Parcel(Parcel.Serialization.BEAN)
 public class Task {
 
+    private long id;
     private String name, description, dataType;
 
     @ParcelConstructor
-    public Task(String name, String description, String dataType) {
+    public Task(long id, String name, String description, String dataType) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.dataType = dataType;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getName() {

