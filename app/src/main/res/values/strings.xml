@@ -6,5 +6,6 @@
     <string name="button_contact_abbot">Contact Andy Abbot</string>
     <string name="title_hints_received">Known Secrets</string>
     <string name="debug_safety_mode">Safety mode</string>
+    <string name="error_no_registration_or_safety_mode">Application is in safety mode or user is not registered</string>
 
 </resources>

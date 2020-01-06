@@ -1,8 +1,10 @@
 package de.hpi3d.gamepgrog.trap.gamelogic;
 
+import android.os.Bundle;
 import android.os.Parcelable;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import de.hpi3d.gamepgrog.trap.api.UserDataPostRequestFactory;
@@ -13,22 +15,6 @@ import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 public interface IApp {
 
     int PERMISSION_CALENDAR = 1, PERMISSION_CONTACTS = 2, PERMISSION_LOCATION = 4;
-
-    /**
-     * Registers a new User if none was present
-     * Returns [User, boolean (Was the user new registered)]
-     */
-    String CALL_REGISTER_OR_GET_USER = "register";
-
-    /**
-     * returns UserStatus
-     */
-    String CALL_USER_STATUS = "user_status";
-
-    /**
-     * no response. Posts given Data (UserDataPostRequest) to the Api
-     */
-    String CALL_ADD_DATA = "add_data";
 
     /**
      * Returns Clue[]
@@ -53,9 +39,7 @@ public interface IApp {
 
     String getLanguage();
 
-    // TODO Replace Parcable with ...
-    void executeApiCall(String call, Consumer<Parcelable> callback);
+    void executeApiCall(String call, BiConsumer<Integer, Bundle> callback);
 
-    // TODO Send UserDataPostRequest to the Service
-    void executeApiCall(String call, UserDataPostRequestFactory.UserDataPostRequest pr, Runnable callback);
+    void postUserData(String call, UserDataPostRequestFactory.UserDataPostRequest pr, Runnable callback);
 }

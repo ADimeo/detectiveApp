@@ -4,11 +4,19 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.os.ResultReceiver;
 import android.util.Log;
+
+import java.util.function.BiConsumer;
 
 import de.hpi3d.gamepgrog.trap.CustomApplication;
 import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
 import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
+import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
 
 /**
  * This class is where decisions about backend calls are made.
@@ -29,6 +37,8 @@ public class BackendManagerIntentService extends IntentService {
     public static final String MANAGE_PLAYER_REGISTRATION = "manage_player_registration";
     public static final String MANAGE_TELEGRAM_BUTTON_STATUS = "manage_telegram_button_status";
     public static final String MANAGE_CLUE_DOWNLOAD = "manage_clue_download";
+    public static final String MANAGE_GET_USER_STATUS = "manage_get_user_status";
+    public static final String MANAGE_ADD_DATA = "manage_add_data";
 
     private static final String KEY_USER_ID = "key_user_id";
     private static final String KEY_BOT_URL = "key_bot_url";
@@ -36,9 +46,12 @@ public class BackendManagerIntentService extends IntentService {
     public static final String KEY_CONVERSATION_HAS_STARTED = "key_conversation_has_started";
     public static final String KEY_SAFETY_MODE = "key_safety_mode";
 
+    private ApiBuilder.API api;
+
 
     public BackendManagerIntentService() {
         super("BackendManagerIntentService");
+        api = ApiBuilder.build(getApplicationContext());
     }
 
 
@@ -57,6 +70,13 @@ public class BackendManagerIntentService extends IntentService {
                 break;
             case MANAGE_CLUE_DOWNLOAD:
                 downloadAndSaveAllClues();
+                break;
+            case MANAGE_ADD_DATA:
+                uploadUserData(intent);
+                break;
+            case MANAGE_GET_USER_STATUS:
+                loadUserStatus(intent);
+                break;
         }
     }
 
@@ -90,7 +110,7 @@ public class BackendManagerIntentService extends IntentService {
 
 
         if (!isInSafetyMode(context)) {
-            ApiBuilder.build(context).getUserStatus(playerID).subscribe(user -> {
+            api.getUserStatus(playerID).subscribe(user -> {
                 if (user != null && user.telegramHandle != null) {
                     setHasPlayerStartedConversation(context, true);
                 }
@@ -101,16 +121,46 @@ public class BackendManagerIntentService extends IntentService {
     }
 
     private void downloadAndSaveAllClues() {
-        Context context = getBaseContext();
         int playerId = getPlayerId(getApplicationContext());
 
+        api.getClues(playerId).subscribe(clueList -> {
+            DaoSession daoSession = ((CustomApplication) getApplication()).getDaoSession();
+            ClueDao clueDao = daoSession.getClueDao();
+            clueDao.insertOrReplaceInTx(clueList);
+        });
 
-            ApiBuilder.build(context).getClues(playerId).subscribe(clueList -> {
-                DaoSession daoSession = ((CustomApplication) getApplication()).getDaoSession();
-                ClueDao clueDao = daoSession.getClueDao();
-                clueDao.insertOrReplaceInTx(clueList);
-            });
+    }
 
+    private void uploadUserData(Intent intent) {
+        UserDataPostRequestFactory.UserDataPostRequest pr = intent.getParcelableExtra("postRequest");
+        ResultReceiver receiver = intent.getParcelableExtra("receiver");
+
+        if (pr != null) {
+            Response res = api.addData(getPlayerId(), pr).blockingLast();
+            int code = res != null ? res.code() : -1;
+
+            if (receiver != null)
+                receiver.send(code, Bundle.EMPTY);
+        }
+    }
+
+    private void loadUserStatus(Intent intent) {
+        UserStatus status = api.getUserStatus(getPlayerId()).blockingLast();
+        sendToReceiver(intent, status);
+    }
+
+    private void sendToReceiver(Intent intent, Parcelable value) {
+        ResultReceiver receiver = intent.getParcelableExtra("receiver");
+
+        if (receiver != null) {
+            if (value == null) {
+                receiver.send(-1, Bundle.EMPTY);
+            } else {
+                Bundle b = Bundle.EMPTY;
+                b.putParcelable("value", value);
+                receiver.send(0, b);
+            }
+        }
     }
 
     /**
@@ -130,6 +180,10 @@ public class BackendManagerIntentService extends IntentService {
                 preferences.edit().putString(KEY_BOT_URL, user.registerURL).apply();
             }
         });
+    }
+
+    public int getPlayerId() {
+        return getPlayerId(getApplicationContext());
     }
 
     /**

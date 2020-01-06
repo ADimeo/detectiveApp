@@ -1,8 +1,12 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
 import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class LocationData {
+import java.util.Objects;
+
+public class LocationData implements Parcelable {
 
     private double longitude, latitude;
     private long time;
@@ -13,7 +17,52 @@ public class LocationData {
         this.time = time;
     }
 
+    protected LocationData(Parcel in) {
+        longitude = in.readDouble();
+        latitude = in.readDouble();
+        time = in.readLong();
+    }
+
+    public static final Creator<LocationData> CREATOR = new Creator<LocationData>() {
+        @Override
+        public LocationData createFromParcel(Parcel in) {
+            return new LocationData(in);
+        }
+
+        @Override
+        public LocationData[] newArray(int size) {
+            return new LocationData[size];
+        }
+    };
+
     public static LocationData fromLocation(Location location) {
         return new LocationData(location.getLongitude(), location.getLatitude(), location.getTime());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeDouble(longitude);
+        dest.writeDouble(latitude);
+        dest.writeLong(time);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LocationData that = (LocationData) o;
+        return Double.compare(that.longitude, longitude) == 0 &&
+                Double.compare(that.latitude, latitude) == 0 &&
+                time == that.time;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(longitude, latitude, time);
     }
 }

@@ -1,23 +1,25 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
 
-/*
-Represents data from a single contact
- */
-
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.util.LongSparseArray;
 
 import com.google.android.gms.common.util.ArrayUtils;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 
-public class Contact {
+/**
+ * Represents data from a single contact
+ **/
+public class Contact implements Parcelable {
 
     private static final int CURSORFLAG_ADDRESS = 0;
     private static final int CURSORFLAG_PHONE = 1;
@@ -25,12 +27,11 @@ public class Contact {
 
     private long ID;
     private String displayNamePrimary;
-    private String homeAddress;
-    private String email; // Not implemented yet
-    private String organisation; // Not implemented yet
-    private String birthday; // Birthday only for now
+    private String homeAddress = "";
+    private String email = ""; // Not implemented yet
+    private String organisation = ""; // Not implemented yet
+    private String birthday = ""; // Birthday only for now
     private ArrayList<String> phoneNumbers; // Could be expanded to include type of number (phone/mobile) and label
-
 
     public Contact(long Id, String primaryName) {
         this.ID = Id;
@@ -42,6 +43,27 @@ public class Contact {
         displayNamePrimary = primaryName;
     }
 
+
+    private Contact(Parcel in) {
+        ID = in.readLong();
+        displayNamePrimary = in.readString();
+        homeAddress = in.readString();
+        email = in.readString();
+        organisation = in.readString();
+        birthday = in.readString();
+    }
+
+    public static final Creator<Contact> CREATOR = new Creator<Contact>() {
+        @Override
+        public Contact createFromParcel(Parcel in) {
+            return new Contact(in);
+        }
+
+        @Override
+        public Contact[] newArray(int size) {
+            return new Contact[size];
+        }
+    };
 
     public long getID() {
         return ID;
@@ -270,4 +292,36 @@ public class Contact {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(ID);
+        dest.writeString(displayNamePrimary);
+        dest.writeString(homeAddress);
+        dest.writeString(email);
+        dest.writeString(organisation);
+        dest.writeString(birthday);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contact contact = (Contact) o;
+        return ID == contact.ID &&
+                Objects.equals(displayNamePrimary, contact.displayNamePrimary) &&
+                Objects.equals(homeAddress, contact.homeAddress) &&
+                Objects.equals(email, contact.email) &&
+                Objects.equals(organisation, contact.organisation) &&
+                Objects.equals(birthday, contact.birthday);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID, displayNamePrimary, homeAddress, email, organisation, birthday);
+    }
 }
