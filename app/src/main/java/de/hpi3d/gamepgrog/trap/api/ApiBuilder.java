@@ -1,18 +1,17 @@
 package de.hpi3d.gamepgrog.trap.api;
 
 
-import android.content.Context;
-
 import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
+import de.hpi3d.gamepgrog.trap.datatypes.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
+import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
-import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Response;
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -32,11 +31,7 @@ public class ApiBuilder {
     private static OkHttpClient client = null;
 
 
-    public static API build(Context context) {
-        if (BackendManagerIntentService.isInSafetyMode(context)) {
-            throw new SecurityException("APPLICATION IS IN SAFETY MODE; UPLOADS ARE NOT ALLOWED");
-        }
-
+    public static API build() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         if (client == null) {
@@ -56,17 +51,27 @@ public class ApiBuilder {
 
     public interface API {
         @GET("user/create")
-        Observable<User> register();
+        Call<User> register();
 
         @GET("user/{userid}")
-        Observable<UserStatus> getUserStatus(@Path("userid") long userid);
+        Call<UserStatus> getUserStatus(@Path("userid") long userid);
 
-        @POST("user/{userid}/data")
-        Observable<Response> addData(@Path("userid") int userid,
-                                     @Body UserDataPostRequestFactory.UserDataPostRequest userData);
+        @GET("user/{userid}/fbtoken/{token}")
+        Call<ResponseBody> sendFBToken(@Path("userid") long userid, @Path("token") String token);
+
+        @GET("user/{userid}/task/{taskid}/finished")
+        Call<Boolean> isTaskFinished(@Path("userid") long userid, @Path("taskid") long taskid);
+
+        @GET("user/{userid}/tasks")
+        Call<List<Task>> fetchTasks(@Path("userid") long userid);
+
+        @POST("user/{userid}/data/{datatype}")
+        Call<ResponseBody> addData(@Path("userid") int userid,
+                                   @Path("datatype") String datatype,
+                                   @Body List<UserData> data);
 
         @GET("user/{userid}/clues")
-        Observable<List<Clue>> getClues(@Path("userid") int userid);
+        Call<List<Clue>> getClues(@Path("userid") int userid);
     }
 }
 

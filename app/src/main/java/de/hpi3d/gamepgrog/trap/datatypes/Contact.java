@@ -16,11 +16,14 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
 
 /**
  * Represents data from a single contact
  **/
-public class Contact implements Parcelable {
+@Parcel(Parcel.Serialization.BEAN)
+public class Contact implements UserData {
 
     private static final int CURSORFLAG_ADDRESS = 0;
     private static final int CURSORFLAG_PHONE = 1;
@@ -29,6 +32,7 @@ public class Contact implements Parcelable {
 
     private long id;
     private String displayNamePrimary = "";
+    private String displayNamePrimary;
     private String homeAddress = "";
     private String email = ""; // Not implemented yet
     private String organisation = ""; // Not implemented yet
@@ -41,23 +45,22 @@ public class Contact implements Parcelable {
 
 
     public Contact(long Id, String primaryName) {
-        this.id = Id;
+        this.ID = Id;
         displayNamePrimary = primaryName;
     }
-
 
     public Contact(String primaryName) {
         displayNamePrimary = primaryName;
     }
 
-
-    private Contact(Parcel in) {
-        ID = in.readLong();
-        displayNamePrimary = in.readString();
-        homeAddress = in.readString();
-        email = in.readString();
-        organisation = in.readString();
-        birthday = in.readString();
+    @ParcelConstructor
+    public Contact(long id, String displayNamePrimary, String homeAddress, String email, String organisation, String birthday) {
+        this.id = id;
+        this.displayNamePrimary = displayNamePrimary;
+        this.homeAddress = homeAddress;
+        this.email = email;
+        this.organisation = organisation;
+        this.birthday = birthday;
     }
 
     public long getId() {

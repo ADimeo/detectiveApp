@@ -2,9 +2,27 @@ package de.hpi3d.gamepgrog.trap.datatypes;
 
 import androidx.annotation.NonNull;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
+
+@Parcel(Parcel.Serialization.BEAN)
 public class User {
-    public int userId;
-    public String registerURL;
+    private int userId;
+    private String registerURL;
+
+    @ParcelConstructor
+    public User(int userId, String registerURL) {
+        this.userId = userId;
+        this.registerURL = registerURL;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public String getRegisterURL() {
+        return registerURL;
+    }
 
     @NonNull
     @Override

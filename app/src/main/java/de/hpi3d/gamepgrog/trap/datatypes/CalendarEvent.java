@@ -1,16 +1,19 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
 import android.database.Cursor;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.provider.CalendarContract;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 
-public class CalendarEvent implements Parcelable {
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
+
+import de.hpi3d.gamepgrog.trap.future.Function;
+
+@Parcel(Parcel.Serialization.BEAN)
+public class CalendarEvent implements UserData {
 
     private long id;
     private String title;
@@ -19,6 +22,7 @@ public class CalendarEvent implements Parcelable {
     private long endInUTCMilliseconds;
 
 
+    @ParcelConstructor
     public CalendarEvent(long id, String title, String eventLocation, long startInUTCMilliseconds, long endInUTCMilliseconds) {
         this.id = id;
         this.title = title;
@@ -27,119 +31,55 @@ public class CalendarEvent implements Parcelable {
         this.endInUTCMilliseconds = endInUTCMilliseconds;
     }
 
-    private CalendarEvent(){
-        this.id = -1;
-        this.title = null;
-        this.eventLocation = null;
-        this.startInUTCMilliseconds = -1;
-        this.endInUTCMilliseconds = -1;
+    private CalendarEvent(Cursor c) {
+        id = cursorColumn(c, CalendarContract.Events._ID, c::getLong);
+        title = cursorColumn(c, CalendarContract.Events.TITLE, c::getString);
+        eventLocation = cursorColumn(c, CalendarContract.Events.EVENT_LOCATION, c::getString);
+        startInUTCMilliseconds = cursorColumn(c, CalendarContract.Events.DTSTART, c::getLong);
+        endInUTCMilliseconds = cursorColumn(c, CalendarContract.Events.DTEND, c::getLong);
     }
 
-
-    private CalendarEvent(Parcel in) {
-        id = in.readLong();
-        title = in.readString();
-        eventLocation = in.readString();
-        startInUTCMilliseconds = in.readLong();
-        endInUTCMilliseconds = in.readLong();
+    private static <T> T cursorColumn(Cursor c, String key, Function<Integer, T> getter) {
+        int pos = c.getColumnIndex(key);
+        return getter.apply(pos);
     }
-
-    public static final Creator<CalendarEvent> CREATOR = new Creator<CalendarEvent>() {
-        @Override
-        public CalendarEvent createFromParcel(Parcel in) {
-            return new CalendarEvent(in);
-        }
-
-        @Override
-        public CalendarEvent[] newArray(int size) {
-            return new CalendarEvent[size];
-        }
-    };
 
     public static ArrayList<CalendarEvent> createFromCursor(Cursor cursor) {
-
-
         ArrayList<CalendarEvent> extractedEvents = new ArrayList<>();
 
         if (null != cursor && cursor.moveToFirst()) {
-            int posOfId = cursor.getColumnIndex(CalendarContract.Events._ID);
-            int posOfTitle = cursor.getColumnIndex(CalendarContract.Events.TITLE);
-            int posOfLocation = cursor.getColumnIndex(CalendarContract.Events.EVENT_LOCATION);
-            int posOfDTStart = cursor.getColumnIndex(CalendarContract.Events.DTSTART);
-            int posOfDTEnd = cursor.getColumnIndex(CalendarContract.Events.DTEND);
-
             do {
-                CalendarEvent cEvent = new CalendarEvent();
-                cEvent.setId(cursor.getLong(posOfId));
-                cEvent.setTitle(cursor.getString(posOfTitle));
-                cEvent.setEventLocation(cursor.getString(posOfLocation));
-                cEvent.setStartInUTCMilliseconds(cursor.getLong(posOfDTStart));
-                cEvent.setEndInUTCMilliseconds(cursor.getLong(posOfDTEnd));
-
-                extractedEvents.add(cEvent);
+                extractedEvents.add(new CalendarEvent(cursor));
             } while (cursor.moveToNext());
             cursor.close();
         }
 
-
         return extractedEvents;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getEventLocation() {
+        return eventLocation;
+    }
+
+    public long getStartInUTCMilliseconds() {
+        return startInUTCMilliseconds;
+    }
+
+    public long getEndInUTCMilliseconds() {
+        return endInUTCMilliseconds;
+    }
 
     @NonNull
     @Override
     public String toString() {
         return this.title;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setEventLocation(String eventLocation) {
-        this.eventLocation = eventLocation;
-    }
-
-    public void setStartInUTCMilliseconds(long startInUTCMilliseconds) {
-        this.startInUTCMilliseconds = startInUTCMilliseconds;
-    }
-
-    public void setEndInUTCMilliseconds(long endInUTCMilliseconds) {
-        this.endInUTCMilliseconds = endInUTCMilliseconds;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
-        dest.writeString(title);
-        dest.writeString(eventLocation);
-        dest.writeLong(startInUTCMilliseconds);
-        dest.writeLong(endInUTCMilliseconds);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CalendarEvent that = (CalendarEvent) o;
-        return id == that.id &&
-                startInUTCMilliseconds == that.startInUTCMilliseconds &&
-                endInUTCMilliseconds == that.endInUTCMilliseconds &&
-                Objects.equals(title, that.title) &&
-                Objects.equals(eventLocation, that.eventLocation);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, eventLocation, startInUTCMilliseconds, endInUTCMilliseconds);
     }
 }

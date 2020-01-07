@@ -4,19 +4,8 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.os.ResultReceiver;
 import android.util.Log;
 
-import java.util.function.BiConsumer;
-
-import de.hpi3d.gamepgrog.trap.CustomApplication;
-import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
-import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
-import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
-import okhttp3.ResponseBody;
-import retrofit2.Response;
 
 /**
  * This class is where decisions about backend calls are made.
@@ -34,11 +23,7 @@ public class BackendManagerIntentService extends IntentService {
 
     public static final String KEY_MANAGE_TYPE = "key_manage_type";
 
-    public static final String MANAGE_PLAYER_REGISTRATION = "manage_player_registration";
     public static final String MANAGE_TELEGRAM_BUTTON_STATUS = "manage_telegram_button_status";
-    public static final String MANAGE_CLUE_DOWNLOAD = "manage_clue_download";
-    public static final String MANAGE_GET_USER_STATUS = "manage_get_user_status";
-    public static final String MANAGE_ADD_DATA = "manage_add_data";
 
     private static final String KEY_USER_ID = "key_user_id";
     private static final String KEY_BOT_URL = "key_bot_url";
@@ -46,12 +31,9 @@ public class BackendManagerIntentService extends IntentService {
     public static final String KEY_CONVERSATION_HAS_STARTED = "key_conversation_has_started";
     public static final String KEY_SAFETY_MODE = "key_safety_mode";
 
-    private ApiBuilder.API api;
-
 
     public BackendManagerIntentService() {
         super("BackendManagerIntentService");
-        api = ApiBuilder.build(getApplicationContext());
     }
 
 
@@ -62,20 +44,8 @@ public class BackendManagerIntentService extends IntentService {
             return;
         }
         switch (manageAction) {
-            case MANAGE_PLAYER_REGISTRATION:
-                registerPlayerIfUnregistered();
-                break;
             case MANAGE_TELEGRAM_BUTTON_STATUS:
                 updatePlayerConversationStatus();
-                break;
-            case MANAGE_CLUE_DOWNLOAD:
-                downloadAndSaveAllClues();
-                break;
-            case MANAGE_ADD_DATA:
-                uploadUserData(intent);
-                break;
-            case MANAGE_GET_USER_STATUS:
-                loadUserStatus(intent);
                 break;
         }
     }
@@ -110,57 +80,10 @@ public class BackendManagerIntentService extends IntentService {
 
 
         if (!isInSafetyMode(context)) {
-            api.getUserStatus(playerID).subscribe(user -> {
-                if (user != null && user.telegramHandle != null) {
-                    setHasPlayerStartedConversation(context, true);
-                }
-            });
+            // TODO call api, update telegram handle
         }
 
 
-    }
-
-    private void downloadAndSaveAllClues() {
-        int playerId = getPlayerId(getApplicationContext());
-
-        api.getClues(playerId).subscribe(clueList -> {
-            DaoSession daoSession = ((CustomApplication) getApplication()).getDaoSession();
-            ClueDao clueDao = daoSession.getClueDao();
-            clueDao.insertOrReplaceInTx(clueList);
-        });
-
-    }
-
-    private void uploadUserData(Intent intent) {
-        UserDataPostRequestFactory.UserDataPostRequest pr = intent.getParcelableExtra("postRequest");
-        ResultReceiver receiver = intent.getParcelableExtra("receiver");
-
-        if (pr != null) {
-            Response res = api.addData(getPlayerId(), pr).blockingLast();
-            int code = res != null ? res.code() : -1;
-
-            if (receiver != null)
-                receiver.send(code, Bundle.EMPTY);
-        }
-    }
-
-    private void loadUserStatus(Intent intent) {
-        UserStatus status = api.getUserStatus(getPlayerId()).blockingLast();
-        sendToReceiver(intent, status);
-    }
-
-    private void sendToReceiver(Intent intent, Parcelable value) {
-        ResultReceiver receiver = intent.getParcelableExtra("receiver");
-
-        if (receiver != null) {
-            if (value == null) {
-                receiver.send(-1, Bundle.EMPTY);
-            } else {
-                Bundle b = Bundle.EMPTY;
-                b.putParcelable("value", value);
-                receiver.send(0, b);
-            }
-        }
     }
 
     /**
@@ -172,14 +95,6 @@ public class BackendManagerIntentService extends IntentService {
      */
     private static void setNewPlayerId(final Context context) {
         SharedPreferences preferences = context.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        ApiBuilder.build(context).register().subscribe(user -> {
-            if (user != null) {
-                Log.d("USER_OBJECT", user.toString());
-                Log.d("PLAYER_ID", "SETTING PLAYER ID TO " + user.userId);
-                preferences.edit().putInt(KEY_USER_ID, user.userId).apply();
-                preferences.edit().putString(KEY_BOT_URL, user.registerURL).apply();
-            }
-        });
     }
 
     public int getPlayerId() {
@@ -192,12 +107,29 @@ public class BackendManagerIntentService extends IntentService {
      * @param applicationContext to access SharedPreferences
      * @return playerID or -1
      */
-    public static int getPlayerId(Context applicationContext) {
+    public static int getPlayerId(Context applicationContext) {  // TODO rename to getUserId
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         Log.d("PLAYER_ID", "GETTING PLAYER ID: " + preferences.getInt(KEY_USER_ID, -1));
         return preferences.getInt(KEY_USER_ID, -1);
     }
 
+    public static void setPlayerId(Context context, int userid) {
+        SharedPreferences prefereces = context.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        prefereces.edit().putInt(KEY_USER_ID, userid).apply();
+    }
+
+    public static boolean hasRegisteredUser(Context context) {
+        return getPlayerId(context) != -1;
+    }
+
+    public static void setPlayerFBToken(Context context, String token) {
+        // TODO save token in Preferences
+    }
+
+    public static String getPlayerFBToken(Context context) {
+        // TODO get token from Preferences
+        return "";
+    }
 
     /**
      * Returns the saved URL used by the app to open the communication channel of the bot
@@ -239,8 +171,7 @@ public class BackendManagerIntentService extends IntentService {
 
     public static boolean isInSafetyMode(Context applicationContext) {
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        return preferences.getBoolean(KEY_SAFETY_MODE, true);
-
+//        return preferences.getBoolean(KEY_SAFETY_MODE, true);
+        return false;
     }
-
 }
