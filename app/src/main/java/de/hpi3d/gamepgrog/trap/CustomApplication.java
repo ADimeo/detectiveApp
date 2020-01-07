@@ -22,6 +22,8 @@ public class CustomApplication extends Application {
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
 
+
+
     }
 
     public DaoSession getDaoSession() {

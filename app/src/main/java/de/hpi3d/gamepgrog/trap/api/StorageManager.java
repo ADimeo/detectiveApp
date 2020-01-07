@@ -1,7 +1,17 @@
 package de.hpi3d.gamepgrog.trap.api;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import java.util.ArrayList;
+
+import de.hpi3d.gamepgrog.trap.CustomApplication;
+import de.hpi3d.gamepgrog.trap.datatypes.Clue;
+import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
+import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
+import de.hpi3d.gamepgrog.trap.datatypes.Task;
+import de.hpi3d.gamepgrog.trap.datatypes.TaskDao;
 
 
 /**
@@ -67,6 +77,45 @@ public class StorageManager {
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         preferences.edit().putBoolean(KEY_CONVERSATION_HAS_STARTED, conversationStarted).apply();
 
+    }
+
+    public static void addClues(Application application, ArrayList<Clue> cluesToAdd) {
+        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
+        ClueDao clueDao = daoSession.getClueDao();
+        clueDao.insertOrReplaceInTx(cluesToAdd);
+    }
+
+    public static void setClues(Application application, ArrayList<Clue> cluesToSet) {
+        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
+        ClueDao clueDao = daoSession.getClueDao();
+        clueDao.deleteAll();
+        clueDao.insertOrReplaceInTx(cluesToSet);
+    }
+
+    public static ArrayList<Clue> getClues(Application application) {
+        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
+        ClueDao clueDao = daoSession.getClueDao();
+        return new ArrayList<>(clueDao.queryBuilder().list());
+    }
+
+    public static void addTasks(Application application, ArrayList<Task> tasksToAdd) {
+        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
+        TaskDao taskDao = daoSession.getTaskDao();
+        taskDao.insertOrReplaceInTx(tasksToAdd);
+    }
+
+    public static void setTasks(Application application, ArrayList<Task> tasksToAdd) {
+        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
+        TaskDao taskDao = daoSession.getTaskDao();
+        taskDao.deleteAll();
+        taskDao.insertOrReplaceInTx(tasksToAdd);
+    }
+
+    public static ArrayList<Task> getTasks(Application application) {
+        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
+        TaskDao taskDao = daoSession.getTaskDao();
+
+        return new ArrayList<>(taskDao.queryBuilder().list());
     }
 
 
