@@ -36,6 +36,7 @@ public class ApiService extends IntentService {
     public static final String KEY_TOKEN = PRE + "token";
     public static final String KEY_RECEIVER = PRE + "receiver";
     public static final String KEY_CALL = PRE + "manager";
+    public static final String KEY_SAFETY = PRE + "safety";
 
     public static final int ERROR_EXCEPTION = -2;
     public static final int SUCCESS = 200;
@@ -166,8 +167,7 @@ public class ApiService extends IntentService {
         Response<T> res = null;
         try {
             res = call.execute();
-        } catch (IOException ignored) {
-        }
+        } catch (IOException ignored) {}
 
         if (res == null) {
             return Response.error(-1, ResponseBody.create(null, "IO Exception"));
@@ -180,8 +180,16 @@ public class ApiService extends IntentService {
         if (intent != null) {
             ApiIntent bIntent = new ApiIntent(intent);
             String type = bIntent.getManagerName();
-            getManager(type).accept(bIntent);
+            boolean safety = BackendManagerIntentService.isInSafetyMode(getApplicationContext());
+            run(getManager(type), bIntent, safety);
         }
+    }
+
+    private void run(Consumer<ApiIntent> manager, ApiIntent intent, boolean safety) {
+        ApiBuilder.API oldApi = api;
+        api = safety ? new NoUploadApi(api) : api;
+        manager.accept(intent);
+        api = oldApi;
     }
 
     private Consumer<ApiIntent> getManager(String manager) {
