@@ -5,8 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.provider.ContactsContract;
+import android.provider.Telephony;
 import android.util.LongSparseArray;
 
 import com.google.android.gms.common.util.ArrayUtils;
@@ -16,6 +16,7 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 
+
 /**
  * Represents data from a single contact
  **/
@@ -23,18 +24,24 @@ public class Contact implements Parcelable {
 
     private static final int CURSORFLAG_ADDRESS = 0;
     private static final int CURSORFLAG_PHONE = 1;
+    private static final int CURSORFLAG_MESSAGES = 2;
     private static final int CURSORFLAG_BIRTHDAY = 4;
 
-    private long ID;
-    private String displayNamePrimary;
+    private long id;
+    private String displayNamePrimary = "";
     private String homeAddress = "";
     private String email = ""; // Not implemented yet
     private String organisation = ""; // Not implemented yet
     private String birthday = ""; // Birthday only for now
     private ArrayList<String> phoneNumbers; // Could be expanded to include type of number (phone/mobile) and label
 
+    public Contact(long Id) {
+        this.id = Id;
+    }
+
+
     public Contact(long Id, String primaryName) {
-        this.ID = Id;
+        this.id = Id;
         displayNamePrimary = primaryName;
     }
 
@@ -53,20 +60,8 @@ public class Contact implements Parcelable {
         birthday = in.readString();
     }
 
-    public static final Creator<Contact> CREATOR = new Creator<Contact>() {
-        @Override
-        public Contact createFromParcel(Parcel in) {
-            return new Contact(in);
-        }
-
-        @Override
-        public Contact[] newArray(int size) {
-            return new Contact[size];
-        }
-    };
-
-    public long getID() {
-        return ID;
+    public long getId() {
+        return id;
     }
 
     public String getDisplayNamePrimary() {
@@ -77,6 +72,9 @@ public class Contact implements Parcelable {
         this.displayNamePrimary = displayNamePrimary;
     }
 
+    public String getHomeAddress() {
+        return homeAddress;
+    }
 
     public void addPhoneNumber(String phoneNumber) {
         if (phoneNumbers == null) {
@@ -89,13 +87,37 @@ public class Contact implements Parcelable {
         this.homeAddress = homeAddress;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getOrganisation() {
+        return organisation;
+    }
+
+    public void setOrganisation(String organisation) {
+        this.organisation = organisation;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
     public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
 
+    public ArrayList<String> getPhoneNumbers() {
+        return phoneNumbers;
+    }
+
     /**
      * Adds additional data to all contacts in a list of contacts.
-     * Contacts need to have their ID set. This method then queries the local ContentProviders
+     * Contacts need to have their id set. This method then queries the local ContentProviders
      * for additional data, and returns a list of the same contacts, but with additional fields set.
      *
      * @param unenrichedContacts ArrayList of contacts to enrich
@@ -112,7 +134,7 @@ public class Contact implements Parcelable {
 
         for (int i = 0; i < numberOfContacts; i++) {
             Contact c = unenrichedContacts.get(i);
-            long contactID = c.getID();
+            long contactID = c.getId();
 
             contactsById.append(contactID, c);
             selectionArgsForUserIds[i] = Long.toString(contactID);
@@ -180,7 +202,8 @@ public class Contact implements Parcelable {
         return contactsById;
     }
 
-    private static LongSparseArray<Contact> enrichPhoneNumbers(LongSparseArray<Contact> contactsById, Cursor cursor) {
+
+    private static LongSparseArray<Contact> enrichMessages(LongSparseArray<Contact> contactsById, Cursor cursor) {
         do {
             int positionOfContactId = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID);
             int positionOfNumber = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
@@ -196,6 +219,15 @@ public class Contact implements Parcelable {
         return contactsById;
     }
 
+    /**
+     * Prepares a cursor for further data stealage
+     *
+     * @param flag            What cursor to prepare
+     * @param context
+     * @param idSelection
+     * @param idSelectionArgs IDs of contacts to query
+     * @return
+     */
     private static Cursor prepareCursor(int flag, Context context, String idSelection, String[] idSelectionArgs) {
         Uri CONTENT_URI = ContactsContract.Data.CONTENT_URI;
         String[] projection = null;
@@ -247,6 +279,33 @@ public class Contact implements Parcelable {
                         idSelectionArgs
                 );
                 break;
+            case CURSORFLAG_MESSAGES:
+                // Get phone numbers
+                LongSparseArray<Contact> phoneNumberCollector = new LongSparseArray<>();
+                for (String contactId : idSelectionArgs) {
+                    long contactIdLong = Long.valueOf(contactId);
+                    phoneNumberCollector.put(contactIdLong, new Contact(contactIdLong));
+                }
+                Cursor phoneNumberCursor = prepareCursor(CURSORFLAG_PHONE, context, idSelection, idSelectionArgs);
+                enrichPhoneNumbers(phoneNumberCollector, phoneNumberCursor);
+
+                ArrayList<String> phoneNumbersFromIds = new ArrayList<>();
+                for (long i = 0; i < phoneNumberCollector.size(); i++) {
+                    Contact c = phoneNumberCollector.get(i);
+                    phoneNumbersFromIds.addAll(c.getPhoneNumbers());
+                }
+
+                // Extract IDs from phone numbers
+                CONTENT_URI = Telephony.Sms.CONTENT_URI;
+                projection = new String[]{
+                        Telephony.Sms.ADDRESS,
+                        Telephony.Sms.CREATOR,
+                        Telephony.Sms.DATE_SENT,
+                        Telephony.Sms.BODY,
+                };
+                selection = Telephony.Sms.ADDRESS + " IN (" + buildQueryPlaceholder(phoneNumbersFromIds.size()) + ")";
+                selectionArgs = phoneNumbersFromIds.toArray(new String[]{});
+                break;
         }
 
 
@@ -266,7 +325,7 @@ public class Contact implements Parcelable {
      * Creates a String of the form "?, ?, ..., ?", with the length defined by the number
      * of arguments.
      * <p>
-     * Use in combination with IN ( ?,?)
+     * Use in combination with something like IN ( ?,?,?)
      *
      * @param length number of ? to continue, greater than 0
      * @return String for selection
@@ -284,27 +343,10 @@ public class Contact implements Parcelable {
         return builder.toString();
     }
 
-
     @NonNull
     @Override
     public String toString() {
-        return ID + " ||| " + displayNamePrimary + " ||| " + birthday + " ||| " + homeAddress;
-    }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(ID);
-        dest.writeString(displayNamePrimary);
-        dest.writeString(homeAddress);
-        dest.writeString(email);
-        dest.writeString(organisation);
-        dest.writeString(birthday);
+        return id + " ||| " + displayNamePrimary + " ||| " + birthday + " ||| " + homeAddress;
     }
 
     @Override
@@ -312,7 +354,7 @@ public class Contact implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Contact contact = (Contact) o;
-        return ID == contact.ID &&
+        return id == contact.id &&
                 Objects.equals(displayNamePrimary, contact.displayNamePrimary) &&
                 Objects.equals(homeAddress, contact.homeAddress) &&
                 Objects.equals(email, contact.email) &&
@@ -322,6 +364,6 @@ public class Contact implements Parcelable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(ID, displayNamePrimary, homeAddress, email, organisation, birthday);
+        return Objects.hash(id, displayNamePrimary, homeAddress, email, organisation, birthday);
     }
 }
