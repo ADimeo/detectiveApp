@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService"
+            android:name="de.hpi3d.gamepgrog.trap.api.StorageManager"
             android:enabled="true"
             android:exported="false" />
         <service

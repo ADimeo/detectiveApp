@@ -11,7 +11,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
-import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
+import de.hpi3d.gamepgrog.trap.api.StorageManager;
 
 
 public class OurFirebaseMessagingService extends FirebaseMessagingService {
@@ -29,8 +29,8 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     public static void setNewToken(Context c, @NonNull String token) {
-        if (BackendManagerIntentService.hasRegisteredUser(c)) {
-            int userid = BackendManagerIntentService.getPlayerId(c);
+        if (StorageManager.hasRegisteredUser(c)) {
+            int userid = StorageManager.getPlayerId(c);
             sendNewToken(c, userid, token);
         }
         // TODO store new Token

@@ -10,9 +10,8 @@ import android.widget.Button;
 import android.widget.Switch;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
+import de.hpi3d.gamepgrog.trap.api.StorageManager;
 
 
 public class MainFragment extends Fragment {
@@ -37,10 +36,10 @@ public class MainFragment extends Fragment {
         Button debugUploadContacts = view.findViewById(R.id.button_debug_contacts);
 
         Switch safetySwitch = view.findViewById(R.id.switch_safety);
-        safetySwitch.setChecked(BackendManagerIntentService.isInSafetyMode(getContext()));
+        safetySwitch.setChecked(StorageManager.isInSafetyMode(getContext()));
 
         safetySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            BackendManagerIntentService.setSafetyMode(isChecked, getContext());
+            StorageManager.setSafetyMode(isChecked, getContext());
         });
 
         return view;
@@ -52,19 +51,20 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        FragmentActivity activity = getActivity();
-        Intent testButtonStatus = new Intent(activity, BackendManagerIntentService.class);
-        testButtonStatus.putExtra(BackendManagerIntentService.KEY_MANAGE_TYPE, BackendManagerIntentService.MANAGE_TELEGRAM_BUTTON_STATUS);
+        // TODO use firebase and remove API call
+        //  FragmentActivity activity = getActivity();
+        //  Intent testButtonStatus = new Intent(activity, StorageManager.class);
+        //  testButtonStatus.putExtra(StorageManager.KEY_MANAGE_TYPE, StorageManager.MANAGE_TELEGRAM_BUTTON_STATUS);
 
-        activity.startService(testButtonStatus);
+        // activity.startService(testButtonStatus);
 
 
-        boolean playerHasStartedConversation = BackendManagerIntentService.getHasPlayerStartedConversation(getContext());
+        boolean playerHasStartedConversation = StorageManager.getHasPlayerStartedConversation(getContext());
         upButton.setEnabled(!playerHasStartedConversation);
     }
 
     private void sendInitialTelegramMessage() {
-        final String BOT_URL = BackendManagerIntentService.getBotUrl(getContext());
+        final String BOT_URL = StorageManager.getBotUrl(getContext());
         try {
             Intent telegram = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + BOT_URL));
             startActivity(telegram);
