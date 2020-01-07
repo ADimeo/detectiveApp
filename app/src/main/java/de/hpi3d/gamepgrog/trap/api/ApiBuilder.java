@@ -25,13 +25,13 @@ import retrofit2.http.Path;
  *
  * @see <a href="https://github.com/EatingBacon/gameprog-detective-game/wiki/API">ApiBuilder Doku</a>
  */
-public class ApiBuilder {
+class ApiBuilder {
 
     private final static String BASE_URL = "http://78.47.11.229:5000";
     private static OkHttpClient client = null;
 
 
-    public static API build() {
+    static API build() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         if (client == null) {

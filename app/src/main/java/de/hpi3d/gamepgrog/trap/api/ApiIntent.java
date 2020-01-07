@@ -41,6 +41,13 @@ public class ApiIntent {
         return Parcels.unwrap(intent.getParcelableExtra(key));
     }
 
+    <T> T getExtra(String key, T valueIfNotPresent) {
+        if (intent.hasExtra(key))
+            return getExtra(key);
+        else
+            return valueIfNotPresent;
+    }
+
     String getManagerName() {
         return getExtra(ApiService.KEY_CALL);
     }
