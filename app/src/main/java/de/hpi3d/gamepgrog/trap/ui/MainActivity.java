@@ -3,7 +3,6 @@ package de.hpi3d.gamepgrog.trap.ui;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -11,29 +10,22 @@ import com.google.android.gms.location.LocationServices;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import org.parceler.Parcels;
-
 import de.hpi3d.gamepgrog.trap.DataStealer;
+import de.hpi3d.gamepgrog.trap.OurFirebaseMessagingService;
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.ServerMessageService;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
-import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
-import de.hpi3d.gamepgrog.trap.datatypes.Contact;
-import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 import de.hpi3d.gamepgrog.trap.datatypes.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
-import de.hpi3d.gamepgrog.trap.datatypes.UserData;
+import de.hpi3d.gamepgrog.trap.future.Consumer;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
@@ -46,22 +38,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO Storage: Has Player, if not register new Player and send fb token
         if (!BackendManagerIntentService.hasRegisteredUser(this)) {
             registerUserAndSendFBToken();
         }
 
-        ServerMessageService.init(this);
+        OurFirebaseMessagingService.init(this);
         setContentView(R.layout.activity_main);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        update();
+        fetchData();
     }
 
-    private void update() {
+    private void fetchData() {
+        // TODO Get Data with Firebase
         if (BackendManagerIntentService.hasRegisteredUser(this)) {
             fetchTasks((tasks) -> {
                 saveTasks(tasks);
@@ -135,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                         String token = BackendManagerIntentService.getPlayerFBToken(this);
 
                         // Send gb token
-                        ServerMessageService.sendNewToken(this, user.getUserId(), token);
+                        OurFirebaseMessagingService.sendNewToken(this, user.getUserId(), token);
                     }
                 })
                 .start();
@@ -157,17 +149,17 @@ public class MainActivity extends AppCompatActivity {
         return BackendManagerIntentService.getPlayerId(this);
     }
 
-//    public void setPermission(String permission, Consumer<Boolean> callback) {
-//        if (ContextCompat.checkSelfPermission(this, permission)
-//                != PackageManager.PERMISSION_GRANTED) {
-//
-//            ActivityCompat.requestPermissions(this, new String[]{permission},
-//                    ++lastPermissionsIndex);
-//            permissionCallbacks.put(lastPermissionsIndex, callback);
-//        } else {
-//            callback.accept(true);
-//        }
-//    }
+    public void setPermission(String permission, Consumer<Boolean> callback) {
+        if (ContextCompat.checkSelfPermission(this, permission)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this, new String[]{permission},
+                    ++lastPermissionsIndex);
+            permissionCallbacks.put(lastPermissionsIndex, callback);
+        } else {
+            callback.accept(true);
+        }
+    }
 //
 //    @Override
 //    public boolean hasPermission(String permission) {

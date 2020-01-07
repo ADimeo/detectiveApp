@@ -14,9 +14,9 @@ import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
 
 
-public class ServerMessageService extends FirebaseMessagingService {
+public class OurFirebaseMessagingService extends FirebaseMessagingService {
 
-    private static final String TAG = "ServerMessageService";
+    private static final String TAG = "OurFBMessagingService";
 
     @Override
     public void onMessageReceived(RemoteMessage message) {

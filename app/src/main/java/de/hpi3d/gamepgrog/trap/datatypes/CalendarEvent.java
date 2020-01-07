@@ -4,12 +4,13 @@ import android.database.Cursor;
 import android.provider.CalendarContract;
 
 import java.util.ArrayList;
-import java.util.function.Function;
 
 import androidx.annotation.NonNull;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
+
+import de.hpi3d.gamepgrog.trap.future.Function;
 
 @Parcel(Parcel.Serialization.BEAN)
 public class CalendarEvent implements UserData {

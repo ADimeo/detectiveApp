@@ -8,13 +8,13 @@ import androidx.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Consumer;
 
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
+import de.hpi3d.gamepgrog.trap.future.Consumer;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;

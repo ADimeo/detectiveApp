@@ -4,26 +4,8 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Parcelable;
-import android.os.ResultReceiver;
 import android.util.Log;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import de.hpi3d.gamepgrog.trap.CustomApplication;
-import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
-import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
-import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
-import okhttp3.ResponseBody;
-import retrofit2.Response;
 
 /**
  * This class is where decisions about backend calls are made.
@@ -113,7 +95,6 @@ public class BackendManagerIntentService extends IntentService {
      */
     private static void setNewPlayerId(final Context context) {
         SharedPreferences preferences = context.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        // TODO Update in API
     }
 
     public int getPlayerId() {

@@ -10,8 +10,7 @@ import androidx.annotation.Nullable;
 
 import org.parceler.Parcels;
 
-import java.util.function.BiConsumer;
-
+import de.hpi3d.gamepgrog.trap.future.BiConsumer;
 import retrofit2.Response;
 
 
