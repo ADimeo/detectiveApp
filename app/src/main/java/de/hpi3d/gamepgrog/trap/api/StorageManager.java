@@ -18,21 +18,22 @@ public class StorageManager {
     private static final String KEY_SAFETY_MODE = "key_safety_mode";
     private static final String KEY_FIREBASE_KEY = "key_firebase_key";
 
+
     /**
      * Returns player ID if set, otherwise -1.
      */
-    public static int getPlayerId(Context applicationContext) {  // TODO rename to getUserId
+    public static int getUserId(Context applicationContext) {
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         return preferences.getInt(KEY_USER_ID, -1);
     }
 
-    public static void setPlayerId(Context context, int userid) {
+    public static void setUserId(Context context, int userid) {
         SharedPreferences prefereces = context.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         prefereces.edit().putInt(KEY_USER_ID, userid).apply();
     }
 
     public static boolean hasRegisteredUser(Context context) {
-        return getPlayerId(context) != -1;
+        return getUserId(context) != -1;
     }
 
     public static void setPlayerFBToken(Context context, String token) {

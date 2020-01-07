@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                         User user = ApiIntent.getResult(bundle);
 
                         // Save new user id in db
-                        StorageManager.setPlayerId(this, user.getUserId());
+                        StorageManager.setUserId(this, user.getUserId());
 
                         // Get fb token
                         String token = StorageManager.getPlayerFBToken(this);
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private int getUserId() {
-        return StorageManager.getPlayerId(this);
+        return StorageManager.getUserId(this);
     }
 
     public void setPermission(String permission, Consumer<Boolean> callback) {
