@@ -4,11 +4,10 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
-import androidx.annotation.Nullable;
-
 import java.io.IOException;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
@@ -167,7 +166,8 @@ public class ApiService extends IntentService {
         Response<T> res = null;
         try {
             res = call.execute();
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
 
         if (res == null) {
             return Response.error(-1, ResponseBody.create(null, "IO Exception"));
@@ -180,7 +180,7 @@ public class ApiService extends IntentService {
         if (intent != null) {
             ApiIntent bIntent = new ApiIntent(intent);
             String type = bIntent.getManagerName();
-            boolean safety = BackendManagerIntentService.isInSafetyMode(getApplicationContext());
+            boolean safety = StorageManager.isInSafetyMode(getApplicationContext());
             run(getManager(type), bIntent, safety);
         }
     }

@@ -52,17 +52,23 @@ public class Contact implements UserData {
     }
 
     @ParcelConstructor
-    public Contact(long id, String displayNamePrimary, String homeAddress, String email, String organisation, String birthday) {
+    public Contact(long id, String displayNamePrimary, String homeAddress, String email, String organisation, String birthday, ArrayList<String> phoneNumbers) {
         this.id = id;
         this.displayNamePrimary = displayNamePrimary;
         this.homeAddress = homeAddress;
         this.email = email;
         this.organisation = organisation;
         this.birthday = birthday;
+        this.phoneNumbers = phoneNumbers;
     }
+
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getDisplayNamePrimary() {
@@ -75,13 +81,6 @@ public class Contact implements UserData {
 
     public String getHomeAddress() {
         return homeAddress;
-    }
-
-    public void addPhoneNumber(String phoneNumber) {
-        if (phoneNumbers == null) {
-            phoneNumbers = new ArrayList<>();
-        }
-        phoneNumbers.add(phoneNumber);
     }
 
     public void setHomeAddress(String homeAddress) {
@@ -115,6 +114,18 @@ public class Contact implements UserData {
     public ArrayList<String> getPhoneNumbers() {
         return phoneNumbers;
     }
+
+    public void setPhoneNumbers(ArrayList<String> phoneNumbers) {
+        this.phoneNumbers = phoneNumbers;
+    }
+
+    public void addPhoneNumber(String phoneNumber) {
+        if (phoneNumbers == null) {
+            phoneNumbers = new ArrayList<>();
+        }
+        phoneNumbers.add(phoneNumber);
+    }
+
 
     /**
      * Adds additional data to all contacts in a list of contacts.
@@ -152,7 +163,7 @@ public class Contact implements UserData {
 
         cursor = prepareCursor(CURSORFLAG_PHONE, context, selectionForUserIds, selectionArgsForUserIds);
         if (cursor.moveToFirst()) {
-          // TODO  enrichPhoneNumbers(contactsById, cursor);
+            // TODO  enrichPhoneNumbers(contactsById, cursor);
         }
         cursor.close();
 
@@ -288,7 +299,7 @@ public class Contact implements UserData {
                     phoneNumberCollector.put(contactIdLong, new Contact(contactIdLong));
                 }
                 Cursor phoneNumberCursor = prepareCursor(CURSORFLAG_PHONE, context, idSelection, idSelectionArgs);
-              // TODO  enrichPhoneNumbers(phoneNumberCollector, phoneNumberCursor);
+                // TODO  enrichPhoneNumbers(phoneNumberCollector, phoneNumberCursor);
 
                 ArrayList<String> phoneNumbersFromIds = new ArrayList<>();
                 for (long i = 0; i < phoneNumberCollector.size(); i++) {
