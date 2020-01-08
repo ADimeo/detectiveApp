@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import de.hpi3d.gamepgrog.trap.future.BiConsumer;
 
 /**
  * Represents data from a single contact
@@ -136,7 +137,7 @@ public class Contact implements UserData {
      * @param context            used to query android system
      * @return contacts with additional data
      */
-    public static ArrayList<Contact> enrichContacts(ArrayList<Contact> unenrichedContacts, Context context) {
+    public static ArrayList<Contact> enrich(ArrayList<Contact> unenrichedContacts, Context context) {
         // Build query parameters
         int numberOfContacts = unenrichedContacts.size();
         LongSparseArray<Contact> contactsById = new LongSparseArray<>();
@@ -153,25 +154,7 @@ public class Contact implements UserData {
         }
 
         // Actual queries and enrichment
-
-
-        Cursor cursor = prepareCursor(CURSORFLAG_BIRTHDAY, context, selectionForUserIds, selectionArgsForUserIds);
-        if (cursor.moveToFirst()) {
-            enrichBirthdays(contactsById, cursor);
-        }
-        cursor.close();
-
-        cursor = prepareCursor(CURSORFLAG_PHONE, context, selectionForUserIds, selectionArgsForUserIds);
-        if (cursor.moveToFirst()) {
-            // TODO  enrichPhoneNumbers(contactsById, cursor);
-        }
-        cursor.close();
-
-        cursor = prepareCursor(CURSORFLAG_ADDRESS, context, selectionForUserIds, selectionArgsForUserIds);
-        if (cursor.moveToFirst()) {
-            enrichAddresses(contactsById, cursor);
-        }
-        cursor.close();
+        enrichContacts(contactsById, selectionForUserIds, selectionArgsForUserIds, context);
 
 
         ArrayList<Contact> enrichedContacts = new ArrayList<Contact>(numberOfContacts);
@@ -182,53 +165,43 @@ public class Contact implements UserData {
         return enrichedContacts;
     }
 
-    private static LongSparseArray<Contact> enrichBirthdays(LongSparseArray<Contact> contactsById, Cursor cursor) {
-        do {
-            int positionOfContactID = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Event.CONTACT_ID);
-            int positionOfDate = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE);
+    private static void enrichContacts(LongSparseArray<Contact> contactsById, String selectionForUserIds, String[] selectionArgsForUserIds, Context context) {
+        Cursor cursor = prepareCursor(CURSORFLAG_BIRTHDAY, context, selectionForUserIds, selectionArgsForUserIds);
+        enrichWithData(contactsById, cursor,
+                ContactsContract.CommonDataKinds.Event.CONTACT_ID,
+                ContactsContract.CommonDataKinds.Event.START_DATE,
+                Contact::setBirthday);
 
-            long contactKey = cursor.getLong(positionOfContactID);
-            String birthday = cursor.getString(positionOfDate);
+        cursor = prepareCursor(CURSORFLAG_PHONE, context, selectionForUserIds, selectionArgsForUserIds);
+        enrichWithData(contactsById, cursor,
+                ContactsContract.CommonDataKinds.StructuredPostal.CONTACT_ID,
+                ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS,
+                Contact::setHomeAddress);
 
-            Contact contactToEnrich = contactsById.get(contactKey);
-            contactToEnrich.setBirthday(birthday);
-            contactsById.put(contactKey, contactToEnrich);
-        } while (cursor.moveToNext());
-
-        return contactsById;
+        cursor = prepareCursor(CURSORFLAG_ADDRESS, context, selectionForUserIds, selectionArgsForUserIds);
+        enrichWithData(contactsById, cursor,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                Contact::addPhoneNumber);
     }
 
-    private static LongSparseArray<Contact> enrichAddresses(LongSparseArray<Contact> contactsById, Cursor cursor) {
-        do {
-            int positionOfContactID = cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CONTACT_ID);
-            int positionOfAddress = cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS);
+    private static LongSparseArray<Contact> enrichWithData(LongSparseArray<Contact> contactsById, Cursor cursor, String nameOfIdColumn, String nameOfDataColumn, BiConsumer<Contact, String> enricher) {
+        if (cursor.moveToFirst()) {
+            do {
+                int positionOfContactID = cursor.getColumnIndex(nameOfIdColumn);
+                int positionOfData = cursor.getColumnIndex(nameOfDataColumn);
 
-            long contactKey = cursor.getLong(positionOfContactID);
-            String address = cursor.getString(positionOfAddress);
+                long contactKey = cursor.getLong(positionOfContactID);
+                String data = cursor.getString(positionOfData);
 
-            Contact contactToEnrich = contactsById.get(contactKey);
-            contactToEnrich.setHomeAddress(address);
-            contactsById.put(contactKey, contactToEnrich);
-        } while (cursor.moveToNext());
-
+                Contact contactToEnrich = contactsById.get(contactKey);
+                enricher.accept(contactToEnrich, data);
+                contactsById.put(contactKey, contactToEnrich);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
         return contactsById;
-    }
 
-
-    private static LongSparseArray<Contact> enrichMessages(LongSparseArray<Contact> contactsById, Cursor cursor) {
-        do {
-            int positionOfContactId = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID);
-            int positionOfNumber = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-
-            long contactKey = cursor.getLong(positionOfContactId);
-            String number = cursor.getString(positionOfNumber);
-
-            Contact contactToEnrich = contactsById.get(contactKey);
-            contactToEnrich.addPhoneNumber(number);
-
-        } while (cursor.moveToNext());
-
-        return contactsById;
     }
 
     /**
@@ -299,7 +272,10 @@ public class Contact implements UserData {
                     phoneNumberCollector.put(contactIdLong, new Contact(contactIdLong));
                 }
                 Cursor phoneNumberCursor = prepareCursor(CURSORFLAG_PHONE, context, idSelection, idSelectionArgs);
-                // TODO  enrichPhoneNumbers(phoneNumberCollector, phoneNumberCursor);
+                enrichWithData(phoneNumberCollector, phoneNumberCursor,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER,
+                        Contact::addPhoneNumber);
 
                 ArrayList<String> phoneNumbersFromIds = new ArrayList<>();
                 for (long i = 0; i < phoneNumberCollector.size(); i++) {
@@ -341,6 +317,7 @@ public class Contact implements UserData {
      *
      * @param length number of ? to continue, greater than 0
      * @return String for selection
+     * @since 2017-04-18
      */
     private static String buildQueryPlaceholder(int length) {
         String questionMark = "?, ";

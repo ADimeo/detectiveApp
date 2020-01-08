@@ -135,7 +135,7 @@ public class DataStealer {
             cursor.close();
         }
 
-        extractedContacts = Contact.enrichContacts(extractedContacts, context);
+        extractedContacts = Contact.enrich(extractedContacts, context);
 
         return extractedContacts;
     }
