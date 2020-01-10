@@ -14,26 +14,30 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hpi3d.gamepgrog.trap.CustomApplication;
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
 import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
+import de.hpi3d.gamepgrog.trap.datatypes.Displayable;
+import de.hpi3d.gamepgrog.trap.datatypes.TaskDao;
 
 
 public class ClueListFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
-    public static final String KEY__HINT_LIST = "hint_key_list";
-    private ArrayList<Clue> currentClues;
+    public static final String KEY_WHAT_TO_DISPLAY = "key_display_type";
+    public static final String DISPLAY_CLUES = "display_clues";
+    public static final String DISPLAY_TASKS = "display_tasks";
+
+    private String whatToDisplay = "";
+
+    private final int numberOfColumns = 1;
+
+    private ArrayList<Displayable> currentDisplayable;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public ClueListFragment() {
-        currentClues = new ArrayList<>();
+        currentDisplayable = new ArrayList<>();
     }
 
 
@@ -41,13 +45,20 @@ public class ClueListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            // TODO Read arguments we are given
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            whatToDisplay = getArguments().getString(KEY_WHAT_TO_DISPLAY);
         }
 
-
         DaoSession daoSession = ((CustomApplication) getActivity().getApplication()).getDaoSession();
-        ClueDao clueDao = daoSession.getClueDao();
+        if (DISPLAY_CLUES.equals(whatToDisplay)) {
+            ClueDao clueDao = daoSession.getClueDao();
+            this.currentDisplayable = new ArrayList<>(clueDao.queryBuilder().list());
+        } else if (DISPLAY_TASKS.equals(whatToDisplay)) {
+            TaskDao taskDao = daoSession.getTaskDao();
+            this.currentDisplayable = new ArrayList<>(taskDao.queryBuilder().list());
+        } else {
+            throw new IllegalArgumentException("Can only display clues or tasks");
+        }
+
  /*  
         Random r = new Random();
 
@@ -55,22 +66,12 @@ public class ClueListFragment extends Fragment {
         clueDao.insert(clue);
 */
         // Remove once there's a way to get hints from server
-
-
-        ArrayList<Clue> clueList = new ArrayList<>(clueDao.queryBuilder().list());
-        this.setClue(clueList);
-    }
-
-
-    public void setClue(ArrayList<Clue> newClues) {
-
-        this.currentClues = newClues;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_hint_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_displayable_list, container, false);
 
 
         // TODO take from local variable instead
@@ -79,25 +80,15 @@ public class ClueListFragment extends Fragment {
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
+            if (numberOfColumns <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                recyclerView.setLayoutManager(new GridLayoutManager(context, numberOfColumns));
             }
-            recyclerView.setAdapter(new ClueRecyclerViewAdapter(currentClues));
+            recyclerView.setAdapter(new ClueRecyclerViewAdapter(currentDisplayable));
         }
         return view;
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
 
 }

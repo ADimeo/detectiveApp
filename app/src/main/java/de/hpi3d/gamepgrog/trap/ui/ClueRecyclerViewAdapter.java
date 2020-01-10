@@ -9,42 +9,41 @@ import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.datatypes.Clue;
+import de.hpi3d.gamepgrog.trap.datatypes.Displayable;
 
 
 public class ClueRecyclerViewAdapter extends RecyclerView.Adapter<ClueRecyclerViewAdapter.ViewHolder> {
 
-    private final List<Clue> clues;
+    private final List<Displayable> displayable;
 
 
-
-    public ClueRecyclerViewAdapter(List<Clue> items) {
-        clues = items;
+    public ClueRecyclerViewAdapter(List<Displayable> items) {
+        displayable = items;
     }
 
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_hint, parent, false);
+                .inflate(R.layout.fragment_displayable, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.clue = clues.get(position);
-        holder.clueView.setText(clues.get(position).getText());
+        holder.clue = displayable.get(position);
+        holder.clueView.setText(displayable.get(position).getDisplayString());
     }
 
     @Override
     public int getItemCount() {
-        return clues.size();
+        return displayable.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView clueView;
-        public Clue clue;
+        public Displayable clue;
 
         public ViewHolder(View view) {
             super(view);

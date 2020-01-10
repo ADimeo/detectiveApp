@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 
 @Entity
 @Parcel(Parcel.Serialization.BEAN)
-public class Clue {
+public class Clue implements Displayable {
 
     @Id(autoincrement = true)
     private Long id;
@@ -35,7 +35,8 @@ public class Clue {
     }
 
     @Generated(hash = 1330280195)
-    public Clue() {}
+    public Clue() {
+    }
 
     public String getText() {
         return text;
@@ -67,6 +68,12 @@ public class Clue {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    @Override
+    public String getDisplayString() {
+        return getText();
     }
 
     @NonNull

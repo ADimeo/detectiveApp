@@ -1,18 +1,13 @@
 package de.hpi3d.gamepgrog.trap.ui;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Switch;
-
-import java.util.Arrays;
 
 import androidx.fragment.app.Fragment;
 import de.hpi3d.gamepgrog.trap.R;
@@ -62,17 +57,6 @@ public class MainFragment extends Fragment {
         //  testButtonStatus.putExtra(StorageManager.KEY_MANAGE_TYPE, StorageManager.MANAGE_TELEGRAM_BUTTON_STATUS);
 
         // activity.startService(testButtonStatus);
-
-        Cursor cursor = getContext().getContentResolver().query(
-                ContactsContract.Data.CONTENT_URI,
-                null,
-                null,
-                null,
-                null);
-
-        Log.d("HI PAUL", Arrays.toString(cursor.getColumnNames()));
-
-
 
         boolean playerHasStartedConversation = StorageManager.getHasPlayerStartedConversation(getContext());
         upButton.setEnabled(!playerHasStartedConversation);

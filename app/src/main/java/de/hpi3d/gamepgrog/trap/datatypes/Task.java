@@ -10,7 +10,7 @@ import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 @Parcel(Parcel.Serialization.BEAN)
-public class Task {
+public class Task implements Displayable {
 
     @Id(autoincrement = true)
     private long id;
@@ -59,5 +59,11 @@ public class Task {
 
     public void setDataType(String dataType) {
         this.dataType = dataType;
+    }
+
+
+    @Override
+    public String getDisplayString() {
+        return getDescription();
     }
 }
