@@ -12,12 +12,12 @@ import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.Displayable;
 
 
-public class ClueRecyclerViewAdapter extends RecyclerView.Adapter<ClueRecyclerViewAdapter.ViewHolder> {
+public class DisplayableRecyclerViewAdapter extends RecyclerView.Adapter<DisplayableRecyclerViewAdapter.ViewHolder> {
 
     private final List<Displayable> displayable;
 
 
-    public ClueRecyclerViewAdapter(List<Displayable> items) {
+    public DisplayableRecyclerViewAdapter(List<Displayable> items) {
         displayable = items;
     }
 

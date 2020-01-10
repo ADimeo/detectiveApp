@@ -20,7 +20,7 @@ import de.hpi3d.gamepgrog.trap.datatypes.Displayable;
 import de.hpi3d.gamepgrog.trap.datatypes.TaskDao;
 
 
-public class ClueListFragment extends Fragment {
+public class DisplayableListFragment extends Fragment {
 
     public static final String KEY_WHAT_TO_DISPLAY = "key_display_type";
     public static final String DISPLAY_CLUES = "display_clues";
@@ -36,7 +36,7 @@ public class ClueListFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ClueListFragment() {
+    public DisplayableListFragment() {
         currentDisplayable = new ArrayList<>();
     }
 
@@ -85,7 +85,7 @@ public class ClueListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, numberOfColumns));
             }
-            recyclerView.setAdapter(new ClueRecyclerViewAdapter(currentDisplayable));
+            recyclerView.setAdapter(new DisplayableRecyclerViewAdapter(currentDisplayable));
         }
         return view;
     }
