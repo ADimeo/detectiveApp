@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat;
 
 import de.hpi3d.gamepgrog.trap.DataStealer;
 import de.hpi3d.gamepgrog.trap.OurFirebaseMessagingService;
+import de.hpi3d.gamepgrog.trap.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
@@ -29,10 +30,6 @@ import de.hpi3d.gamepgrog.trap.future.Consumer;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
-
-
-    private Map<Integer, Consumer<Boolean>> permissionCallbacks = new HashMap<>();
-    private int lastPermissionsIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,30 +133,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
-        boolean isGranted = grantResults.length > 0
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED;
-
-        if (permissionCallbacks.containsKey(requestCode)) {
-            permissionCallbacks.get(requestCode).accept(isGranted);
-            permissionCallbacks.remove(requestCode);
-        }
+        PermissionHelper.onPermission(requestCode, grantResults);
     }
 
     private int getUserId() {
         return BackendManagerIntentService.getPlayerId(this);
     }
 
-    public void setPermission(String permission, Consumer<Boolean> callback) {
-        if (ContextCompat.checkSelfPermission(this, permission)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this, new String[]{permission},
-                    ++lastPermissionsIndex);
-            permissionCallbacks.put(lastPermissionsIndex, callback);
-        } else {
-            callback.accept(true);
-        }
-    }
 //
 //    @Override
 //    public boolean hasPermission(String permission) {

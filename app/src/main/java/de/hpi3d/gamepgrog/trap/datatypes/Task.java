@@ -1,8 +1,14 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
+
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
+
+import de.hpi3d.gamepgrog.trap.PermissionHelper;
 
 @Parcel(Parcel.Serialization.BEAN)
 public class Task {
@@ -32,5 +38,9 @@ public class Task {
 
     public String getDataType() {
         return dataType;
+    }
+
+    public void execute(Activity app) {
+//        PermissionHelper.setPermission(app, userDataPermission);
     }
 }
