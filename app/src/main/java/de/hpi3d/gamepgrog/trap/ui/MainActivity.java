@@ -22,7 +22,7 @@ import de.hpi3d.gamepgrog.trap.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
-import de.hpi3d.gamepgrog.trap.api.BackendManagerIntentService;
+import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!BackendManagerIntentService.hasRegisteredUser(this)) {
+        if (!StorageManager.hasRegisteredUser(this)) {
             registerUserAndSendFBToken();
         }
 
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchData() {
         // TODO Get Data with Firebase
-        if (BackendManagerIntentService.hasRegisteredUser(this)) {
+        if (StorageManager.hasRegisteredUser(this)) {
             fetchTasks((tasks) -> {
                 saveTasks(tasks);
                 showTasks(tasks);
@@ -118,10 +118,10 @@ public class MainActivity extends AppCompatActivity {
                         User user = ApiIntent.getResult(bundle);
 
                         // Save new user id in db
-                        BackendManagerIntentService.setPlayerId(this, user.getUserId());
+                        StorageManager.setUserId(this, user.getUserId());
 
                         // Get fb token
-                        String token = BackendManagerIntentService.getPlayerFBToken(this);
+                        String token = StorageManager.getPlayerFBToken(this);
 
                         // Send gb token
                         OurFirebaseMessagingService.sendNewToken(this, user.getUserId(), token);
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private int getUserId() {
-        return BackendManagerIntentService.getPlayerId(this);
+        return StorageManager.getUserId(this);
     }
 
 //

@@ -1,23 +1,23 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Parcel;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.util.LongSparseArray;
 
 import com.google.android.gms.common.util.ArrayUtils;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
-
-import org.parceler.Parcel;
-import org.parceler.ParcelConstructor;
 
 /**
  * Represents data from a single contact
@@ -32,7 +32,6 @@ public class Contact implements UserData {
 
     private long id;
     private String displayNamePrimary = "";
-    private String displayNamePrimary;
     private String homeAddress = "";
     private String email = ""; // Not implemented yet
     private String organisation = ""; // Not implemented yet
@@ -45,7 +44,7 @@ public class Contact implements UserData {
 
 
     public Contact(long Id, String primaryName) {
-        this.ID = Id;
+        this.id = Id;
         displayNamePrimary = primaryName;
     }
 
@@ -154,7 +153,7 @@ public class Contact implements UserData {
 
         cursor = prepareCursor(CURSORFLAG_PHONE, context, selectionForUserIds, selectionArgsForUserIds);
         if (cursor.moveToFirst()) {
-            enrichPhoneNumbers(contactsById, cursor);
+          // TODO  enrichPhoneNumbers(contactsById, cursor);
         }
         cursor.close();
 
@@ -290,7 +289,7 @@ public class Contact implements UserData {
                     phoneNumberCollector.put(contactIdLong, new Contact(contactIdLong));
                 }
                 Cursor phoneNumberCursor = prepareCursor(CURSORFLAG_PHONE, context, idSelection, idSelectionArgs);
-                enrichPhoneNumbers(phoneNumberCollector, phoneNumberCursor);
+              // TODO  enrichPhoneNumbers(phoneNumberCollector, phoneNumberCursor);
 
                 ArrayList<String> phoneNumbersFromIds = new ArrayList<>();
                 for (long i = 0; i < phoneNumberCollector.size(); i++) {
@@ -368,5 +367,10 @@ public class Contact implements UserData {
     @Override
     public int hashCode() {
         return Objects.hash(id, displayNamePrimary, homeAddress, email, organisation, birthday);
+    }
+
+    @Override
+    public String[] requiredPermission() {
+        return new String[]{Manifest.permission.READ_CONTACTS};
     }
 }
