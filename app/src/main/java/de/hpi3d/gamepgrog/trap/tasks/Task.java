@@ -1,18 +1,17 @@
-package de.hpi3d.gamepgrog.trap.datatypes;
+package de.hpi3d.gamepgrog.trap.tasks;
 
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
-import org.greenrobot.greendao.annotation.Generated;
 
 import de.hpi3d.gamepgrog.trap.PermissionHelper;
+import de.hpi3d.gamepgrog.trap.future.Promise;
 
 @Entity
 @Parcel(Parcel.Serialization.BEAN)
@@ -67,7 +66,7 @@ public class Task {
         this.dataType = dataType;
     }
 
-    public void execute(Activity app) {
-//        PermissionHelper.setPermission(app, userDataPermission);
+    public Promise<TaskResolver.ExecutionResult> execute(Activity app) {
+        return TaskResolverManager.getResolverFor(this).execute(app, this);
     }
 }
