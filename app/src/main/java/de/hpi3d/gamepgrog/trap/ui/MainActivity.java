@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         OurFirebaseMessagingService.init(this);
-        setContentView(R.layout.activity_main);
 //        new Task(10, "Test", "Hello World", "contact").execute(this);
     }
 

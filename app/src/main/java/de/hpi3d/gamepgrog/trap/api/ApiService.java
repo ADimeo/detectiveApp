@@ -9,11 +9,11 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
-import de.hpi3d.gamepgrog.trap.tasks.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
 import de.hpi3d.gamepgrog.trap.future.Consumer;
+import de.hpi3d.gamepgrog.trap.tasks.Task;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -167,6 +167,8 @@ public class ApiService extends IntentService {
         try {
             res = call.execute();
         } catch (IOException ignored) {
+        } catch (NullPointerException n) {
+            n.printStackTrace();
         }
 
         if (res == null) {
