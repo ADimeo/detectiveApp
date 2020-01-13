@@ -10,7 +10,7 @@ import org.greenrobot.greendao.annotation.Keep;
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
-import de.hpi3d.gamepgrog.trap.PermissionHelper;
+import de.hpi3d.gamepgrog.trap.datatypes.Displayable;
 import de.hpi3d.gamepgrog.trap.future.Promise;
 
 @Entity

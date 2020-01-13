@@ -15,10 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import de.hpi3d.gamepgrog.trap.CustomApplication;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
-import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
 import de.hpi3d.gamepgrog.trap.datatypes.Displayable;
-import de.hpi3d.gamepgrog.trap.datatypes.TaskDao;
-
+import de.hpi3d.gamepgrog.trap.tasks.DaoSession;
+import de.hpi3d.gamepgrog.trap.tasks.TaskDao;
 
 public class DisplayableListFragment extends Fragment {
 
