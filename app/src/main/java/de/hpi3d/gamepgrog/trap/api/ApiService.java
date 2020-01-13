@@ -137,7 +137,7 @@ public class ApiService extends IntentService {
 
     private void isTaskFinished(ApiIntent intent) {
         int userid = intent.getExtra(KEY_USER_ID);
-        int taskid = intent.getExtra(KEY_TASK_ID);
+        long taskid = intent.getExtra(KEY_TASK_ID);
         Response<Boolean> response = execute(api.isTaskFinished(userid, taskid));
         intent.sendBack(response);
     }

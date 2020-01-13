@@ -33,10 +33,7 @@ public abstract class TaskResolver<T extends UserData> {
     }
 
     protected void showResultMessage(Activity app, Task task, ExecutionResult result) {
-        Toast t = new Toast(app);
-        t.setText(getResultMessage(task, result));
-        t.setDuration(Toast.LENGTH_SHORT);
-        t.show();
+        Toast.makeText(app, getResultMessage(task, result), Toast.LENGTH_SHORT).show();
     }
 
     protected String getResultMessage(Task task, ExecutionResult result) {

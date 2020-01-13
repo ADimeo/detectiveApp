@@ -27,7 +27,7 @@ import retrofit2.http.Path;
  */
 class ApiBuilder {
 
-    private final static String BASE_URL = "http://78.47.11.229:5000";
+    private final static String BASE_URL = "http://78.47.11.229:8080";
     private static OkHttpClient client = null;
 
 

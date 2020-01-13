@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         OurFirebaseMessagingService.init(this);
         setContentView(R.layout.activity_main);
+//        new Task(10, "Test", "Hello World", "contact").execute(this);
     }
 
     @Override
@@ -69,16 +70,8 @@ public class MainActivity extends AppCompatActivity {
                 .start();
     }
 
-    private void showTasks(List<Task> tasks) {
-        // TODO Update UI
-    }
-
     private void showClues(List<Clue> clues) {
         // TODO Update UI
-    }
-
-    private void saveTasks(List<Task> tasks) {
-        // TODO
     }
 
     private void saveClues(List<Clue> clues) {
