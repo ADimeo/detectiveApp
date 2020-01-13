@@ -31,7 +31,7 @@ public abstract class TaskResolver<T extends UserData> {
         Promise<ExecutionResult> p = Promise.create();
 
         if (applicableFor(task)) {
-            if (!hasPermissions(app)) {
+            if (!hasPermissions(app)) {  // TODO error: does nothing if permission present
 
                 // Show Dialog
                 showPermissionDialog(app).then((success) -> {
@@ -74,7 +74,7 @@ public abstract class TaskResolver<T extends UserData> {
                 .setCall(ApiService.CALL_ADD_DATA)
                 .put(ApiService.KEY_USER_ID, StorageManager.getUserId(app))
                 .put(ApiService.KEY_DATA_TYPE, getDatatypeName())
-                .put(ApiService.KEY_DATA, data)
+                .put(ApiService.KEY_DATA, data)  // TODO complete
                 .start();
     }
 
