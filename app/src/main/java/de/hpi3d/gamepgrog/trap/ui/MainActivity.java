@@ -11,9 +11,9 @@ import java.util.List;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import de.hpi3d.gamepgrog.trap.DataStealer;
-import de.hpi3d.gamepgrog.trap.OurFirebaseMessagingService;
-import de.hpi3d.gamepgrog.trap.PermissionHelper;
+import de.hpi3d.gamepgrog.trap.android.DataStealer;
+import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
+import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;

@@ -5,7 +5,7 @@ import android.app.AlertDialog;
 
 import java.util.List;
 
-import de.hpi3d.gamepgrog.trap.PermissionHelper;
+import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
