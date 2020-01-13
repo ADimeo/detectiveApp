@@ -3,8 +3,6 @@ package de.hpi3d.gamepgrog.trap.datatypes;
 import android.Manifest;
 import android.location.Location;
 
-import androidx.annotation.Nullable;
-
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
@@ -13,6 +11,12 @@ public class LocationData implements UserData {
 
     private double longitude, latitude;
     private long time;
+
+    public LocationData(Location location) {
+        this.longitude = location.getLongitude();
+        this.latitude = location.getLatitude();
+        this.time = location.getTime();
+    }
 
     @ParcelConstructor
     public LocationData(double longitude, double latitude, long time) {

