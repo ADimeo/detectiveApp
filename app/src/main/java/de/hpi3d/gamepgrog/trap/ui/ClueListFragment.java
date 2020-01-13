@@ -16,7 +16,7 @@ import de.hpi3d.gamepgrog.trap.CustomApplication;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
-import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
+import de.hpi3d.gamepgrog.trap.tasks.DaoSession;
 
 
 public class ClueListFragment extends Fragment {

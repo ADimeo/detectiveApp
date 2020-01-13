@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import de.hpi3d.gamepgrog.trap.CustomApplication;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
-import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
+import de.hpi3d.gamepgrog.trap.tasks.DaoSession;
 import de.hpi3d.gamepgrog.trap.tasks.Task;
-import de.hpi3d.gamepgrog.trap.datatypes.TaskDao;
+import de.hpi3d.gamepgrog.trap.tasks.TaskDao;
 
 
 /**

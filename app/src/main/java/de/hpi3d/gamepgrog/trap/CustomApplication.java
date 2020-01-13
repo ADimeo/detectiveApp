@@ -3,8 +3,8 @@ package de.hpi3d.gamepgrog.trap;
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 
-import de.hpi3d.gamepgrog.trap.datatypes.DaoMaster;
-import de.hpi3d.gamepgrog.trap.datatypes.DaoSession;
+import de.hpi3d.gamepgrog.trap.tasks.DaoMaster;
+import de.hpi3d.gamepgrog.trap.tasks.DaoSession;
 
 
 public class CustomApplication extends Application {
