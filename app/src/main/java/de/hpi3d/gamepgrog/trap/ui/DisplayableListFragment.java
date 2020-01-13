@@ -63,8 +63,8 @@ public class DisplayableListFragment extends Fragment {
      /*
         // Uncomment for fast local test data
 
-        Clue clue = new Clue("PLACEHOLDER CLUE GENERATED IN DisplayableListFragment " + r.nextInt(100));
-        daoSession.getClueDao().insert(clue);
+        Clue displayable = new Clue("PLACEHOLDER CLUE GENERATED IN DisplayableListFragment " + r.nextInt(100));
+        daoSession.getClueDao().insert(displayable);
         Task task = new Task("PLACEHOLDER TASK GENERATED IN DisplayableListFragment " + r.nextInt(100));
         daoSession.getTaskDao().insert(task);
 
@@ -88,7 +88,8 @@ public class DisplayableListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, numberOfColumns));
             }
-            recyclerView.setAdapter(new DisplayableRecyclerViewAdapter(currentDisplayable));
+
+            recyclerView.setAdapter(new DisplayableRecyclerViewAdapter(currentDisplayable, getActivity()));
         }
 
         Log.d("ON_CREATE_VIEW", Arrays.toString(currentDisplayable.toArray(new Displayable[0])));
