@@ -2,7 +2,6 @@ package de.hpi3d.gamepgrog.trap.ui;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -13,22 +12,17 @@ import java.util.Locale;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
-import de.hpi3d.gamepgrog.trap.android.DataStealer;
-import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
-import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
 import androidx.viewpager.widget.ViewPager;
-import de.hpi3d.gamepgrog.trap.DataStealer;
-import de.hpi3d.gamepgrog.trap.OurFirebaseMessagingService;
-import de.hpi3d.gamepgrog.trap.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.R;
+import de.hpi3d.gamepgrog.trap.android.DataStealer;
+import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
+import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.future.Consumer;
-import de.hpi3d.gamepgrog.trap.tasks.Task;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
@@ -63,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
         if (StorageManager.hasRegisteredUser(this)) {
             fetchClues((clues -> {
                 saveClues(clues);
-                showClues(clues);
             }));
         }
     }
