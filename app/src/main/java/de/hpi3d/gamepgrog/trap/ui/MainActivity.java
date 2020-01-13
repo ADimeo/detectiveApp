@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
                         // Save new user id in db
                         StorageManager.setUserId(this, user.getUserId());
+                        StorageManager.setBotUrl(this, user.getRegisterURL());
 
                         // Get fb token
                         String token = StorageManager.getPlayerFBToken(this);

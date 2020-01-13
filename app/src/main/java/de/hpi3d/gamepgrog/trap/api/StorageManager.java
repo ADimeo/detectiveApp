@@ -64,6 +64,10 @@ public class StorageManager {
         return preferences.getString(KEY_BOT_URL, null);
     }
 
+    public static void setBotUrl(Context applicationContext, String botUrl) {
+        SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        preferences.edit().putString(KEY_BOT_URL, botUrl).apply();
+    }
 
     /**
      * Returns the whether or not the player has tapped the "Contact Andy Abbot" Button.
