@@ -2,6 +2,8 @@ package de.hpi3d.gamepgrog.trap.tasks;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -11,12 +13,15 @@ import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
+import de.hpi3d.gamepgrog.trap.future.EmptyPromise;
 import de.hpi3d.gamepgrog.trap.future.Promise;
 
 public abstract class TaskResolver<T extends UserData> {
 
+    private static final String TAG = "TaskResolver";
+
     public enum ExecutionResult {
-        SUCCESS, PERMISSION_FAILED, TASK_FAILED
+        SUCCESS, PERMISSION_FAILED, UPLOAD_FAILED, TASK_FAILED
     }
 
     protected abstract String getDatatypeName();
@@ -27,11 +32,46 @@ public abstract class TaskResolver<T extends UserData> {
         return R.string.abstract_permissions_dialog;
     }
 
+    protected void showResultMessage(Activity app, Task task, ExecutionResult result) {
+        Toast t = new Toast(app);
+        t.setText(getResultMessage(task, result));
+        t.setDuration(Toast.LENGTH_SHORT);
+        t.show();
+    }
+
+    protected String getResultMessage(Task task, ExecutionResult result) {
+        switch (result) {
+            case SUCCESS:
+                return "Task fulfilled successfully";
+            case PERMISSION_FAILED:
+                return "Task cannot be fulfilled without permissions";
+            case UPLOAD_FAILED:
+                return "No network connection, please try again later";
+            case TASK_FAILED:
+                return "Task failed, there is something wrong with your data";
+            default:
+                throw new IllegalStateException("");
+        }
+    }
+
+    public EmptyPromise executeAndShowResult(Activity app, Task task) {
+        EmptyPromise p = EmptyPromise.create();
+
+        execute(app, task).then((result) -> {
+            showResultMessage(app, task, result);
+            p.resolve();
+        });
+
+        return p;
+    }
+
     public Promise<ExecutionResult> execute(Activity app, Task task) {
         Promise<ExecutionResult> p = Promise.create();
 
         if (applicableFor(task)) {
-            if (!hasPermissions(app)) {  // TODO error: does nothing if permission present
+            if (hasPermissions(app)) {
+                executeWithPermissionsPresent(app, task, p);
+            } else {
 
                 // Show Dialog
                 showPermissionDialog(app).then((success) -> {
@@ -44,20 +84,7 @@ public abstract class TaskResolver<T extends UserData> {
                             if (!granted) {
                                 p.resolve(ExecutionResult.PERMISSION_FAILED);
                             } else {
-
-                                // Steal Data
-                                fetchData(app).then((data) -> {
-
-                                    // Send data to Server
-                                    sendData(app, data);
-
-                                    // Check if task is finished
-                                    isTaskFinished(app, task).then((isFinished) -> {
-                                        p.resolve(isFinished ?
-                                                ExecutionResult.SUCCESS :
-                                                ExecutionResult.TASK_FAILED);
-                                    });
-                                });
+                                executeWithPermissionsPresent(app, task, p);
                             }
                         });
                     }
@@ -68,14 +95,42 @@ public abstract class TaskResolver<T extends UserData> {
         return p;
     }
 
-    protected void sendData(Activity app, List<T> data) {
+    protected void executeWithPermissionsPresent(Activity app, Task task, Promise<ExecutionResult> p) {
+        // Steal Data
+        fetchData(app).then((data) -> {
+
+            // Send data to Server
+            sendData(app, data).then((success) -> {
+                if (!success) {
+                    p.resolve(ExecutionResult.UPLOAD_FAILED);
+                } else {
+
+                    // Check if task is finished
+                    isTaskFinished(app, task).then((isFinished) -> {
+                        if (isFinished) {
+                            StorageManager.removeTask(app.getApplication(), task);
+                        }
+
+                        p.resolve(isFinished ?
+                                ExecutionResult.SUCCESS :
+                                ExecutionResult.TASK_FAILED);
+                    });
+                }
+            });
+        });
+    }
+
+    protected Promise<Boolean> sendData(Activity app, List<T> data) {
+        Promise<Boolean> p = Promise.create();
         ApiIntent
                 .build(app)
                 .setCall(ApiService.CALL_ADD_DATA)
                 .put(ApiService.KEY_USER_ID, StorageManager.getUserId(app))
                 .put(ApiService.KEY_DATA_TYPE, getDatatypeName())
-                .put(ApiService.KEY_DATA, data)  // TODO complete
+                .put(ApiService.KEY_DATA, data)
+                .putReceiver((code, bundle) -> p.resolve(code == ApiService.SUCCESS))
                 .start();
+        return p;
     }
 
     protected Promise<Boolean> isTaskFinished(Activity app, Task task) {
@@ -112,7 +167,7 @@ public abstract class TaskResolver<T extends UserData> {
                 .setNegativeButton(R.string.permissions_dialog_no, (dialog, which) -> {
                     p.resolve(false);
                 })
-                .create();
+                .create().show();
         return p;
     }
 

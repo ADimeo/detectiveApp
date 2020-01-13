@@ -2,6 +2,7 @@ package de.hpi3d.gamepgrog.trap.ui;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -41,36 +42,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        fetchData();
+//        fetchData();
     }
 
     private void fetchData() {
-        // TODO Get Data with Firebase
         if (StorageManager.hasRegisteredUser(this)) {
-            fetchTasks((tasks) -> {
-                saveTasks(tasks);
-                showTasks(tasks);
-            });
             fetchClues((clues -> {
                 saveClues(clues);
                 showClues(clues);
             }));
         }
-    }
-
-    private void fetchTasks(Consumer<List<Task>> callback) {
-        ApiIntent
-                .build(this)
-                .setCall(ApiService.CALL_FETCH_TASKS)
-                .put(ApiService.KEY_USER_ID, getUserId())
-                .putReceiver((code, bundle) -> {
-                    if (code == ApiService.SUCCESS) {
-                        List<Task> tasks = ApiIntent.getResult(bundle);
-                        callback.accept(tasks);
-                    }
-                    // TODO handle Error
-                })
-                .start();
     }
 
     private void fetchClues(Consumer<List<Clue>> callback) {
