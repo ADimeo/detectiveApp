@@ -10,6 +10,7 @@ import org.greenrobot.greendao.annotation.Keep;
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
+import de.hpi3d.gamepgrog.trap.future.EmptyPromise;
 import de.hpi3d.gamepgrog.trap.datatypes.Displayable;
 import de.hpi3d.gamepgrog.trap.future.Promise;
 
@@ -66,8 +67,8 @@ public class Task implements Displayable {
         this.dataType = dataType;
     }
 
-    public Promise<TaskResolver.ExecutionResult> execute(Activity app) {
-        return TaskResolverManager.getResolverFor(this).execute(app, this);
+    public EmptyPromise execute(Activity app) {
+        return TaskResolverManager.getResolverFor(this).executeAndShowResult(app, this);
     }
 
 

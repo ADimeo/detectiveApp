@@ -1,4 +1,4 @@
-package de.hpi3d.gamepgrog.trap;
+package de.hpi3d.gamepgrog.trap.android;
 
 import android.content.Context;
 import android.database.Cursor;

@@ -7,9 +7,9 @@ import java.util.List;
 public class ArrayExt {
 
     public static List<Integer> toIntList(int[] array) {
-        List<Integer> list = new ArrayList<>(array.length);
-        for (int i = 0; i < array.length; i++) {
-            list.set(i, array[i]);
+        List<Integer> list = new ArrayList<>();
+        for (int value : array) {
+            list.add(value);
         }
         return list;
     }

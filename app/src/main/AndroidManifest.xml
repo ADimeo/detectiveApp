@@ -32,7 +32,7 @@
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name="de.hpi3d.gamepgrog.trap.OurFirebaseMessagingService"
+            android:name="de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

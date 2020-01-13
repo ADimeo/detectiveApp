@@ -2,6 +2,7 @@ package de.hpi3d.gamepgrog.trap.ui;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -11,9 +12,9 @@ import java.util.List;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import de.hpi3d.gamepgrog.trap.DataStealer;
-import de.hpi3d.gamepgrog.trap.OurFirebaseMessagingService;
-import de.hpi3d.gamepgrog.trap.PermissionHelper;
+import de.hpi3d.gamepgrog.trap.android.DataStealer;
+import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
+import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
@@ -36,41 +37,22 @@ public class MainActivity extends AppCompatActivity {
 
         OurFirebaseMessagingService.init(this);
         setContentView(R.layout.activity_main);
+//        new Task(10, "Test", "Hello World", "contact").execute(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        fetchData();
+//        fetchData();
     }
 
     private void fetchData() {
-        // TODO Get Data with Firebase
         if (StorageManager.hasRegisteredUser(this)) {
-            fetchTasks((tasks) -> {
-                saveTasks(tasks);
-                showTasks(tasks);
-            });
             fetchClues((clues -> {
                 saveClues(clues);
                 showClues(clues);
             }));
         }
-    }
-
-    private void fetchTasks(Consumer<List<Task>> callback) {
-        ApiIntent
-                .build(this)
-                .setCall(ApiService.CALL_FETCH_TASKS)
-                .put(ApiService.KEY_USER_ID, getUserId())
-                .putReceiver((code, bundle) -> {
-                    if (code == ApiService.SUCCESS) {
-                        List<Task> tasks = ApiIntent.getResult(bundle);
-                        callback.accept(tasks);
-                    }
-                    // TODO handle Error
-                })
-                .start();
     }
 
     private void fetchClues(Consumer<List<Clue>> callback) {
@@ -88,16 +70,8 @@ public class MainActivity extends AppCompatActivity {
                 .start();
     }
 
-    private void showTasks(List<Task> tasks) {
-        // TODO Update UI
-    }
-
     private void showClues(List<Clue> clues) {
         // TODO Update UI
-    }
-
-    private void saveTasks(List<Task> tasks) {
-        // TODO
     }
 
     private void saveClues(List<Clue> clues) {

@@ -10,5 +10,6 @@
     <string name="abstract_permissions_dialog">We need this Permission</string>
     <string name="permissions_dialog_yes">Ok</string>
     <string name="permissions_dialog_no">No</string>
+    <string name="fcm_message">Andy Abbot has new Tasks for you</string>
 
 </resources>

@@ -2,7 +2,7 @@ package de.hpi3d.gamepgrog.trap.tasks;
 
 import android.Manifest;
 
-import de.hpi3d.gamepgrog.trap.DataStealer;
+import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;

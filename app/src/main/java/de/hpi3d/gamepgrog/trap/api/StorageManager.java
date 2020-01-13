@@ -96,6 +96,12 @@ public class StorageManager {
         clueDao.insertOrReplaceInTx(cluesToSet);
     }
 
+    public static void removeClue(Application application, Clue clue) {
+        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
+        ClueDao clueDao = daoSession.getClueDao();
+        clueDao.delete(clue);
+    }
+
     public static ArrayList<Clue> getClues(Application application) {
         DaoSession daoSession = ((CustomApplication) application).getDaoSession();
         ClueDao clueDao = daoSession.getClueDao();
@@ -113,6 +119,12 @@ public class StorageManager {
         TaskDao taskDao = daoSession.getTaskDao();
         taskDao.deleteAll();
         taskDao.insertOrReplaceInTx(tasksToAdd);
+    }
+
+    public static void removeTask(Application application, Task task) {
+        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
+        TaskDao taskDao = daoSession.getTaskDao();
+        taskDao.delete(task);
     }
 
     public static ArrayList<Task> getTasks(Application application) {

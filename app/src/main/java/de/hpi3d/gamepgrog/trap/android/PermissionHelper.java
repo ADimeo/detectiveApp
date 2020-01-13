@@ -1,4 +1,4 @@
-package de.hpi3d.gamepgrog.trap;
+package de.hpi3d.gamepgrog.trap.android;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
