@@ -2,11 +2,13 @@ package de.hpi3d.gamepgrog.trap.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -58,13 +60,17 @@ public class DisplayableListFragment extends Fragment {
             throw new IllegalArgumentException("Can only display clues or tasks");
         }
 
- /*  
-        Random r = new Random();
+     /*
+        // Uncomment for fast local test data
 
-        Clue clue = new Clue("This is a hint! It's number is " + r.nextInt(100));
-        clueDao.insert(clue);
-*/
-        // Remove once there's a way to get hints from server
+        Clue clue = new Clue("PLACEHOLDER CLUE GENERATED IN DisplayableListFragment " + r.nextInt(100));
+        daoSession.getClueDao().insert(clue);
+        Task task = new Task("PLACEHOLDER TASK GENERATED IN DisplayableListFragment " + r.nextInt(100));
+        daoSession.getTaskDao().insert(task);
+
+        Clue[] clues = (daoSession.getClueDao().queryBuilder().list()).toArray(new Clue[0]);
+        Log.d("Temp", Arrays.toString(clues));
+        */
     }
 
     @Override
@@ -72,8 +78,6 @@ public class DisplayableListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_displayable_list, container, false);
 
-
-        // TODO take from local variable instead
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -86,6 +90,8 @@ public class DisplayableListFragment extends Fragment {
             }
             recyclerView.setAdapter(new DisplayableRecyclerViewAdapter(currentDisplayable));
         }
+
+        Log.d("ON_CREATE_VIEW", Arrays.toString(currentDisplayable.toArray(new Displayable[0])));
         return view;
     }
 

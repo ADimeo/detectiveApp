@@ -10,9 +10,10 @@ import org.greenrobot.greendao.annotation.Keep;
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
-import de.hpi3d.gamepgrog.trap.future.EmptyPromise;
+import java.util.Random;
+
 import de.hpi3d.gamepgrog.trap.datatypes.Displayable;
-import de.hpi3d.gamepgrog.trap.future.Promise;
+import de.hpi3d.gamepgrog.trap.future.EmptyPromise;
 
 @Entity
 @Parcel(Parcel.Serialization.BEAN)
@@ -20,7 +21,13 @@ public class Task implements Displayable {
 
     @Id(autoincrement = true)
     private long id;
+
     private String name, description, dataType;
+
+    public Task(String description) {
+        this.description = description;
+        this.id = new Random().nextLong();
+    }
 
     @ParcelConstructor
     @Keep

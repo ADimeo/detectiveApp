@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="de.hpi3d.gamepgrog.trap.api.StorageManager"
+            android:name=".api.StorageManager"
             android:enabled="true"
             android:exported="false" />
         <service
@@ -38,7 +38,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name="de.hpi3d.gamepgrog.trap.api.ApiService"
+        <service
+            android:name=".api.ApiService"
             android:enabled="true"
             android:exported="false" />
     </application>

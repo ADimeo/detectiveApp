@@ -6,8 +6,10 @@ import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,21 +17,32 @@ import androidx.appcompat.app.AppCompatActivity;
 import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
 import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
+import androidx.viewpager.widget.ViewPager;
+import de.hpi3d.gamepgrog.trap.DataStealer;
+import de.hpi3d.gamepgrog.trap.OurFirebaseMessagingService;
+import de.hpi3d.gamepgrog.trap.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
+import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
-import de.hpi3d.gamepgrog.trap.tasks.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.future.Consumer;
+import de.hpi3d.gamepgrog.trap.tasks.Task;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+        ViewPager viewPager = findViewById(R.id.view_pager);
+        viewPager.setAdapter(sectionsPagerAdapter);
+        TabLayout tabs = findViewById(R.id.tabs);
+        tabs.setupWithViewPager(viewPager);
 
         if (!StorageManager.hasRegisteredUser(this)) {
             registerUserAndSendFBToken();
@@ -70,9 +83,6 @@ public class MainActivity extends AppCompatActivity {
                 .start();
     }
 
-    private void showClues(List<Clue> clues) {
-        // TODO Update UI
-    }
 
     private void saveClues(List<Clue> clues) {
         // TODO
@@ -110,45 +120,10 @@ public class MainActivity extends AppCompatActivity {
         return StorageManager.getUserId(this);
     }
 
-//
-//    @Override
-//    public boolean hasPermission(String permission) {
-//        return (ContextCompat.checkSelfPermission(this, permission)
-//                == PackageManager.PERMISSION_GRANTED);
-//    }
-//
-//    @Override
-//    public List<CalendarEvent> getCalendarEvents() throws NoPermissionsException {
-//        try {
-//            return DataStealer.takeCalendarData(getApplicationContext());
-//        } catch (SecurityException e) {
-//            throw new NoPermissionsException();
-//        }
-//    }
-//
-//    @Override
-//    public List<Contact> getContacts() throws NoPermissionsException {
-//        try {
-//
-//            return DataStealer.takeContactData(getApplicationContext());
-//        } catch (SecurityException e) {
-//            throw new NoPermissionsException();
-//        }
-//
-//    }
-//
-//    @Override
-//    public List<LocationData> getLocation() throws NoPermissionsException {
-//        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
-//        DataStealer locationStealer = new DataStealer(client);
-//        locationStealer.getContinuousLocationUpdates(getApplicationContext());
-//
-//        return null;
-//    }
-
-//    public String getLanguage() {
-//        return Locale.getDefault().getLanguage();
-//    }
+    public String getLanguage() {
+        // TODO Wrap in object
+        return Locale.getDefault().getLanguage();
+    }
 
     private void getContinuousLocationUpdates() {
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
@@ -156,15 +131,4 @@ public class MainActivity extends AppCompatActivity {
         locationStealer.getContinuousLocationUpdates(getApplicationContext());
     }
 
-   /* Needs higher API level. How to refactor?
-
-    private void sendLocationData(List<Location> locations) {
-        int userid = getUserId();
-        List<LocationData> locationsData = locations
-                .stream()
-                .map(LocationData::fromLocation)
-                .collect(Collectors.toList());
-        server.addData(userid, UserData.buildWithLocations(locationsData))
-                .subscribe();
-    }*/
 }
