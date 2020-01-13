@@ -1,37 +1,30 @@
 package de.hpi3d.gamepgrog.trap.ui;
 
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+
 import de.hpi3d.gamepgrog.trap.DataStealer;
 import de.hpi3d.gamepgrog.trap.OurFirebaseMessagingService;
+import de.hpi3d.gamepgrog.trap.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
+import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
-import de.hpi3d.gamepgrog.trap.datatypes.Task;
+import de.hpi3d.gamepgrog.trap.tasks.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.future.Consumer;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
-
-
-    private Map<Integer, Consumer<Boolean>> permissionCallbacks = new HashMap<>();
-    private int lastPermissionsIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
         OurFirebaseMessagingService.init(this);
         setContentView(R.layout.activity_main);
-
-
     }
 
     @Override
@@ -123,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
                         // Save new user id in db
                         StorageManager.setUserId(this, user.getUserId());
+                        StorageManager.setBotUrl(this, user.getRegisterURL());
 
                         // Get fb token
                         String token = StorageManager.getPlayerFBToken(this);
@@ -137,30 +129,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
-        boolean isGranted = grantResults.length > 0
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED;
-
-        if (permissionCallbacks.containsKey(requestCode)) {
-            permissionCallbacks.get(requestCode).accept(isGranted);
-            permissionCallbacks.remove(requestCode);
-        }
+        PermissionHelper.onPermission(requestCode, grantResults);
     }
 
     private int getUserId() {
         return StorageManager.getUserId(this);
     }
 
-    public void setPermission(String permission, Consumer<Boolean> callback) {
-        if (ContextCompat.checkSelfPermission(this, permission)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this, new String[]{permission},
-                    ++lastPermissionsIndex);
-            permissionCallbacks.put(lastPermissionsIndex, callback);
-        } else {
-            callback.accept(true);
-        }
-    }
 //
 //    @Override
 //    public boolean hasPermission(String permission) {

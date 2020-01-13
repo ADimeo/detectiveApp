@@ -1,6 +1,7 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -354,5 +355,10 @@ public class Contact implements UserData {
     @Override
     public int hashCode() {
         return Objects.hash(id, displayNamePrimary, homeAddress, email, organisation, birthday);
+    }
+
+    @Override
+    public String[] requiredPermission() {
+        return new String[]{Manifest.permission.READ_CONTACTS};
     }
 }

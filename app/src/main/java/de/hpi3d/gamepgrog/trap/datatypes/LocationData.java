@@ -1,6 +1,9 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
+import android.Manifest;
 import android.location.Location;
+
+import androidx.annotation.Nullable;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
@@ -32,5 +35,10 @@ public class LocationData implements UserData {
 
     public long getTime() {
         return time;
+    }
+
+    @Override
+    public String[] requiredPermission() {
+        return new String[]{Manifest.permission.ACCESS_COARSE_LOCATION};
     }
 }

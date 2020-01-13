@@ -3,6 +3,7 @@ package de.hpi3d.gamepgrog.trap.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import de.hpi3d.gamepgrog.trap.api.StorageManager;
 
 
 public class MainFragment extends Fragment {
+
+    private static final String TAG = "MAIN_FRAGMENT";
 
     private Button upButton;
 
@@ -59,13 +62,15 @@ public class MainFragment extends Fragment {
         // activity.startService(testButtonStatus);
 
         boolean playerHasStartedConversation = StorageManager.getHasPlayerStartedConversation(getContext());
+        Log.d(TAG, "has player started conversation: " + playerHasStartedConversation);
         upButton.setEnabled(!playerHasStartedConversation);
     }
 
     private void sendInitialTelegramMessage() {
-        final String BOT_URL = StorageManager.getBotUrl(getContext());
+        String botUrl = StorageManager.getBotUrl(getContext());
+        Log.d(TAG, "Sending Telegram Message with url: " + botUrl);
         try {
-            Intent telegram = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + BOT_URL));
+            Intent telegram = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + botUrl));
             startActivity(telegram);
         } catch (Exception e) {
             e.printStackTrace();
