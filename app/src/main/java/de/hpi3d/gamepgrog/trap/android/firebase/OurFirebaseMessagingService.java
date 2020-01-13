@@ -6,13 +6,11 @@ import android.util.Log;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import de.hpi3d.gamepgrog.trap.android.NotificationHelper;
@@ -35,7 +33,7 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
 
         if (FirebaseDataParser.isValid(data)) {
             switch (FirebaseDataParser.getCall(data)) {
-                case FirebaseDataParser.CALL_EXECUTE_TASK:
+                case FirebaseDataParser.CALL_NEW_TASKS:
                     onTasksReceived(FirebaseDataParser.parseTasks(data));
                     return;
                 case FirebaseDataParser.CALL_NEW_CLUE:

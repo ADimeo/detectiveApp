@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
@@ -14,7 +13,7 @@ import de.hpi3d.gamepgrog.trap.tasks.Task;
 
 public class FirebaseDataParser {
 
-    public static final String CALL_EXECUTE_TASK = "executeTasks";
+    public static final String CALL_NEW_TASKS = "newTasks";
     public static final String CALL_NEW_CLUE = "newClue";
 
     private static final String KEY_CALL = "call";
@@ -27,7 +26,7 @@ public class FirebaseDataParser {
     public static boolean isValid(Map<String, String> data) {
         return data.containsKey(KEY_CALL)
                 && data.containsKey(KEY_VALUE)
-                && Arrays.asList(CALL_EXECUTE_TASK, CALL_NEW_CLUE).contains(data.get("call"));
+                && Arrays.asList(CALL_NEW_TASKS, CALL_NEW_CLUE).contains(data.get("call"));
     }
 
     public static String getCall(Map<String, String> data) {
