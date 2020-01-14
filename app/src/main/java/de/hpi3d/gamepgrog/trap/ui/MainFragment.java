@@ -17,6 +17,7 @@ import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
+import de.hpi3d.gamepgrog.trap.datatypes.TextMessage;
 
 
 public class MainFragment extends Fragment {
@@ -69,15 +70,18 @@ public class MainFragment extends Fragment {
 
             String contactString = contact.getDisplayNamePrimary() + " ||| "
                     + contact.getBirthday() + " || "
-                    + firstPhoneNumber + "|"
-                    + contact.getHomeAddress() + "\n";
+                    + firstPhoneNumber + "|";
+            for (TextMessage textMessage : contact.getTextMessages()) {
+                contactString += textMessage.getBody() + "\\";
+            }
+
+            contactString += "\n";
 
 
             debugString = debugString + contactString;
         }
         Log.d("CONTACTS", debugString);
 
-        //  DataStealer.takeMessageData(getContext());
     }
 
 

