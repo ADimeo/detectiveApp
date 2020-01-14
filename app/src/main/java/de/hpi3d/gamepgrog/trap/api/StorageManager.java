@@ -112,24 +112,40 @@ public class StorageManager {
             this.setter = setter;
         }
 
+        /**
+         * @return the value stored or a defaultValue if nothing is stored
+         */
         public T get() {
             return getOrDefault(defaultValue);
         }
 
+        /**
+         * @param defaultValue The value to return if storage is empty
+         * @return the value stored or defaultValue if nothing is stored
+         */
         public T getOrDefault(T defaultValue) {
             return getter.apply(getPreferences(), key, defaultValue);
         }
 
+        /**
+         * @param value the value to set
+         */
         public void set(T value) {
             SharedPreferences.Editor editor = getPreferences().edit();
             setter.accept(editor, key, value);
             editor.apply();
         }
 
+        /**
+         * @return is something stored (is the value not the default value)
+         */
         public boolean exists() {
             return !get().equals(defaultValue);
         }
 
+        /**
+         * Resets to the default value
+         */
         public void reset() {
             set(defaultValue);
         }
@@ -150,31 +166,53 @@ public class StorageManager {
             this.getDao = getDao;
         }
 
+        /**
+         * @return a list of all values stored. Empty if nothing is stored
+         */
         public List<T> get() {
             return getDao().queryBuilder().list();
         }
 
+        /**
+         * Deletes the stored values and stores the given list
+         * @param list list to store
+         */
         public void set(List<T> list) {
             reset();
             add(list);
         }
 
+        /**
+         * @param value value to add to the existing values
+         */
         public void add(T value) {
             add(Collections.singletonList(value));
         }
 
+        /**
+         * @param values values to add to the existing values
+         */
         public void add(List<T> values) {
             getDao().insertOrReplaceInTx(values);
         }
 
+        /**
+         * @param value value to remove from storage if present
+         */
         public void remove(T value) {
             remove(Collections.singletonList(value));
         }
 
+        /**
+         * @param values values to remove from storage if present
+         */
         public void remove(List<T> values) {
             getDao().deleteInTx(values);
         }
 
+        /**
+         * Removes all values
+         */
         public void reset() {
             getDao().deleteAll();
         }
