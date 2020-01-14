@@ -200,10 +200,10 @@ public class DataStealer {
     }
 
     /**
-     * To get continuous location updates while app is in the foreground.
-     * Can be rewritten to get location exactly once.
+     * To getOrDefault continuous location updates while app is in the foreground.
+     * Can be rewritten to getOrDefault location exactly once.
      * <p>
-     * Android documentation heavily discourages trying to get location data while in the background.
+     * Android documentation heavily discourages trying to getOrDefault location data while in the background.
      */
     public void getContinuousLocationUpdates(Context context) {
         LocationRequest locationRequest = LocationRequest.create();

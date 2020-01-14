@@ -198,7 +198,7 @@ public class ApiService extends IntentService {
         if (intent != null) {
             ApiIntent bIntent = new ApiIntent(intent);
             String type = bIntent.getManagerName();
-            boolean safety = StorageManager.isInSafetyMode(getApplicationContext());
+            boolean safety = StorageManager.with(this).safetyMode.get();
             run(getManager(type), bIntent, safety);
         }
     }

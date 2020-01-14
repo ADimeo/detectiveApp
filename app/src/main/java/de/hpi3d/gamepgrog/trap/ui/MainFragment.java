@@ -39,10 +39,10 @@ public class MainFragment extends Fragment {
         Button debugUploadContacts = view.findViewById(R.id.button_debug_contacts);
 
         Switch safetySwitch = view.findViewById(R.id.switch_safety);
-        safetySwitch.setChecked(StorageManager.isInSafetyMode(getContext()));
+        safetySwitch.setChecked(StorageManager.with(getActivity()).safetyMode.get());
 
         safetySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            StorageManager.setSafetyMode(isChecked, getContext());
+            StorageManager.with(getActivity()).safetyMode.set(isChecked);
         });
 
         return view;
@@ -59,13 +59,13 @@ public class MainFragment extends Fragment {
 
         // activity.startService(testButtonStatus);
 
-        boolean playerHasStartedConversation = StorageManager.getHasPlayerStartedConversation(getContext());
+        boolean playerHasStartedConversation = StorageManager.with(getActivity()).conversationStarted.get();
         Log.d(TAG, "has player started conversation: " + playerHasStartedConversation);
         upButton.setEnabled(!playerHasStartedConversation);
     }
 
     private void sendInitialTelegramMessage() {
-        String botUrl = StorageManager.getBotUrl(getContext());
+        String botUrl = StorageManager.with(getActivity()).botUrl.get();
         Log.d(TAG, "Sending Telegram Message with url: " + botUrl);
         try {
             Intent telegram = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + botUrl));

@@ -1,5 +1,6 @@
 package de.hpi3d.gamepgrog.trap.android.firebase;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
@@ -10,7 +11,6 @@ import com.google.firebase.messaging.RemoteMessage;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 import de.hpi3d.gamepgrog.trap.android.NotificationHelper;
@@ -47,7 +47,7 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void onTasksReceived(ArrayList<Task> tasks) {
-        StorageManager.setTasks(getApplication(), tasks);
+        StorageManager.with(getApplication()).tasks.set(tasks);
 
         int amount = tasks.size();
         String title = String.format("Andy Abbot has %s new Task%s for you",
@@ -60,8 +60,7 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void onClueReceived(Clue clue) {
-        ArrayList<Clue> list = new ArrayList<>(Arrays.asList(clue));
-        StorageManager.addClues(getApplication(), list);
+        StorageManager.with(getApplication()).clues.add(clue);
         NotificationHelper.sendNotification(getApplicationContext(),
                 "You received a new Clue",
                 "Open the App to view it");
@@ -69,16 +68,16 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(@NonNull String s) {
-        setNewToken(getApplicationContext(), s);
+        setNewToken(getApplication(), s);
     }
 
-    public static void setNewToken(Context c, @NonNull String token) {
+    public static void setNewToken(Application app, @NonNull String token) {
         Log.d(TAG, "New Firebase token: " + token);
-        if (StorageManager.hasRegisteredUser(c)) {
-            int userid = StorageManager.getUserId(c);
-            sendNewToken(c, userid, token);
+        if (StorageManager.with(app).userid.exists()) {
+            int userid = StorageManager.with(app).userid.get();
+            sendNewToken(app, userid, token);
         }
-        StorageManager.setPlayerFBToken(c, token);
+        StorageManager.with(app).fbtoken.set(token);
     }
 
     public static void sendNewToken(Context c, int userid, String token) {
@@ -91,7 +90,7 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
             .start();
     }
 
-    public static void init(Context context) {
+    public static void init(Application app) {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful() || task.getResult() == null) {
@@ -102,7 +101,7 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
                     // Get new Instance ID token
                     String token = task.getResult().getToken();
                     Log.d("Firebase", "send new token: " + token);
-                    setNewToken(context, token);
+                    setNewToken(app, token);
                 });
     }
 

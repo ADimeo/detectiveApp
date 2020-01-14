@@ -5,8 +5,8 @@ package de.hpi3d.gamepgrog.trap.future;
  * <br>
  * <h3>Call a method returning a promise with:</h3>
  * <code>asyncMethod(yourParams).then((result) -> {});</code><br>
- * <code>then</code> will get executed once when the asyncMethod finishes.
- * There is no guaranty that it will ever get executed.
+ * <code>then</code> will getOrDefault executed once when the asyncMethod finishes.
+ * There is no guaranty that it will ever getOrDefault executed.
  * <h3>A method can return a promise like this:</h3>
  * <pre>
  * {@code
@@ -44,7 +44,7 @@ public class Promise<T> {
     }
 
     /**
-     * The given consumer will get called when the called method finishes with its return value
+     * The given consumer will getOrDefault called when the called method finishes with its return value
      * @param consumer Handle the return value
      */
     public void then(Consumer<T> consumer) {
