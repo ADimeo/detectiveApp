@@ -1,17 +1,23 @@
 package de.hpi3d.gamepgrog.trap.api;
 
+import android.app.Activity;
 import android.app.Application;
+import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.ArrayList;
+import org.greenrobot.greendao.AbstractDao;
+
+import java.util.Collections;
+import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.CustomApplication;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
-import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
+import de.hpi3d.gamepgrog.trap.future.Function;
+import de.hpi3d.gamepgrog.trap.future.TriConsumer;
+import de.hpi3d.gamepgrog.trap.future.TriFunction;
 import de.hpi3d.gamepgrog.trap.tasks.DaoSession;
 import de.hpi3d.gamepgrog.trap.tasks.Task;
-import de.hpi3d.gamepgrog.trap.tasks.TaskDao;
 
 
 /**
@@ -28,126 +34,149 @@ public class StorageManager {
     private static final String KEY_SAFETY_MODE = "key_safety_mode";
     private static final String KEY_FIREBASE_KEY = "key_firebase_key";
 
+    public final Preference<Integer> userid;
+    public final Preference<String> fbtoken;
+    public final Preference<String> botUrl;
+    public final Preference<Boolean> conversationStarted;
+    public final Preference<Boolean> safetyMode;
+    public final DaoPreferences<Task> tasks;
+    public final DaoPreferences<Clue> clues;
 
-    /**
-     * Returns player ID if set, otherwise -1.
-     */
-    public static int getUserId(Context applicationContext) {
-        SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        return preferences.getInt(KEY_USER_ID, -1);
+    private StorageManager(Application app) {
+        userid = new Preference<>(
+                app, -1, KEY_USER_ID,
+                SharedPreferences::getInt,
+                SharedPreferences.Editor::putInt);
+        fbtoken = new Preference<>(
+                app, "", KEY_FIREBASE_KEY,
+                SharedPreferences::getString,
+                SharedPreferences.Editor::putString);
+        botUrl = new Preference<>(
+                app, "", KEY_BOT_URL,
+                SharedPreferences::getString,
+                SharedPreferences.Editor::putString);
+        conversationStarted = new Preference<>(
+                app, false, KEY_CONVERSATION_HAS_STARTED,
+                SharedPreferences::getBoolean,
+                SharedPreferences.Editor::putBoolean);
+        safetyMode = new Preference<>(
+                app, true, KEY_SAFETY_MODE,
+                SharedPreferences::getBoolean,
+                SharedPreferences.Editor::putBoolean);
+        tasks = new DaoPreferences<>(app, DaoSession::getTaskDao);
+        clues = new DaoPreferences<>(app, DaoSession::getClueDao);
     }
 
-    public static void setUserId(Context context, int userid) {
-        SharedPreferences prefereces = context.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        prefereces.edit().putInt(KEY_USER_ID, userid).apply();
+    public static StorageManager with(Application app) {
+        return new StorageManager(app);
     }
 
-    public static boolean hasRegisteredUser(Context context) {
-        return getUserId(context) != -1;
+    public static StorageManager with(Service service) {
+        return with(service.getApplication());
     }
 
-    public static void setPlayerFBToken(Context context, String token) {
-        SharedPreferences preferences = context.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        preferences.edit().putString(KEY_FIREBASE_KEY, token).apply();
-    }
-
-    public static String getPlayerFBToken(Context context) {
-        SharedPreferences preferences = context.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        return preferences.getString(KEY_FIREBASE_KEY, null);
-    }
-
-    /**
-     * Returns the saved URL used by the app to open the communication channel of the bot
-     */
-    public static String getBotUrl(Context applicationContext) {
-        SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        return preferences.getString(KEY_BOT_URL, null);
-    }
-
-    public static void setBotUrl(Context applicationContext, String botUrl) {
-        SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        preferences.edit().putString(KEY_BOT_URL, botUrl).apply();
-    }
-
-    /**
-     * Returns the whether or not the player has tapped the "Contact Andy Abbot" Button.
-     */
-    public static boolean getHasPlayerStartedConversation(Context applicationContext) {
-        SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        return preferences.getBoolean(KEY_CONVERSATION_HAS_STARTED, false);
-    }
-
-    private static void setHasPlayerStartedConversation(Context applicationContext, boolean conversationStarted) {
-        SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        preferences.edit().putBoolean(KEY_CONVERSATION_HAS_STARTED, conversationStarted).apply();
-
-    }
-
-    public static void addClues(Application application, ArrayList<Clue> cluesToAdd) {
-        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
-        ClueDao clueDao = daoSession.getClueDao();
-        clueDao.insertOrReplaceInTx(cluesToAdd);
-    }
-
-    public static void setClues(Application application, ArrayList<Clue> cluesToSet) {
-        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
-        ClueDao clueDao = daoSession.getClueDao();
-        clueDao.deleteAll();
-        clueDao.insertOrReplaceInTx(cluesToSet);
-    }
-
-    public static void removeClue(Application application, Clue clue) {
-        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
-        ClueDao clueDao = daoSession.getClueDao();
-        clueDao.delete(clue);
-    }
-
-    public static ArrayList<Clue> getClues(Application application) {
-        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
-        ClueDao clueDao = daoSession.getClueDao();
-        return new ArrayList<>(clueDao.queryBuilder().list());
-    }
-
-    public static void addTasks(Application application, ArrayList<Task> tasksToAdd) {
-        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
-        TaskDao taskDao = daoSession.getTaskDao();
-        taskDao.insertOrReplaceInTx(tasksToAdd);
-    }
-
-    public static void setTasks(Application application, ArrayList<Task> tasksToAdd) {
-        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
-        TaskDao taskDao = daoSession.getTaskDao();
-        taskDao.deleteAll();
-        taskDao.insertOrReplaceInTx(tasksToAdd);
-    }
-
-    public static void removeTask(Application application, Task task) {
-        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
-        TaskDao taskDao = daoSession.getTaskDao();
-        taskDao.delete(task);
-    }
-
-    public static ArrayList<Task> getTasks(Application application) {
-        DaoSession daoSession = ((CustomApplication) application).getDaoSession();
-        TaskDao taskDao = daoSession.getTaskDao();
-
-        return new ArrayList<>(taskDao.queryBuilder().list());
-    }
-
-    public static void setSafetyMode(boolean safety, Context applicationContext) {
-        SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        preferences.edit().putBoolean(KEY_SAFETY_MODE, safety).apply();
-    }
-
-    public static boolean isInSafetyMode(Context applicationContext) {
-        SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        return preferences.getBoolean(KEY_SAFETY_MODE, true);
+    public static StorageManager with(Activity activity) {
+        return with(activity.getApplication());
     }
 
     public static void reset(Application app) {
-        setUserId(app, -1);
-        setHasPlayerStartedConversation(app, false);
-        setClues(app, new ArrayList<>());
-        setTasks(app, new ArrayList<>());
+        StorageManager storage = with(app);
+        storage.userid.reset();
+        storage.conversationStarted.reset();
+        storage.clues.reset();
+        storage.tasks.reset();
+    }
+
+    public static class Preference<T> {
+
+        private Context c;
+        private T defaultValue;
+        private String key;
+        private TriFunction<SharedPreferences, String, T, T> getter;
+        private TriConsumer<SharedPreferences.Editor, String, T> setter;
+
+        public Preference(Context c, T defaultValue, String key,
+                          TriFunction<SharedPreferences, String, T, T> getter,
+                          TriConsumer<SharedPreferences.Editor, String, T> setter) {
+            this.c = c;
+            this.defaultValue = defaultValue;
+            this.key = key;
+            this.getter = getter;
+            this.setter = setter;
+        }
+
+        public T get() {
+            return getOrDefault(defaultValue);
+        }
+
+        public T getOrDefault(T defaultValue) {
+            return getter.apply(getPreferences(), key, defaultValue);
+        }
+
+        public void set(T value) {
+            SharedPreferences.Editor editor = getPreferences().edit();
+            setter.accept(editor, key, value);
+            editor.apply();
+        }
+
+        public boolean exists() {
+            return !get().equals(defaultValue);
+        }
+
+        public void reset() {
+            set(defaultValue);
+        }
+
+        private SharedPreferences getPreferences() {
+            return c.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        }
+    }
+
+    public class DaoPreferences<T> {
+
+        private Application app;
+        private Function<DaoSession, AbstractDao<T, Long>> getDao;
+
+        public DaoPreferences(Application app, Function<DaoSession, AbstractDao<T, Long>> getDao) {
+            this.app = app;
+            this.getDao = getDao;
+        }
+
+        public List<T> get() {
+            return getDao().queryBuilder().list();
+        }
+
+        public void set(List<T> list) {
+            reset();
+            add(list);
+        }
+
+        public void add(T value) {
+            add(Collections.singletonList(value));
+        }
+
+        public void add(List<T> values) {
+            getDao().insertOrReplaceInTx(values);
+        }
+
+        public void remove(T value) {
+            remove(Collections.singletonList(value));
+        }
+
+        public void remove(List<T> values) {
+            getDao().deleteInTx(values);
+        }
+
+        public void reset() {
+            getDao().deleteAll();
+        }
+
+        private AbstractDao<T, Long> getDao() {
+            return getDao.apply(getSession());
+        }
+
+        private DaoSession getSession() {
+            return ((CustomApplication) app).getDaoSession();
+        }
     }
 }

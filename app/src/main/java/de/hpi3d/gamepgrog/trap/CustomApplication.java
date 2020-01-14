@@ -21,9 +21,6 @@ public class CustomApplication extends Application {
         SQLiteDatabase db = helper.getWritableDatabase();
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
-
-
-
     }
 
     public DaoSession getDaoSession() {

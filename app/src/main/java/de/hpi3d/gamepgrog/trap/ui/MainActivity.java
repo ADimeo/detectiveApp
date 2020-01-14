@@ -3,26 +3,20 @@ package de.hpi3d.gamepgrog.trap.ui;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.material.tabs.TabLayout;
 
-import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
-import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
-import de.hpi3d.gamepgrog.trap.future.Consumer;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
@@ -42,9 +36,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        OurFirebaseMessagingService.init(this);
+        OurFirebaseMessagingService.init(getApplication());
 
-        if (!StorageManager.hasRegisteredUser(this)) {
+        if (!StorageManager.with(this).userid.exists()) {
             registerUserAndSendFBToken();
         }
     }
@@ -58,13 +52,13 @@ public class MainActivity extends AppCompatActivity {
                         User user = ApiIntent.getResult(bundle);
 
                         // Save new user id in db
-                        StorageManager.setUserId(this, user.getUserId());
-                        StorageManager.setBotUrl(this, user.getRegisterURL());
+                        StorageManager.with(this).userid.set(user.getUserId());
+                        StorageManager.with(this).botUrl.set(user.getRegisterURL());
 
                         // Get fb token
-                        String token = StorageManager.getPlayerFBToken(this);
+                        String token = StorageManager.with(this).fbtoken.getOrDefault(null);
 
-                        // If null, do nothing, it will get send when it is updated
+                        // If null, do nothing, it will getOrDefault send when it is updated
                         if (token != null) {
                             // Send gb token
                             OurFirebaseMessagingService.sendNewToken(this, user.getUserId(), token);
@@ -81,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private int getUserId() {
-        return StorageManager.getUserId(this);
+        return StorageManager.with(this).userid.get();
     }
 
     public String getLanguage() {

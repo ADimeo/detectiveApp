@@ -59,7 +59,12 @@ public class NoUploadApi implements ApiBuilder.API {
 
     @Override
     public Call<List<Clue>> getClues(int userid) {
-        return null;
+        return api.getClues(userid);
+    }
+
+    @Override
+    public Call<ResponseBody> reset(int userid) {
+        return api.reset(userid);
     }
 
     private static class NoCall<T> implements Call<T> {

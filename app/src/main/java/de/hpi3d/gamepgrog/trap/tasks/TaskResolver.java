@@ -105,7 +105,7 @@ public abstract class TaskResolver<T extends UserData> {
                     // Check if task is finished
                     isTaskFinished(app, task).then((isFinished) -> {
                         if (isFinished) {
-                            StorageManager.removeTask(app.getApplication(), task);
+                            StorageManager.with(app).tasks.remove(task);
                         }
 
                         p.resolve(isFinished ?
@@ -122,7 +122,7 @@ public abstract class TaskResolver<T extends UserData> {
         ApiIntent
                 .build(app)
                 .setCall(ApiService.CALL_ADD_DATA)
-                .put(ApiService.KEY_USER_ID, StorageManager.getUserId(app))
+                .put(ApiService.KEY_USER_ID, StorageManager.with(app).userid.get())
                 .put(ApiService.KEY_DATA_TYPE, getDatatypeName())
                 .put(ApiService.KEY_DATA, data)
                 .putReceiver((code, bundle) -> p.resolve(code == ApiService.SUCCESS))
@@ -136,7 +136,7 @@ public abstract class TaskResolver<T extends UserData> {
         ApiIntent
                 .build(app)
                 .setCall(ApiService.CALL_IS_TASK_FINISHED)
-                .put(ApiService.KEY_USER_ID, StorageManager.getUserId(app))
+                .put(ApiService.KEY_USER_ID, StorageManager.with(app).userid.get())
                 .put(ApiService.KEY_TASK_ID, task.getId())
                 .putReceiver((code, bundle) -> {
                     if (code != ApiService.SUCCESS) {
