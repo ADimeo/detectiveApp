@@ -22,8 +22,14 @@ import de.hpi3d.gamepgrog.trap.tasks.Task;
 
 /**
  * Wrapper around everything persistence.
+ * A typical call looks like:
+ * <pre>
+ * {@code
+ * StorageManager.with(application).userid.set(42);
+ * }
+ * </pre>
+ * Can be reset
  */
-
 public class StorageManager {
 
 
@@ -87,6 +93,7 @@ public class StorageManager {
         storage.tasks.reset();
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static class Preference<T> {
 
         private Context c;
@@ -95,7 +102,7 @@ public class StorageManager {
         private TriFunction<SharedPreferences, String, T, T> getter;
         private TriConsumer<SharedPreferences.Editor, String, T> setter;
 
-        public Preference(Context c, T defaultValue, String key,
+        private Preference(Context c, T defaultValue, String key,
                           TriFunction<SharedPreferences, String, T, T> getter,
                           TriConsumer<SharedPreferences.Editor, String, T> setter) {
             this.c = c;
@@ -132,12 +139,13 @@ public class StorageManager {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     public class DaoPreferences<T> {
 
         private Application app;
         private Function<DaoSession, AbstractDao<T, Long>> getDao;
 
-        public DaoPreferences(Application app, Function<DaoSession, AbstractDao<T, Long>> getDao) {
+        private DaoPreferences(Application app, Function<DaoSession, AbstractDao<T, Long>> getDao) {
             this.app = app;
             this.getDao = getDao;
         }
