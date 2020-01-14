@@ -38,11 +38,11 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
+        OurFirebaseMessagingService.init(this);
+
         if (!StorageManager.hasRegisteredUser(this)) {
             registerUserAndSendFBToken();
         }
-
-        OurFirebaseMessagingService.init(this);
 //        new Task(10, "Test", "Hello World", "contact").execute(this);
     }
 
@@ -95,8 +95,11 @@ public class MainActivity extends AppCompatActivity {
                         // Get fb token
                         String token = StorageManager.getPlayerFBToken(this);
 
-                        // Send gb token
-                        OurFirebaseMessagingService.sendNewToken(this, user.getUserId(), token);
+                        // If null, do nothing, it will get send when it is updated
+                        if (token != null) {
+                            // Send gb token
+                            OurFirebaseMessagingService.sendNewToken(this, user.getUserId(), token);
+                        }
                     }
                 })
                 .start();
