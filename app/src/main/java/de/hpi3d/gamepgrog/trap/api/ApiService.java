@@ -109,6 +109,15 @@ public class ApiService extends IntentService {
      */
     public static final String CALL_GET_CLUES = PRE + "get_clues";
 
+    /**
+     * Resets the User
+     * <br>
+     * Param: Userid (int) in {@link ApiService#KEY_USER_ID}<br>
+     * Returns a {@link android.os.ResultReceiver} in {@link ApiService#KEY_RECEIVER} with
+     * a HTTP error/success code
+     */
+    public static final String CALL_RESET = PRE + "reset";
+
     private ApiBuilder.API api;
 
     public ApiService() {
@@ -162,6 +171,13 @@ public class ApiService extends IntentService {
         intent.sendBack(clues);
     }
 
+    private void reset(ApiIntent intent) {
+        int userid = intent.getExtra(KEY_USER_ID);
+
+        Response<ResponseBody> result = execute(api.reset(userid));
+        intent.sendBack(result.code());
+    }
+
     private <T> Response<T> execute(Call<T> call) {
         Response<T> res = null;
         try {
@@ -210,6 +226,8 @@ public class ApiService extends IntentService {
                 return this::isTaskFinished;
             case CALL_SEND_FB_TOKEN:
                 return this::sendFBToken;
+            case CALL_RESET:
+                return this::reset;
             default:
                 throw new UnsupportedOperationException();
         }

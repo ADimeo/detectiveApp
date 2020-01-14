@@ -1,6 +1,8 @@
 package de.hpi3d.gamepgrog.trap.api;
 
 
+import org.parceler.ParcelConstructor;
+
 import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
@@ -72,6 +74,9 @@ class ApiBuilder {
 
         @GET("user/{userid}/clues")
         Call<List<Clue>> getClues(@Path("userid") int userid);
+
+        @GET("user/{userid}/reset")
+        Call<ResponseBody> reset(@Path("userid") int userid);
     }
 }
 

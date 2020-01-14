@@ -134,15 +134,20 @@ public class StorageManager {
         return new ArrayList<>(taskDao.queryBuilder().list());
     }
 
-
     public static void setSafetyMode(boolean safety, Context applicationContext) {
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         preferences.edit().putBoolean(KEY_SAFETY_MODE, safety).apply();
     }
 
-
     public static boolean isInSafetyMode(Context applicationContext) {
         SharedPreferences preferences = applicationContext.getSharedPreferences(KEY_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         return preferences.getBoolean(KEY_SAFETY_MODE, true);
+    }
+
+    public static void reset(Application app) {
+        setUserId(app, -1);
+        setHasPlayerStartedConversation(app, false);
+        setClues(app, new ArrayList<>());
+        setTasks(app, new ArrayList<>());
     }
 }

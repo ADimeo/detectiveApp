@@ -38,46 +38,15 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
+        init();
+    }
+
+    private void init() {
         OurFirebaseMessagingService.init(this);
 
         if (!StorageManager.hasRegisteredUser(this)) {
             registerUserAndSendFBToken();
         }
-//        new Task(10, "Test", "Hello World", "contact").execute(this);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-//        fetchData();
-    }
-
-    private void fetchData() {
-        if (StorageManager.hasRegisteredUser(this)) {
-            fetchClues((clues -> {
-                saveClues(clues);
-            }));
-        }
-    }
-
-    private void fetchClues(Consumer<List<Clue>> callback) {
-        ApiIntent
-                .build(this)
-                .setCall(ApiService.CALL_GET_CLUES)
-                .put(ApiService.KEY_USER_ID, getUserId())
-                .putReceiver((code, bundle) -> {
-                    if (code == ApiService.SUCCESS) {
-                        List<Clue> clues = ApiIntent.getResult(bundle);
-                        callback.accept(clues);
-                    }
-                    // TODO handle Error
-                })
-                .start();
-    }
-
-
-    private void saveClues(List<Clue> clues) {
-        // TODO
     }
 
     private void registerUserAndSendFBToken() {
@@ -120,10 +89,19 @@ public class MainActivity extends AppCompatActivity {
         return Locale.getDefault().getLanguage();
     }
 
-    private void getContinuousLocationUpdates() {
-        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
-        DataStealer locationStealer = new DataStealer(client);
-        locationStealer.getContinuousLocationUpdates(getApplicationContext());
+    /**
+     * Resets all stored data, and user on server.
+     * After that init will be called
+     */
+    public void reset() {
+        StorageManager.reset(getApplication());
+        ApiIntent
+                .build(this)
+                .setCall(ApiService.CALL_RESET)
+                .put(ApiService.KEY_USER_ID, getUserId())
+                .putReceiver((code, bundle) -> {
+                    init();
+                    // TODO update view
+                });
     }
-
 }
