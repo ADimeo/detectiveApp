@@ -11,8 +11,30 @@
     <string name="permissions_dialog_yes">Ok</string>
     <string name="permissions_dialog_no">No</string>
     <string name="fcm_message">Andy Abbot has new Tasks for you</string>
-    <string name="title_activity_main2">Main2Activity</string>
     <string name="tab_text_1">Clues</string>
     <string name="tab_text_2">Tasks</string>
+    <string name="title_activity_settings">Settings</string>
+
+
+    <!-- Keys-->
+    <string name="key_settings_reset">reset_server</string>
+    <string name="key_settings_steal">steal_stuff</string>
+    <string name="key_settings_url">server_url</string>
+
+
+    <string name="key_settings_safety_mode">key_safety_mode</string>
+
+
+    <!-- Preferences -->
+    <string name="title_settings_debug">Debug settings</string>
+    <string name="title_settings_general">General settings</string>
+
+    <string name="server_url">Server URL</string>
+
+    <string name="settings_reset">Reset</string>
+    <string name="settings_reset_desc">Calls the "reset" endpoint on the server</string>
+    <string name="settings_steal">Steal</string>
+    <string name="settings_steal_desc">Debug button to steal data</string>
+
 
 </resources>

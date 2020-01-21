@@ -37,7 +37,8 @@ public class StorageManager {
     private static final String KEY_BOT_URL = "key_bot_url";
     private static final String KEY_SHARED_PREFERENCES = "backend_manager_preferences";
     private static final String KEY_CONVERSATION_HAS_STARTED = "key_conversation_has_started";
-    private static final String KEY_SAFETY_MODE = "key_safety_mode";
+    private static final String KEY_SAFETY_MODE = "key_safety_mode"; // Also defined in strings.xml
+
     private static final String KEY_FIREBASE_KEY = "key_firebase_key";
 
     public final Preference<Integer> userid;
