@@ -52,30 +52,31 @@ class ApiBuilder {
 
 
     public interface API {
-        @GET("user/create")
+        @GET("users/create")
         Call<User> register();
 
-        @GET("user/{userid}")
+        @GET("users/{userid}")
         Call<UserStatus> getUserStatus(@Path("userid") long userid);
 
-        @GET("user/{userid}/fbtoken/{token}")
+        @GET("users/{userid}/fbtoken/{token}")
         Call<ResponseBody> sendFBToken(@Path("userid") long userid, @Path("token") String token);
 
-        @GET("user/{userid}/task/{taskid}/finished")
+        @GET("users/{userid}/tasks/{taskid}/finished")
         Call<Boolean> isTaskFinished(@Path("userid") long userid, @Path("taskid") long taskid);
 
-        @GET("user/{userid}/tasks")
+        @GET("users/{userid}/tasks")
+        @Deprecated
         Call<List<Task>> fetchTasks(@Path("userid") long userid);
 
-        @POST("user/{userid}/data/{datatype}")
+        @POST("users/{userid}/data/{datatype}")
         Call<ResponseBody> addData(@Path("userid") int userid,
                                    @Path("datatype") String datatype,
                                    @Body List<UserData> data);
 
-        @GET("user/{userid}/clues")
+        @GET("users/{userid}/clues")
         Call<List<Clue>> getClues(@Path("userid") int userid);
 
-        @GET("user/{userid}/reset")
+        @GET("users/{userid}/reset")
         Call<ResponseBody> reset(@Path("userid") int userid);
     }
 }
