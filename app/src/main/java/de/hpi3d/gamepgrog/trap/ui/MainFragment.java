@@ -43,7 +43,8 @@ public class MainFragment extends Fragment {
 
         Button debugUploadContacts = view.findViewById(R.id.button_debug_steal);
         debugUploadContacts.setOnClickListener(v -> {
-            debugInitialiseSteal();
+            onStealButtonClicked();
+
         });
 
         Switch safetySwitch = view.findViewById(R.id.switch_safety);
@@ -54,6 +55,12 @@ public class MainFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void onStealButtonClicked() {
+        // debugInitialiseSteal();
+        Intent intent = new Intent(getActivity(), SettingsActivity.class);
+        startActivity(intent);
     }
 
     private void debugInitialiseSteal() {

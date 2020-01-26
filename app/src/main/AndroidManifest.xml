@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_SMS" />
 
-
     <application
         android:name=".CustomApplication"
         android:allowBackup="true"
@@ -19,6 +18,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".ui.MainActivity"></activity>
+
 
         <activity android:name=".ui.MainActivity">
             <intent-filter>
@@ -27,12 +31,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".api.StorageManager"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name="de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService"
+            android:name=".android.firebase.OurFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
