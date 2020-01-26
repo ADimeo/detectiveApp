@@ -25,6 +25,6 @@ public class TaskResolverManager {
         if (contactTaskResolver.applicableFor(task)) return contactTaskResolver;
         else if (calendarTaskResolver.applicableFor(task)) return calendarTaskResolver;
         throw new UnsupportedOperationException("There is no Resolver for a task with datatype: "
-                + task.getDataType());
+                + task.getDatatype());
     }
 }

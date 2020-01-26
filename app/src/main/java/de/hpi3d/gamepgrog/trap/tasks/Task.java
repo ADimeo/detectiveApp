@@ -22,7 +22,7 @@ public class Task implements Displayable {
     @Id(autoincrement = true)
     private long id;
 
-    private String name, description, dataType;
+    private String name, description, datatype;
 
     public Task(String description) {
         this.description = description;
@@ -31,11 +31,11 @@ public class Task implements Displayable {
 
     @ParcelConstructor
     @Keep
-    public Task(long id, String name, String description, String dataType) {
+    public Task(long id, String name, String description, String datatype) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.dataType = dataType;
+        this.datatype = datatype;
     }
 
     @Generated(hash = 733837707)
@@ -54,8 +54,8 @@ public class Task implements Displayable {
         return description;
     }
 
-    public String getDataType() {
-        return dataType;
+    public String getDatatype() {
+        return datatype;
     }
 
     public void setId(long id) {
@@ -70,8 +70,8 @@ public class Task implements Displayable {
         this.description = description;
     }
 
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
+    public void setDatatype(String datatype) {
+        this.datatype = datatype;
     }
 
     public EmptyPromise execute(Activity app) {

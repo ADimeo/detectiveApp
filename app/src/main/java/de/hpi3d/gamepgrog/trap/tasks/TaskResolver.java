@@ -2,7 +2,6 @@ package de.hpi3d.gamepgrog.trap.tasks;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.List;
@@ -173,6 +172,6 @@ public abstract class TaskResolver<T extends UserData> {
     }
 
     protected boolean applicableFor(Task task) {
-        return this.getDatatypeName().equals(task.getDataType());
+        return this.getDatatypeName().equals(task.getDatatype());
     }
 }
