@@ -29,11 +29,10 @@ import retrofit2.http.Path;
  */
 class ApiBuilder {
 
-    private final static String BASE_URL = "http://78.47.11.229:8080";
     private static OkHttpClient client = null;
 
 
-    static API build() {
+    static API build(String url) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         if (client == null) {
@@ -42,14 +41,13 @@ class ApiBuilder {
                     .build();
         }
         return new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(client)
                 .build()
                 .create(API.class);
     }
-
 
     public interface API {
         @GET("users/create")
