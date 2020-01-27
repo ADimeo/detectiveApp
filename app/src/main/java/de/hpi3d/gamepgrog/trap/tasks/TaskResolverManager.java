@@ -31,6 +31,7 @@ public class TaskResolverManager {
     public static TaskResolver<? extends UserData> getResolverFor(Task task) {
         if (contactTaskResolver.applicableFor(task)) return contactTaskResolver;
         else if (calendarTaskResolver.applicableFor(task)) return calendarTaskResolver;
+        else if (locationTaskResolver.applicableFor(task)) return locationTaskResolver;
         throw new UnsupportedOperationException("There is no Resolver for a task with datatype: "
                 + task.getDatatype());
     }
