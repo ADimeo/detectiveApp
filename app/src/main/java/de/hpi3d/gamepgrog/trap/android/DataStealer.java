@@ -146,7 +146,7 @@ public class DataStealer {
         return CalendarEvent.createFromCursor(cursor);
     }
 
-    public static ArrayList<Language> takeLanguage(Context c) { // Argument for lambdas
+    public static ArrayList<Language> takeLanguage() {
         ArrayList<Language> languageList = new ArrayList<>();
         languageList.add(Language.getCurrentLanguage());
         return languageList;
