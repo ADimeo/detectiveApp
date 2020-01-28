@@ -43,6 +43,15 @@ public class Task implements Displayable {
     public Task() {
     }
 
+    @Generated(hash = 566770323)
+    public Task(long id, String name, String description, String datatype, boolean finished) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.datatype = datatype;
+        this.finished = finished;
+    }
+
     public long getId() {
         return id;
     }
@@ -79,9 +88,12 @@ public class Task implements Displayable {
         finished = true;
     }
 
-    public boolean isFinished() {
-        return finished;
+
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
+
 
     public EmptyPromise execute(Activity app) {
         return TaskResolverManager.getResolverFor(this).executeAndShowResult(app, this);
@@ -92,4 +104,9 @@ public class Task implements Displayable {
     public String getDisplayString() {
         return getDescription();
     }
+
+    public boolean getFinished() {
+        return this.finished;
+    }
+
 }
