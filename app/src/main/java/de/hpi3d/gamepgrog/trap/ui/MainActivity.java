@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     public String getLanguage() {
-        // TODO Wrap in object
         return Locale.getDefault().getLanguage();
     }
 

