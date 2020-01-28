@@ -74,28 +74,12 @@ public class MainActivity extends AppCompatActivity {
         PermissionHelper.onPermission(requestCode, grantResults);
     }
 
-    private int getUserId() {
-        return StorageManager.with(this).userid.get();
-    }
+
 
     public String getLanguage() {
         // TODO Wrap in object
         return Locale.getDefault().getLanguage();
     }
 
-    /**
-     * Resets all stored data, and user on server.
-     * After that init will be called
-     */
-    public void reset() {
-        StorageManager.reset(getApplication());
-        ApiIntent
-                .build(this)
-                .setCall(ApiService.CALL_RESET)
-                .put(ApiService.KEY_USER_ID, getUserId())
-                .putReceiver((code, bundle) -> {
-                    init();
-                    // TODO update view
-                });
-    }
+
 }

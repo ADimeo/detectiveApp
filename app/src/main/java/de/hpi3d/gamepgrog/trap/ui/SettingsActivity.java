@@ -11,7 +11,11 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 import de.hpi3d.gamepgrog.trap.R;
+import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
+import de.hpi3d.gamepgrog.trap.api.ApiIntent;
+import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
+import de.hpi3d.gamepgrog.trap.datatypes.User;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -31,6 +35,60 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * Resets all stored data, and user on server.
+     * After that init will be called
+     */
+    public void reset() {
+        StorageManager.reset(getApplication());
+        ApiIntent
+                .build(this)
+                .setCall(ApiService.CALL_RESET)
+                .put(ApiService.KEY_USER_ID, getUserId())
+                .putReceiver((code, bundle) -> {
+                    init();
+                });
+    }
+
+    private void init() {
+        OurFirebaseMessagingService.init(getApplication());
+
+        if (!StorageManager.with(this).userid.exists()) {
+            registerUserAndSendFBToken();
+        }
+    }
+
+    private void registerUserAndSendFBToken() {
+        ApiIntent
+                .build(this)
+                .setCall(ApiService.CALL_REGISTER)
+                .putReceiver((code, bundle) -> {
+                    if (code == ApiService.SUCCESS) {
+                        User user = ApiIntent.getResult(bundle);
+
+                        // Save new user id in db
+                        StorageManager.with(this).userid.set(user.getUserId());
+                        StorageManager.with(this).botUrl.set(user.getRegisterURL());
+
+                        // Get fb token
+                        String token = StorageManager.with(this).fbtoken.getOrDefault(null);
+
+                        // If null, do nothing, it will getOrDefault send when it is updated
+                        if (token != null) {
+                            // Send gb token
+                            OurFirebaseMessagingService.sendNewToken(this, user.getUserId(), token);
+                        }
+                    }
+                })
+                .start();
+    }
+
+
+    private int getUserId() {
+        return StorageManager.with(this).userid.get();
+    }
+
     public static class SettingsFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -44,6 +102,7 @@ public class SettingsActivity extends AppCompatActivity {
             resetServerButton.setOnPreferenceClickListener((preference) -> {
                 String currentUrl = StorageManager.with(getActivity()).botUrl.get();
                 Toast.makeText(getContext(), currentUrl, Toast.LENGTH_SHORT).show();
+                ((SettingsActivity) getActivity()).reset();
                 return true;
             });
 
