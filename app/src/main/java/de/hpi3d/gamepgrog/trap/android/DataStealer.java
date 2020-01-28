@@ -19,6 +19,9 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
@@ -156,13 +159,13 @@ public class DataStealer {
      * @param context
      * @param consumer
      */
-    public void takeLocationData(Context context, Consumer<LocationData[]> consumer) {
+    public static void takeLocationData(Context context, Consumer<List<LocationData>> consumer) {
         FusedLocationProviderClient client = new FusedLocationProviderClient(context);
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setInterval(100);
         locationRequest.setFastestInterval(50);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationCallback = new LocationCallback() {
+        LocationCallback locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) {
@@ -170,14 +173,14 @@ public class DataStealer {
                 }
                 for (Location location : locationResult.getLocations()) {
                     // Give out data
-                    consumer.accept(new LocationData[]{new LocationData(location)});
-                    client.removeLocationUpdates(locationCallback);
+                    consumer.accept(Collections.singletonList(new LocationData(location)));
+                    client.removeLocationUpdates(this);
                 }
             }
         };
 
 
-        fusedLocationClient.requestLocationUpdates(locationRequest,
+        client.requestLocationUpdates(locationRequest,
                 locationCallback,
                 Looper.getMainLooper());
     }
