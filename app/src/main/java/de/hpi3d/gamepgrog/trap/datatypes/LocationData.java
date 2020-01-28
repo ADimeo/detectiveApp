@@ -1,6 +1,5 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
-import android.Manifest;
 import android.location.Location;
 
 import org.parceler.Parcel;
@@ -23,10 +22,6 @@ public class LocationData implements UserData {
         this.longitude = longitude;
         this.latitude = latitude;
         this.time = time;
-    }
-
-    public static LocationData fromLocation(Location location) {
-        return new LocationData(location.getLongitude(), location.getLatitude(), location.getTime());
     }
 
     public double getLongitude() {

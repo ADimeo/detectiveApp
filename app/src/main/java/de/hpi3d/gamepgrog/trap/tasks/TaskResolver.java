@@ -17,8 +17,6 @@ import de.hpi3d.gamepgrog.trap.future.Promise;
 
 public abstract class TaskResolver<T extends UserData> {
 
-    private static final String TAG = "TaskResolver";
-
     public enum ExecutionResult {
         SUCCESS, PERMISSION_FAILED, UPLOAD_FAILED, TASK_FAILED
     }

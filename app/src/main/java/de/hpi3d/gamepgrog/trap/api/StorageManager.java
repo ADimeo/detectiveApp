@@ -164,7 +164,6 @@ public class StorageManager {
         }
     }
 
-    @SuppressWarnings("WeakerAccess")
     public class DaoPreferences<T> {
 
         private Application app;

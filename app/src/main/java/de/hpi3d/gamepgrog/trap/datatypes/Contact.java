@@ -1,7 +1,6 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
 
-import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;

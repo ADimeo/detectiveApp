@@ -3,8 +3,6 @@ package de.hpi3d.gamepgrog.trap.tasks;
 import android.app.Activity;
 import android.content.Context;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;

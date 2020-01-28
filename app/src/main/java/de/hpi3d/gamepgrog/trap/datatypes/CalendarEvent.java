@@ -1,13 +1,11 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
-import android.Manifest;
 import android.database.Cursor;
 import android.provider.CalendarContract;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;

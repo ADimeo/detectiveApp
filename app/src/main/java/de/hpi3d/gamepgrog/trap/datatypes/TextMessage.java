@@ -1,7 +1,5 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
-import android.Manifest;
-
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
