@@ -23,7 +23,6 @@ public class TaskResolverManager {
                     new String[]{Manifest.permission.READ_CALENDAR},
                     DataStealer::takeCalendarData);
 
-
     private final static TaskResolver<Language> languageResolver =
             new SyncTaskResolver<>(
                     "language",

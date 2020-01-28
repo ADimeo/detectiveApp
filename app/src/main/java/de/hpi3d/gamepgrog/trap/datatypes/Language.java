@@ -1,7 +1,11 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
+
 import java.util.Locale;
 
+@Parcel(Parcel.Serialization.BEAN)
 public class Language implements UserData {
 
     private String languageCode;
@@ -12,15 +16,14 @@ public class Language implements UserData {
         return new Language(languageString);
     }
 
+    @ParcelConstructor
     public Language(String languageCode) {
         this.languageCode = languageCode;
     }
 
-
     @Override
     public String[] requiredPermission() {
         // No permission required.
-        // TODO: Does this say no permission required?
         return new String[0];
     }
 }
