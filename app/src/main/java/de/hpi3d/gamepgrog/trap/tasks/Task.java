@@ -23,6 +23,7 @@ public class Task implements Displayable {
     private long id;
 
     private String name, description, datatype;
+    private boolean finished = false;
 
     public Task(String description) {
         this.description = description;
@@ -72,6 +73,14 @@ public class Task implements Displayable {
 
     public void setDatatype(String datatype) {
         this.datatype = datatype;
+    }
+
+    public void setFinished() {
+        finished = true;
+    }
+
+    public boolean isFinished() {
+        return finished;
     }
 
     public EmptyPromise execute(Activity app) {
