@@ -47,7 +47,7 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void onTasksReceived(ArrayList<Task> tasks) {
-        StorageManager.with(getApplication()).tasks.set(tasks);
+        StorageManager.with(getApplication()).tasks.add(tasks);
 
         int amount = tasks.size();
         String title = String.format("Andy Abbot has %s new Task%s for you",
