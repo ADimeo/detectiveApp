@@ -109,9 +109,4 @@ public class TextMessage implements UserData {
     public int hashCode() {
         return Objects.hash(id, timeStamp, body, address, inbound);
     }
-
-    @Override
-    public String[] requiredPermission() {
-        return new String[]{Manifest.permission.READ_SMS};
-    }
 }

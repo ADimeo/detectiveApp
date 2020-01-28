@@ -396,9 +396,4 @@ public class Contact implements UserData {
     public int hashCode() {
         return Objects.hash(id, displayNamePrimary, homeAddress, email, organisation, birthday);
     }
-
-    @Override
-    public String[] requiredPermission() {
-        return new String[]{Manifest.permission.READ_CONTACTS};
-    }
 }

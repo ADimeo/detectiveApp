@@ -40,9 +40,4 @@ public class LocationData implements UserData {
     public long getTime() {
         return time;
     }
-
-    @Override
-    public String[] requiredPermission() {
-        return new String[]{Manifest.permission.ACCESS_COARSE_LOCATION};
-    }
 }

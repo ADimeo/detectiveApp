@@ -41,11 +41,6 @@ public class CalendarEvent implements UserData {
         endInUTCMilliseconds = cursorColumn(c, CalendarContract.Events.DTEND, c::getLong);
     }
 
-    @Override
-    public String[] requiredPermission() {
-        return new String[]{Manifest.permission.READ_CALENDAR};
-    }
-
     private static <T> T cursorColumn(Cursor c, String key, Function<Integer, T> getter) {
         int pos = c.getColumnIndex(key);
         return getter.apply(pos);
