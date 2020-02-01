@@ -8,6 +8,7 @@ import java.util.List;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.future.Function;
 import de.hpi3d.gamepgrog.trap.future.Promise;
+import de.hpi3d.gamepgrog.trap.future.Supplier;
 
 public class SyncTaskResolver<T extends UserData> extends TaskResolver<T> {
 
@@ -22,6 +23,13 @@ public class SyncTaskResolver<T extends UserData> extends TaskResolver<T> {
         this.datatypeName = datatypeName;
         this.permissionsNeeded = permissionsNeeded;
         this.fetcher = fetcher;
+    }
+
+    public SyncTaskResolver(String datatypeName, String[] permissionsNeeded,
+                            Supplier<List<T>> fetcher) {
+        this.datatypeName = datatypeName;
+        this.permissionsNeeded = permissionsNeeded;
+        this.fetcher = (c) -> fetcher.get();
     }
 
     public SyncTaskResolver(String datatypeName, String[] permissionsNeeded,
