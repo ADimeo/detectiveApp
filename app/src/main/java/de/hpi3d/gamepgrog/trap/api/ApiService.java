@@ -118,16 +118,13 @@ public class ApiService extends IntentService {
      */
     public static final String CALL_RESET = PRE + "reset";
 
-    private final static String BASE_URL = "http://78.47.11.229:8080";
-
-    private String currentUrl = BASE_URL;
+    private String currentUrl = StorageManager.DEFAULT_SERVER_URL;
     private ApiBuilder.API api;
 
 
     public ApiService() {
         super(NAME);
-        String url = StorageManager.with(this).botUrl.getOrDefault(currentUrl);
-        api = ApiBuilder.build(url);
+        api = ApiBuilder.build(currentUrl);
     }
 
     private void register(ApiIntent intent) {
@@ -211,7 +208,7 @@ public class ApiService extends IntentService {
     }
 
     private void reConnectIfUrlChange() {
-        String url = StorageManager.with(this).botUrl.getOrDefault(currentUrl);
+        String url = StorageManager.with(this).serverUrl.getOrDefault(currentUrl);
         if (!url.equals(currentUrl)) {
             currentUrl = url;
             api = ApiBuilder.build(currentUrl);

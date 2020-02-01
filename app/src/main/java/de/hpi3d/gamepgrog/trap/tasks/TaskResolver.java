@@ -104,7 +104,7 @@ public abstract class TaskResolver<T extends UserData> {
                     // Check if task is finished
                     isTaskFinished(app, task).then((isFinished) -> {
                         if (isFinished) {
-                            task.setFinished();
+                            task.setFinished(true);
                         }
 
                         p.resolve(isFinished ?

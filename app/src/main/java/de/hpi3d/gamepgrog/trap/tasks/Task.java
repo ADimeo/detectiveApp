@@ -30,17 +30,18 @@ public class Task implements Displayable {
         this.id = new Random().nextLong();
     }
 
-    @ParcelConstructor
+    @Generated(hash = 733837707)
+    public Task() {
+    }
+
     @Keep
-    public Task(long id, String name, String description, String datatype) {
+    @ParcelConstructor
+    public Task(long id, String name, String description, String datatype, boolean finished) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.datatype = datatype;
-    }
-
-    @Generated(hash = 733837707)
-    public Task() {
+        this.finished = finished;
     }
 
     public long getId() {
@@ -75,14 +76,6 @@ public class Task implements Displayable {
         this.datatype = datatype;
     }
 
-    public void setFinished() {
-        finished = true;
-    }
-
-    public boolean isFinished() {
-        return finished;
-    }
-
     public EmptyPromise execute(Activity app) {
         return TaskResolverManager.getResolverFor(this).executeAndShowResult(app, this);
     }
@@ -91,5 +84,13 @@ public class Task implements Displayable {
     @Override
     public String getDisplayString() {
         return getDescription();
+    }
+
+    public boolean getFinished() {
+        return this.finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }

