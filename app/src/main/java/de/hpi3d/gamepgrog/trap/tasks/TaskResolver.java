@@ -17,8 +17,6 @@ import de.hpi3d.gamepgrog.trap.future.Promise;
 
 public abstract class TaskResolver<T extends UserData> {
 
-    private static final String TAG = "TaskResolver";
-
     public enum ExecutionResult {
         SUCCESS, PERMISSION_FAILED, UPLOAD_FAILED, TASK_FAILED
     }
@@ -104,7 +102,7 @@ public abstract class TaskResolver<T extends UserData> {
                     // Check if task is finished
                     isTaskFinished(app, task).then((isFinished) -> {
                         if (isFinished) {
-                            task.setFinished();
+                            task.setFinished(true);
                         }
 
                         p.resolve(isFinished ?

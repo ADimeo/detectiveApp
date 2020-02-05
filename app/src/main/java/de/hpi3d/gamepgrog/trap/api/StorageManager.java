@@ -38,14 +38,18 @@ public class StorageManager {
     private static final String KEY_SHARED_PREFERENCES = "backend_manager_preferences";
     private static final String KEY_CONVERSATION_HAS_STARTED = "key_conversation_has_started";
     private static final String KEY_SAFETY_MODE = "key_safety_mode"; // Also defined in strings.xml
+    private static final String KEY_SERVER_URL = "key_server_url";
 
     private static final String KEY_FIREBASE_KEY = "key_firebase_key";
+
+    public static final String DEFAULT_SERVER_URL = "http://78.47.11.229:8080";
 
     public final Preference<Integer> userid;
     public final Preference<String> fbtoken;
     public final Preference<String> botUrl;
     public final Preference<Boolean> conversationStarted;
     public final Preference<Boolean> safetyMode;
+    public final Preference<String> serverUrl;
     public final DaoPreferences<Task> tasks;
     public final DaoPreferences<Clue> clues;
 
@@ -70,6 +74,10 @@ public class StorageManager {
                 app, true, KEY_SAFETY_MODE,
                 SharedPreferences::getBoolean,
                 SharedPreferences.Editor::putBoolean);
+        serverUrl = new Preference<>(
+                app, DEFAULT_SERVER_URL, KEY_SERVER_URL,
+                SharedPreferences::getString,
+                SharedPreferences.Editor::putString);
         tasks = new DaoPreferences<>(app, DaoSession::getTaskDao);
         clues = new DaoPreferences<>(app, DaoSession::getClueDao);
     }
@@ -156,7 +164,6 @@ public class StorageManager {
         }
     }
 
-    @SuppressWarnings("WeakerAccess")
     public class DaoPreferences<T> {
 
         private Application app;

@@ -1,8 +1,6 @@
 package de.hpi3d.gamepgrog.trap.api;
 
 
-import org.parceler.ParcelConstructor;
-
 import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;

@@ -35,9 +35,7 @@ public class ApiService extends IntentService {
     public static final String KEY_TOKEN = PRE + "token";
     public static final String KEY_RECEIVER = PRE + "receiver";
     public static final String KEY_CALL = PRE + "manager";
-    public static final String KEY_SAFETY = PRE + "safety";
 
-    public static final int ERROR_EXCEPTION = -2;
     public static final int SUCCESS = 200;
 
     /**
@@ -73,7 +71,7 @@ public class ApiService extends IntentService {
      * Param: UserId (int) in {@link ApiService#KEY_USER_ID}<br>
      * Param: TaskId (int) in {@link ApiService#KEY_TASK_ID}<br>
      * Returns a {@link android.os.ResultReceiver} in {@link ApiService#KEY_RECEIVER} with
-     * a HTTP error/success or {@link ApiService#ERROR_EXCEPTION} code and
+     * a HTTP error/success code and
      * a {@link Boolean} in {@link ApiService#KEY_RESULT}
      */
     public static final String CALL_IS_TASK_FINISHED = PRE + "task_finished";
@@ -118,16 +116,13 @@ public class ApiService extends IntentService {
      */
     public static final String CALL_RESET = PRE + "reset";
 
-    private final static String BASE_URL = "http://78.47.11.229:8080";
-
-    private String currentUrl = BASE_URL;
+    private String currentUrl = StorageManager.DEFAULT_SERVER_URL;
     private ApiBuilder.API api;
 
 
     public ApiService() {
         super(NAME);
-        String url = StorageManager.with(this).botUrl.getOrDefault(currentUrl);
-        api = ApiBuilder.build(url);
+        api = ApiBuilder.build(currentUrl);
     }
 
     private void register(ApiIntent intent) {
@@ -211,7 +206,7 @@ public class ApiService extends IntentService {
     }
 
     private void reConnectIfUrlChange() {
-        String url = StorageManager.with(this).botUrl.getOrDefault(currentUrl);
+        String url = StorageManager.with(this).serverUrl.getOrDefault(currentUrl);
         if (!url.equals(currentUrl)) {
             currentUrl = url;
             api = ApiBuilder.build(currentUrl);

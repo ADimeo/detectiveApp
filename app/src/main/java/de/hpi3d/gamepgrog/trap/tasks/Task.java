@@ -30,20 +30,12 @@ public class Task implements Displayable {
         this.id = new Random().nextLong();
     }
 
-    @ParcelConstructor
-    @Keep
-    public Task(long id, String name, String description, String datatype) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.datatype = datatype;
-    }
-
     @Generated(hash = 733837707)
     public Task() {
     }
 
-    @Generated(hash = 566770323)
+    @Keep
+    @ParcelConstructor
     public Task(long id, String name, String description, String datatype, boolean finished) {
         this.id = id;
         this.name = name;
@@ -51,6 +43,7 @@ public class Task implements Displayable {
         this.datatype = datatype;
         this.finished = finished;
     }
+
 
     public long getId() {
         return id;

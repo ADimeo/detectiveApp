@@ -1,13 +1,11 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
-import android.Manifest;
 import android.database.Cursor;
 import android.provider.CalendarContract;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
@@ -39,11 +37,6 @@ public class CalendarEvent implements UserData {
         eventLocation = cursorColumn(c, CalendarContract.Events.EVENT_LOCATION, c::getString);
         startInUTCMilliseconds = cursorColumn(c, CalendarContract.Events.DTSTART, c::getLong);
         endInUTCMilliseconds = cursorColumn(c, CalendarContract.Events.DTEND, c::getLong);
-    }
-
-    @Override
-    public String[] requiredPermission() {
-        return new String[]{Manifest.permission.READ_CALENDAR};
     }
 
     private static <T> T cursorColumn(Cursor c, String key, Function<Integer, T> getter) {

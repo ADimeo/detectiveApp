@@ -73,13 +73,4 @@ public class MainActivity extends AppCompatActivity {
                                            String[] permissions, int[] grantResults) {
         PermissionHelper.onPermission(requestCode, grantResults);
     }
-
-
-
-    public String getLanguage() {
-        // TODO Wrap in object
-        return Locale.getDefault().getLanguage();
-    }
-
-
 }

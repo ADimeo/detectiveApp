@@ -1,7 +1,5 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
-import android.Manifest;
-
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
@@ -108,10 +106,5 @@ public class TextMessage implements UserData {
     @Override
     public int hashCode() {
         return Objects.hash(id, timeStamp, body, address, inbound);
-    }
-
-    @Override
-    public String[] requiredPermission() {
-        return new String[]{Manifest.permission.READ_SMS};
     }
 }
