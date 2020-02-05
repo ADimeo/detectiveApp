@@ -112,8 +112,8 @@ public class StorageManager {
         private TriConsumer<SharedPreferences.Editor, String, T> setter;
 
         private Preference(Context c, T defaultValue, String key,
-                          TriFunction<SharedPreferences, String, T, T> getter,
-                          TriConsumer<SharedPreferences.Editor, String, T> setter) {
+                           TriFunction<SharedPreferences, String, T, T> getter,
+                           TriConsumer<SharedPreferences.Editor, String, T> setter) {
             this.c = c;
             this.defaultValue = defaultValue;
             this.key = key;
@@ -128,12 +128,18 @@ public class StorageManager {
             return getOrDefault(defaultValue);
         }
 
+
         /**
          * @param defaultValue The value to return if storage is empty
          * @return the value stored or defaultValue if nothing is stored
          */
         public T getOrDefault(T defaultValue) {
-            return getter.apply(getPreferences(), key, defaultValue);
+            try {
+                return getter.apply(getPreferences(), key, defaultValue);
+            } catch (NullPointerException e) {
+                return defaultValue;
+            }
+
         }
 
         /**
@@ -183,6 +189,7 @@ public class StorageManager {
 
         /**
          * Deletes the stored values and stores the given list
+         *
          * @param list list to store
          */
         public void set(List<T> list) {

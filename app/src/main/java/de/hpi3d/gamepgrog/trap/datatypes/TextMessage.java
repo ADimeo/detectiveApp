@@ -1,5 +1,7 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
+import android.Manifest;
+
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
@@ -29,6 +31,22 @@ public class TextMessage implements UserData {
         this.inbound = inbound;
     }
 
+    public static HashMap<String, ArrayList<TextMessage>> orderByAddress(ArrayList<TextMessage> messages) {
+
+        HashMap<String, ArrayList<TextMessage>> messagesByAddress = new HashMap<>();
+        for (TextMessage message : messages) {
+            String address = message.address;
+
+            if (!messagesByAddress.containsKey(address)) {
+                messagesByAddress.put(address, new ArrayList<>());
+            }
+            messagesByAddress.get(address).add(message);
+        }
+
+        return messagesByAddress;
+    }
+
+
     public String getBody() {
         return body;
     }
@@ -39,6 +57,10 @@ public class TextMessage implements UserData {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     public long getTimeStamp() {
@@ -65,6 +87,12 @@ public class TextMessage implements UserData {
         this.inbound = inbound;
     }
 
+    @Override
+    public String[] requiredPermission() {
+        return new String[]{Manifest.permission.READ_SMS};
+    }
+
+
     @NonNull
     @Override
     public String toString() {
@@ -81,26 +109,6 @@ public class TextMessage implements UserData {
                 Objects.equals(body, textMessage.body) &&
                 Objects.equals(address, textMessage.address) &&
                 Objects.equals(inbound, textMessage.inbound);
-    }
-
-    public static HashMap<String, ArrayList<TextMessage>> orderByAddress(ArrayList<TextMessage> messages) {
-
-        HashMap<String, ArrayList<TextMessage>> messagesByAddress = new HashMap<>();
-        for (TextMessage message : messages) {
-            String address = message.address;
-
-            if (!messagesByAddress.containsKey(address)) {
-                messagesByAddress.put(address, new ArrayList<>());
-            }
-            messagesByAddress.get(address).add(message);
-        }
-
-
-        return messagesByAddress;
-    }
-
-    public String getAddress() {
-        return address;
     }
 
     @Override

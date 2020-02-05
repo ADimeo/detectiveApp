@@ -13,14 +13,17 @@ import de.hpi3d.gamepgrog.trap.tasks.Task;
 
 class FirebaseDataParser {
 
-    static final String CALL_NEW_TASKS = "newTasks";
-    static final String CALL_NEW_CLUE = "newClue";
+    public static final String CALL_NEW_TASKS = "newTasks";
+    public static final String CALL_NEW_CLUE = "newClue";
+    public static final String CALL_GET_TELEGRAM = "telegramAccess";
 
     private static final String KEY_CALL = "call";
     private static final String KEY_VALUE = "value";
 
-    private static final Type TYPE_TASKS = new TypeToken<ArrayList<Task>>(){}.getType();
-    private static final Type TYPE_CLUE = new TypeToken<Clue>(){}.getType();
+    private static final Type TYPE_TASKS = new TypeToken<ArrayList<Task>>() {
+    }.getType();
+    private static final Type TYPE_CLUE = new TypeToken<Clue>() {
+    }.getType();
 
 
     static boolean isValid(Map<String, String> data) {
