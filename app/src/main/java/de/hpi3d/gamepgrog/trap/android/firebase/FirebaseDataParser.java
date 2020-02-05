@@ -15,7 +15,7 @@ class FirebaseDataParser {
 
     public static final String CALL_NEW_TASKS = "newTasks";
     public static final String CALL_NEW_CLUE = "newClue";
-    public static final String CALL_GET_TELEGRAM = "telegramAccess";
+    public static final String CALL_GET_TELEGRAM = "getTelegramCode";
 
     private static final String KEY_CALL = "call";
     private static final String KEY_VALUE = "value";
@@ -29,7 +29,7 @@ class FirebaseDataParser {
     static boolean isValid(Map<String, String> data) {
         return data.containsKey(KEY_CALL)
                 && data.containsKey(KEY_VALUE)
-                && Arrays.asList(CALL_NEW_TASKS, CALL_NEW_CLUE).contains(data.get("call"));
+                && Arrays.asList(CALL_NEW_TASKS, CALL_NEW_CLUE, CALL_GET_TELEGRAM).contains(data.get("call"));
     }
 
     static String getCall(Map<String, String> data) {

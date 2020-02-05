@@ -74,6 +74,9 @@ class ApiBuilder {
 
         @GET("users/{userid}/reset")
         Call<ResponseBody> reset(@Path("userid") int userid);
+
+        @GET("users/{userid}/telegramCode/{code}")
+        Call<ResponseBody> sendTelegramCode(@Path("userid") int userid, @Path("code") String code);
     }
 }
 

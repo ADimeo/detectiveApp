@@ -2,6 +2,7 @@ package de.hpi3d.gamepgrog.trap.future;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class ArrayExt {
@@ -60,10 +61,20 @@ public class ArrayExt {
     }
 
     public static <T, V> List<V> map(List<T> list, Function<T, V> converter) {
-        List<V> converted = new ArrayList<>(list.size());
-        for (int i = 0; i < list.size(); i++) {
-            converted.set(i, converter.apply(list.get(i)));
+        List<V> converted = new ArrayList<>();
+        for (T value : list) {
+            converted.add(converter.apply(value));
         }
         return converted;
+    }
+
+    public static <T> List<T> filter(List<T> list, Predicate<T> predicate) {
+        List<T> matches = new ArrayList<>();
+        for (T value : list) {
+            if (predicate.test(value)) {
+                matches.add(value);
+            }
+        }
+        return matches;
     }
 }

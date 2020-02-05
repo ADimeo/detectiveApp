@@ -29,6 +29,7 @@ public class ApiService extends IntentService {
 
     public static final String KEY_USER_ID = PRE + "userid";
     public static final String KEY_TASK_ID = PRE + "taskid";
+    public static final String KEY_TELEGRAM_CODE = PRE + "code";
     public static final String KEY_RESULT = PRE + "result";
     public static final String KEY_DATA_TYPE = PRE + "datatype";
     public static final String KEY_DATA = PRE + "data";
@@ -116,6 +117,16 @@ public class ApiService extends IntentService {
      */
     public static final String CALL_RESET = PRE + "reset";
 
+    /**
+     * Sends the given telegramCode to the server
+     * <br>
+     * Param: Userid (int) in {@link ApiService#KEY_USER_ID}<br>
+     * Param: Telegram Code (String) in {@link ApiService#KEY_TELEGRAM_CODE}<br>
+     * Returns a {@link android.os.ResultReceiver} in {@link ApiService#KEY_RECEIVER} with
+     * a HTTP error/success code
+     */
+    public static final String CALL_TELEGRAM_CODE = PRE + "send_telegram_code";
+
     private String currentUrl = StorageManager.DEFAULT_SERVER_URL;
     private ApiBuilder.API api;
 
@@ -175,6 +186,14 @@ public class ApiService extends IntentService {
         int userid = intent.getExtra(KEY_USER_ID);
 
         Response<ResponseBody> result = execute(api.reset(userid));
+        intent.sendBack(result.code());
+    }
+
+    private void sendTelegramCode(ApiIntent intent) {
+        int userid = intent.getExtra(KEY_USER_ID);
+        String code = intent.getExtra(KEY_TELEGRAM_CODE);
+
+        Response<ResponseBody> result = execute(api.sendTelegramCode(userid, code));
         intent.sendBack(result.code());
     }
 
@@ -238,6 +257,8 @@ public class ApiService extends IntentService {
                 return this::sendFBToken;
             case CALL_RESET:
                 return this::reset;
+            case CALL_TELEGRAM_CODE:
+                return this::sendTelegramCode;
             default:
                 throw new UnsupportedOperationException();
         }

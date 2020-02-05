@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 
 
 @Parcel(Parcel.Serialization.BEAN)
-public class TextMessage implements UserData {
+public class TextMessage implements UserData, Comparable {
 
     private long id;
     private long timeStamp;
@@ -87,12 +87,6 @@ public class TextMessage implements UserData {
         this.inbound = inbound;
     }
 
-    @Override
-    public String[] requiredPermission() {
-        return new String[]{Manifest.permission.READ_SMS};
-    }
-
-
     @NonNull
     @Override
     public String toString() {
@@ -114,5 +108,13 @@ public class TextMessage implements UserData {
     @Override
     public int hashCode() {
         return Objects.hash(id, timeStamp, body, address, inbound);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof TextMessage) {
+            return Long.compare(getTimeStamp(), ((TextMessage) o).getTimeStamp());
+        }
+        return 0;
     }
 }

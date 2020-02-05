@@ -67,6 +67,11 @@ public class NoUploadApi implements ApiBuilder.API {
         return api.reset(userid);
     }
 
+    @Override
+    public Call<ResponseBody> sendTelegramCode(int userid, String code) {
+        return api.sendTelegramCode(userid, code);
+    }
+
     private static class NoCall<T> implements Call<T> {
 
         private Supplier<T> defaultSupplier;
