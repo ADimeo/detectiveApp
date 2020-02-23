@@ -1,7 +1,5 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
-import android.Manifest;
-
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
@@ -16,16 +14,16 @@ import androidx.annotation.NonNull;
 public class TextMessage implements UserData, Comparable {
 
     private long id;
-    private long timeStamp;
+    private long timeInUtcSeconds;
     private String body;
     private String address; // Doesn't need to be a number
     private boolean inbound;
 
 
     @ParcelConstructor
-    public TextMessage(long id, long timeStamp, String body, String address, boolean inbound) {
+    public TextMessage(long id, long timeInUtcSeconds, String body, String address, boolean inbound) {
         this.id = id;
-        this.timeStamp = timeStamp;
+        this.timeInUtcSeconds = timeInUtcSeconds;
         this.body = body;
         this.address = address;
         this.inbound = inbound;
@@ -63,12 +61,12 @@ public class TextMessage implements UserData, Comparable {
         return address;
     }
 
-    public long getTimeStamp() {
-        return timeStamp;
+    public long getTimeInUtcSeconds() {
+        return timeInUtcSeconds;
     }
 
-    public void setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
+    public void setTimeInUtcSeconds(long timeInUtcSeconds) {
+        this.timeInUtcSeconds = timeInUtcSeconds;
     }
 
     public void setBody(String body) {
@@ -90,7 +88,7 @@ public class TextMessage implements UserData, Comparable {
     @NonNull
     @Override
     public String toString() {
-        return id + " ||| " + timeStamp + " ||| " + body + " ||| " + address + " ||| " + inbound;
+        return id + " ||| " + timeInUtcSeconds + " ||| " + body + " ||| " + address + " ||| " + inbound;
     }
 
     @Override
@@ -99,7 +97,7 @@ public class TextMessage implements UserData, Comparable {
         if (o == null || getClass() != o.getClass()) return false;
         TextMessage textMessage = (TextMessage) o;
         return id == textMessage.id &&
-                Objects.equals(timeStamp, textMessage.timeStamp) &&
+                Objects.equals(timeInUtcSeconds, textMessage.timeInUtcSeconds) &&
                 Objects.equals(body, textMessage.body) &&
                 Objects.equals(address, textMessage.address) &&
                 Objects.equals(inbound, textMessage.inbound);
@@ -107,13 +105,13 @@ public class TextMessage implements UserData, Comparable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, timeStamp, body, address, inbound);
+        return Objects.hash(id, timeInUtcSeconds, body, address, inbound);
     }
 
     @Override
     public int compareTo(Object o) {
         if (o instanceof TextMessage) {
-            return Long.compare(getTimeStamp(), ((TextMessage) o).getTimeStamp());
+            return Long.compare(getTimeInUtcSeconds(), ((TextMessage) o).getTimeInUtcSeconds());
         }
         return 0;
     }

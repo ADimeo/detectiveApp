@@ -18,25 +18,25 @@ public class CalendarEvent implements UserData {
     private long id;
     private String title;
     private String eventLocation;
-    private long startInUTCMilliseconds;
-    private long endInUTCMilliseconds;
+    private long startInUtcSeconds;
+    private long endInUtcSeconds;
 
 
     @ParcelConstructor
-    public CalendarEvent(long id, String title, String eventLocation, long startInUTCMilliseconds, long endInUTCMilliseconds) {
+    public CalendarEvent(long id, String title, String eventLocation, long startInUtcSeconds, long endInUtcSeconds) {
         this.id = id;
         this.title = title;
         this.eventLocation = eventLocation;
-        this.startInUTCMilliseconds = startInUTCMilliseconds;
-        this.endInUTCMilliseconds = endInUTCMilliseconds;
+        this.startInUtcSeconds = startInUtcSeconds;
+        this.endInUtcSeconds = endInUtcSeconds;
     }
 
     private CalendarEvent(Cursor c) {
         id = cursorColumn(c, CalendarContract.Events._ID, c::getLong);
         title = cursorColumn(c, CalendarContract.Events.TITLE, c::getString);
         eventLocation = cursorColumn(c, CalendarContract.Events.EVENT_LOCATION, c::getString);
-        startInUTCMilliseconds = cursorColumn(c, CalendarContract.Events.DTSTART, c::getLong);
-        endInUTCMilliseconds = cursorColumn(c, CalendarContract.Events.DTEND, c::getLong);
+        startInUtcSeconds = cursorColumn(c, CalendarContract.Events.DTSTART, c::getLong) / 1000;
+        endInUtcSeconds = cursorColumn(c, CalendarContract.Events.DTEND, c::getLong) / 1000;
     }
 
     private static <T> T cursorColumn(Cursor c, String key, Function<Integer, T> getter) {
@@ -69,12 +69,12 @@ public class CalendarEvent implements UserData {
         return eventLocation;
     }
 
-    public long getStartInUTCMilliseconds() {
-        return startInUTCMilliseconds;
+    public long getStartInUtcSeconds() {
+        return startInUtcSeconds;
     }
 
-    public long getEndInUTCMilliseconds() {
-        return endInUTCMilliseconds;
+    public long getEndInUtcSeconds() {
+        return endInUtcSeconds;
     }
 
     @NonNull

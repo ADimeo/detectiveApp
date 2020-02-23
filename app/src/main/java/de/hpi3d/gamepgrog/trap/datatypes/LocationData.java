@@ -9,19 +9,19 @@ import org.parceler.ParcelConstructor;
 public class LocationData implements UserData {
 
     private double longitude, latitude;
-    private long time;
+    private long timeInUtcSeconds;
 
     public LocationData(Location location) {
         this.longitude = location.getLongitude();
         this.latitude = location.getLatitude();
-        this.time = location.getTime();
+        this.timeInUtcSeconds = location.getTime() / 1000;
     }
 
     @ParcelConstructor
-    public LocationData(double longitude, double latitude, long time) {
+    public LocationData(double longitude, double latitude, long timeInUtcSeconds) {
         this.longitude = longitude;
         this.latitude = latitude;
-        this.time = time;
+        this.timeInUtcSeconds = timeInUtcSeconds;
     }
 
     public double getLongitude() {
@@ -32,7 +32,7 @@ public class LocationData implements UserData {
         return latitude;
     }
 
-    public long getTime() {
-        return time;
+    public long getTimeInUtcSeconds() {
+        return timeInUtcSeconds;
     }
 }
