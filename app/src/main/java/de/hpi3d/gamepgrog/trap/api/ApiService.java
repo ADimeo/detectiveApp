@@ -201,9 +201,8 @@ public class ApiService extends IntentService {
         Response<T> res = null;
         try {
             res = call.execute();
-        } catch (IOException ignored) {
-        } catch (NullPointerException n) {
-            n.printStackTrace();
+        } catch (IOException | NullPointerException e) {
+            e.printStackTrace();
         }
 
         if (res == null) {
@@ -217,10 +216,9 @@ public class ApiService extends IntentService {
         if (intent != null) {
             ApiIntent bIntent = new ApiIntent(intent);
             String type = bIntent.getManagerName();
-            boolean safety = StorageManager.with(this).safetyMode.get();
 
             reConnectIfUrlChange();
-            run(getManager(type), bIntent, safety);
+            run(getManager(type), bIntent);
         }
     }
 
@@ -232,9 +230,14 @@ public class ApiService extends IntentService {
         }
     }
 
-    private void run(Consumer<ApiIntent> manager, ApiIntent intent, boolean safety) {
+    private void run(Consumer<ApiIntent> manager, ApiIntent intent) {
         ApiBuilder.API oldApi = api;
-        api = safety ? new NoUploadApi(api) : api;
+
+        if (StorageManager.with(this).useMockApi.get())
+            api = new MockApi();
+        else if (StorageManager.with(this).safetyMode.get())
+            api = new NoUploadApi(api);
+
         manager.accept(intent);
         api = oldApi;
     }

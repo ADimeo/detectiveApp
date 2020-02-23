@@ -54,7 +54,7 @@ public class NoUploadApi implements ApiBuilder.API {
     @Override
     public Call<ResponseBody> addData(int userid, String datatype, List<UserData> data) {
         Log.d(TAG, "Safety Mode is on. Blocked Data Upload");
-        return new NoCall<>(() -> ResponseBody.create(null, ""));
+        return NoCall.emptyResponse();
     }
 
     @Override
@@ -72,7 +72,7 @@ public class NoUploadApi implements ApiBuilder.API {
         return api.sendTelegramCode(userid, code);
     }
 
-    private static class NoCall<T> implements Call<T> {
+    static class NoCall<T> implements Call<T> {
 
         private Supplier<T> defaultSupplier;
         private boolean executed = false;
@@ -114,6 +114,10 @@ public class NoUploadApi implements ApiBuilder.API {
         @Override
         public Request request() {
             return null;
+        }
+
+        public static Call<ResponseBody> emptyResponse() {
+            return new NoCall<>(() -> ResponseBody.create(null, ""));
         }
     }
 }

