@@ -61,8 +61,8 @@ public class DisplayableRecyclerViewAdapter extends RecyclerView.Adapter<Display
             displayableTextView = (TextView) view.findViewById(R.id.content);
             displayableTextView.setOnClickListener(v -> {
                 if (displayable instanceof Task) {
-                    ((Task) displayable).execute(activity);
-                    Toast.makeText(activity.getApplicationContext(), "DO IT!" + displayable.getDisplayString(), Toast.LENGTH_SHORT).show();
+                    ((Task) displayable).execute(activity).then(this.displayableTextView::invalidate);
+//                    Toast.makeText(activity.getApplicationContext(), "DO IT!" + displayable.getDisplayString(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
