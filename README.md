@@ -8,6 +8,7 @@ An introduction to the Project and the Game are [here](https://github.com/Eating
 To get the App running, take the latest Release (Server and App Version should match).  
 Install the Apk ([How to install an Apk](https://www.androidpit.com/android-for-beginners-what-is-an-apk-file#howto)).  
 You also need to have installed and setup Telegram for this App to work.
+If you don't have a running server, start the App with `--ez MOCKAPI true`
 
 ### How to use
 *(If you don't want the App to upload your Contacts, Calendar Events and more over a insecure connection to our Server, check the "Safety Mode" Switch on)*
