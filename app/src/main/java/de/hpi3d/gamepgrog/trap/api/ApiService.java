@@ -196,7 +196,7 @@ public class ApiService extends IntentService {
         Image img = intent.getExtra(KEY_DATA);
         File f = img.toFile(this);
 
-        RequestBody body = RequestBody.create(MediaType.parse("image/*"), f);
+        RequestBody body = RequestBody.create(MediaType.parse("image/png"), f);
         MultipartBody.Part part = MultipartBody.Part.createFormData("upload", f.getName(), body);
         RequestBody desc = RequestBody.create(MediaType.parse("text/plain"), "image-type");
 
