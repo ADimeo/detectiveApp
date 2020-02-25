@@ -15,6 +15,17 @@ public class ArrayExt {
         return list;
     }
 
+    /**
+     * This is needed because Parcels only accepts ArrayList, not Arrays#ArrayList
+     */
+    public static <T> List<T> toArrayList(T ... original) {
+        List<T> list = new ArrayList<>();
+        for (T value : original) {
+            list.add(value);
+        }
+        return list;
+    }
+
     public static <T> boolean allMatch(T[] list, Predicate<? super T> predicate) {
         return allMatch(Arrays.asList(list), predicate);
     }
