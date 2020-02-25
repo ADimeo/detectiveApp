@@ -19,6 +19,7 @@ import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.tasks.Task;
+import de.hpi3d.gamepgrog.trap.tasks.TaskInitializerManager;
 
 
 public class OurFirebaseMessagingService extends FirebaseMessagingService {
@@ -62,6 +63,10 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
 
     private void onTasksReceived(ArrayList<Task> tasks) {
         StorageManager.with(getApplication()).tasks.add(tasks);
+
+        for (Task task : tasks) {
+            TaskInitializerManager.getInitializerFor(task).accept(getApplication(), task);
+        }
 
         int amount = tasks.size();
         String title = String.format("Andy Abbot has %s new Task%s for you",

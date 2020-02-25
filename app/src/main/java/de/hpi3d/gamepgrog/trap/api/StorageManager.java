@@ -15,6 +15,7 @@ import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.CustomApplication;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
+import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 import de.hpi3d.gamepgrog.trap.future.Function;
 import de.hpi3d.gamepgrog.trap.future.TriConsumer;
 import de.hpi3d.gamepgrog.trap.future.TriFunction;
@@ -56,6 +57,7 @@ public class StorageManager {
     public final Preference<String> serverUrl;
     public final DaoPreferences<Task> tasks;
     public final DaoPreferences<Clue> clues;
+    public final DaoPreferences<LocationData> locations;
 
     private StorageManager(Application app) {
         userid = new Preference<>(
@@ -88,6 +90,7 @@ public class StorageManager {
                 SharedPreferences.Editor::putBoolean);
         tasks = new DaoPreferences<>(app, DaoSession::getTaskDao);
         clues = new DaoPreferences<>(app, DaoSession::getClueDao);
+        locations = new DaoPreferences<>(app, DaoSession::getLocationDataDao);
     }
 
     public static StorageManager with(Application app) {

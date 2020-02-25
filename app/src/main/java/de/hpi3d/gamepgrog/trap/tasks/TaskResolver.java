@@ -23,6 +23,8 @@ public abstract class TaskResolver<T extends UserData> {
 
     protected abstract String getDatatypeName();
 
+    protected abstract String getTaskName();
+
     protected abstract String[] getPermissionsNeeded();
 
     protected int getPermissionsDialogMessageId() {
@@ -174,6 +176,6 @@ public abstract class TaskResolver<T extends UserData> {
     }
 
     protected boolean applicableFor(Task task) {
-        return this.getDatatypeName().equals(task.getDatatype());
+        return this.getTaskName().equals(task.getDatatype());
     }
 }

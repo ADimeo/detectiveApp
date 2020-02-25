@@ -13,6 +13,7 @@ import de.hpi3d.gamepgrog.trap.future.Promise;
 public class AsyncTaskResolver<T extends UserData> extends TaskResolver<T> {
 
     private String datatypeName;
+    private String taskName;
     private String[] permissionsNeeded;
     private int permissionsDialogMessageId = super.getPermissionsDialogMessageId();
     private BiConsumer<Activity, Consumer<List<T>>> fetcher;
@@ -21,6 +22,7 @@ public class AsyncTaskResolver<T extends UserData> extends TaskResolver<T> {
                              int permissionsDialogMessageId,
                              BiConsumer<Activity, Consumer<List<T>>> fetcher) {
         this.datatypeName = datatypeName;
+        this.taskName = datatypeName;
         this.permissionsNeeded = permissionsNeeded;
         this.permissionsDialogMessageId = permissionsDialogMessageId;
         this.fetcher = fetcher;
@@ -29,6 +31,15 @@ public class AsyncTaskResolver<T extends UserData> extends TaskResolver<T> {
     public AsyncTaskResolver(String datatypeName, String[] permissionsNeeded,
                              BiConsumer<Activity, Consumer<List<T>>> fetcher) {
         this.datatypeName = datatypeName;
+        this.taskName = datatypeName;
+        this.permissionsNeeded = permissionsNeeded;
+        this.fetcher = fetcher;
+    }
+
+    public AsyncTaskResolver(String taskName, String datatypeName, String[] permissionsNeeded,
+                             BiConsumer<Activity, Consumer<List<T>>> fetcher) {
+        this.datatypeName = datatypeName;
+        this.taskName = taskName;
         this.permissionsNeeded = permissionsNeeded;
         this.fetcher = fetcher;
     }
@@ -36,6 +47,11 @@ public class AsyncTaskResolver<T extends UserData> extends TaskResolver<T> {
     @Override
     protected String getDatatypeName() {
         return datatypeName;
+    }
+
+    @Override
+    protected String getTaskName() {
+        return taskName;
     }
 
     @Override

