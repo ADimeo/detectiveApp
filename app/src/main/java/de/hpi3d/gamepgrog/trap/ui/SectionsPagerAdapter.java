@@ -43,9 +43,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position % 2 == 0) {
-            return clueFragment;
-        } else {
             return taskFragment;
+        } else {
+            return clueFragment;
         }
     }
 

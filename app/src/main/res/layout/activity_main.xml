@@ -7,22 +7,15 @@
     tools:context=".ui.MainActivity">
 
 
-    <fragment
-        android:id="@+id/headlines_fragment"
-        android:name="de.hpi3d.gamepgrog.trap.ui.MainFragment"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        app:layout_constraintTop_toBottomOf="@+id/headlines_fragment"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="0dp" />
 
     <androidx.viewpager.widget.ViewPager
@@ -33,5 +26,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tabs"
         tools:layout_editor_absoluteX="16dp" />
+
+
+    <fragment
+        android:id="@+id/headlines_fragment"
+        android:name="de.hpi3d.gamepgrog.trap.ui.MainFragment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view_pager" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
