@@ -3,7 +3,6 @@ package de.hpi3d.gamepgrog.trap.ui;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -11,12 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
-
-import org.parceler.Parcels;
-
-import java.util.Arrays;
-import java.util.Collections;
-
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.android.CameraStealer;
 import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
@@ -25,7 +18,6 @@ import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
-import de.hpi3d.gamepgrog.trap.tasks.Task;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
@@ -55,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
             registerUserAndSendFBToken();
         }
 
-//        DataStealer.takeTelegramAccessCode(this);
     }
 
     private void registerUserAndSendFBToken() {

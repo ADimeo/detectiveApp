@@ -60,17 +60,6 @@ public class DisplayableListFragment extends Fragment {
             throw new IllegalArgumentException("Can only display clues or tasks");
         }
 
-     /*
-        // Uncomment for fast local test data
-
-        Clue displayable = new Clue("PLACEHOLDER CLUE GENERATED IN DisplayableListFragment " + r.nextInt(100));
-        daoSession.getClueDao().insert(displayable);
-        Task task = new Task("PLACEHOLDER TASK GENERATED IN DisplayableListFragment " + r.nextInt(100));
-        daoSession.getTaskDao().insert(task);
-
-        Clue[] clues = (daoSession.getClueDao().queryBuilder().list()).toArray(new Clue[0]);
-        Log.d("Temp", Arrays.toString(clues));
-        */
     }
 
     @Override

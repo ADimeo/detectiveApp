@@ -1,11 +1,12 @@
 package de.hpi3d.gamepgrog.trap.ui;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -61,8 +62,15 @@ public class DisplayableRecyclerViewAdapter extends RecyclerView.Adapter<Display
             displayableTextView = (TextView) view.findViewById(R.id.content);
             displayableTextView.setOnClickListener(v -> {
                 if (displayable instanceof Task) {
+
                     ((Task) displayable).execute(activity).then(this.displayableTextView::invalidate);
-//                    Toast.makeText(activity.getApplicationContext(), "DO IT!" + displayable.getDisplayString(), Toast.LENGTH_SHORT).show();
+
+                    Intent telegramWithTextIntent = new Intent();
+                    telegramWithTextIntent.setData(Uri.parse("http://telegram.me/AndyAbbot"));
+                    telegramWithTextIntent.putExtra(Intent.EXTRA_TEXT, "CUSTOM TELEGRAM MESSAGE HERE");
+               //     telegramWithTextIntent.setAction(Intent.ACTION_SEND);
+
+                    activity.startActivity(telegramWithTextIntent);
                 }
             });
         }
