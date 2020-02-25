@@ -47,13 +47,6 @@ public class MainFragment extends Fragment {
 
         });
 
-        Switch safetySwitch = view.findViewById(R.id.switch_safety);
-        safetySwitch.setChecked(StorageManager.with(getActivity()).safetyMode.get());
-
-        safetySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            StorageManager.with(getActivity()).safetyMode.set(isChecked);
-        });
-
         return view;
     }
 
