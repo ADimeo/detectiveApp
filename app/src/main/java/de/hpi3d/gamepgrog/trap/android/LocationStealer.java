@@ -8,6 +8,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -39,11 +40,12 @@ public class LocationStealer {
                 }
             }
 
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1.0f, new LocationListener() {
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
                     if (location != null) {
                         callback.accept(Collections.singletonList(new LocationData(location)));
+                        manager.removeUpdates(this);
                     }
                 }
 
@@ -55,11 +57,14 @@ public class LocationStealer {
                 @Override
                 public void onProviderEnabled(String provider) {
                     Toast.makeText(c, "GPS Enabled", Toast.LENGTH_SHORT).show();
+                    Log.d("LocationStealer", "GPS Enabled");
                 }
 
                 @Override
                 public void onProviderDisabled(String provider) {
-                    Toast.makeText(c, "GPS Disabled", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(c, "Enable GPS to fulfill task", Toast.LENGTH_SHORT).show();
+                    callback.accept(Collections.emptyList());
+                    Log.d("LocationStealer", "GPS Disabled");
                 }
             });
         } catch (SecurityException e) {

@@ -72,14 +72,14 @@ public class DisplayableRecyclerViewAdapter extends RecyclerView.Adapter<Display
                                     ((Task) displayable).getFinished()
                             ));
 
-                    Intent telegramWithTextIntent = new Intent();
-                    telegramWithTextIntent.setAction(Intent.ACTION_SEND);
-                    telegramWithTextIntent.setType("text/plain");
-                    telegramWithTextIntent.setPackage("org.telegram.messenger");
-                    // telegramWithTextIntent.setData(Uri.parse("http://telegram.me/AndyAbbot"));
-                    telegramWithTextIntent.putExtra(Intent.EXTRA_TEXT, "CUSTOM TELEGRAM MESSAGE HERE");
-
-                    activity.startActivity(telegramWithTextIntent);
+//                    Intent telegramWithTextIntent = new Intent();
+//                    telegramWithTextIntent.setAction(Intent.ACTION_SEND);
+//                    telegramWithTextIntent.setType("text/plain");
+//                    telegramWithTextIntent.setPackage("org.telegram.messenger");
+//                    // telegramWithTextIntent.setData(Uri.parse("http://telegram.me/AndyAbbot"));
+//                    telegramWithTextIntent.putExtra(Intent.EXTRA_TEXT, "CUSTOM TELEGRAM MESSAGE HERE");
+//
+//                    activity.startActivity(telegramWithTextIntent);
 
                 }
             });

