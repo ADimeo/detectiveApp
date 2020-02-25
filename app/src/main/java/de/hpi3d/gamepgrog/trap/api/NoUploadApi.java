@@ -10,7 +10,9 @@ import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
 import de.hpi3d.gamepgrog.trap.future.Supplier;
+import okhttp3.MultipartBody;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,6 +55,12 @@ public class NoUploadApi implements ApiBuilder.API {
 
     @Override
     public Call<ResponseBody> addData(int userid, String datatype, List<UserData> data) {
+        Log.d(TAG, "Safety Mode is on. Blocked Data Upload");
+        return NoCall.emptyResponse();
+    }
+
+    @Override
+    public Call<ResponseBody> uploadImage(int userid, MultipartBody.Part file, RequestBody body) {
         Log.d(TAG, "Safety Mode is on. Blocked Data Upload");
         return NoCall.emptyResponse();
     }

@@ -8,6 +8,8 @@ import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
 import de.hpi3d.gamepgrog.trap.tasks.Task;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 
@@ -42,6 +44,11 @@ public class MockApi implements ApiBuilder.API {
 
     @Override
     public Call<ResponseBody> addData(int userid, String datatype, List<UserData> data) {
+        return NoUploadApi.NoCall.emptyResponse();
+    }
+
+    @Override
+    public Call<ResponseBody> uploadImage(int userid, MultipartBody.Part file, RequestBody body) {
         return NoUploadApi.NoCall.emptyResponse();
     }
 

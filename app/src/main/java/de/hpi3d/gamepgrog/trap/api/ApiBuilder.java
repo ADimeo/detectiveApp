@@ -8,7 +8,9 @@ import de.hpi3d.gamepgrog.trap.tasks.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -17,7 +19,9 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 /**
@@ -68,6 +72,12 @@ class ApiBuilder {
         Call<ResponseBody> addData(@Path("userid") int userid,
                                    @Path("datatype") String datatype,
                                    @Body List<UserData> data);
+
+        @Multipart
+        @POST("users/{userid}/data/image")
+        Call<ResponseBody> uploadImage(@Path("userid") int userid,
+                                       @Part MultipartBody.Part file,
+                                       @Part("name") RequestBody body);
 
         @GET("users/{userid}/clues")
         Call<List<Clue>> getClues(@Path("userid") int userid);

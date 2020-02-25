@@ -4,16 +4,21 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import androidx.annotation.Nullable;
 import de.hpi3d.gamepgrog.trap.datatypes.Clue;
+import de.hpi3d.gamepgrog.trap.datatypes.Image;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
 import de.hpi3d.gamepgrog.trap.future.Consumer;
 import de.hpi3d.gamepgrog.trap.tasks.Task;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -99,6 +104,16 @@ public class ApiService extends IntentService {
     public static final String CALL_ADD_DATA = PRE + "add_data";
 
     /**
+     * Uploads an Image
+     * <br>
+     * Param: Userid (int) in {@link ApiService#KEY_USER_ID}<br>
+     * Param: Data {@link Image}) in {@link ApiService#KEY_DATA}<br>
+     * Returns a {@link android.os.ResultReceiver} in {@link ApiService#KEY_RECEIVER} with
+     * a HTTP error/success code
+     */
+    public static final String CALL_UPLOAD_IMAGE = PRE + "upload_image";
+
+    /**
      * Fetches Clues for the User
      * <br>
      * Param: Userid (int) in {@link ApiService#KEY_USER_ID}<br>
@@ -176,6 +191,19 @@ public class ApiService extends IntentService {
         intent.sendBack(result.code());
     }
 
+    private void uploadImage(ApiIntent intent) {
+        int userid = intent.getExtra(KEY_USER_ID);
+        Image img = intent.getExtra(KEY_DATA);
+        File f = img.toFile(this);
+
+        RequestBody body = RequestBody.create(MediaType.parse("image/*"), f);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("upload", f.getName(), body);
+        RequestBody desc = RequestBody.create(MediaType.parse("text/plain"), "image-type");
+
+        Response<ResponseBody> result = execute(api.uploadImage(userid, part, desc));
+        intent.sendBack(result.code());
+    }
+
     private void getClues(ApiIntent intent) {
         int userid = intent.getExtra(KEY_USER_ID);
         Response<List<Clue>> clues = execute(api.getClues(userid));
@@ -250,6 +278,8 @@ public class ApiService extends IntentService {
                 return this::getUserStatus;
             case CALL_ADD_DATA:
                 return this::addData;
+            case CALL_UPLOAD_IMAGE:
+                return this::uploadImage;
             case CALL_FETCH_TASKS:
                 return this::fetchTasks;
             case CALL_GET_CLUES:

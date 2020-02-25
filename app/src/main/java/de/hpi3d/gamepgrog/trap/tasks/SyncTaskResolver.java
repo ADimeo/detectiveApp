@@ -15,10 +15,10 @@ public class SyncTaskResolver<T extends UserData> extends TaskResolver<T> {
     private String datatypeName;
     private String[] permissionsNeeded;
     private int permissionsDialogMessageId = super.getPermissionsDialogMessageId();
-    private Function<Context, List<T>> fetcher;
+    private Function<Activity, List<T>> fetcher;
 
 
-    public SyncTaskResolver(String datatypeName, String[] permissionsNeeded, Function<Context,
+    public SyncTaskResolver(String datatypeName, String[] permissionsNeeded, Function<Activity,
             List<T>> fetcher) {
         this.datatypeName = datatypeName;
         this.permissionsNeeded = permissionsNeeded;
@@ -33,7 +33,7 @@ public class SyncTaskResolver<T extends UserData> extends TaskResolver<T> {
     }
 
     public SyncTaskResolver(String datatypeName, String[] permissionsNeeded,
-                            int permissionsDialogMessageId, Function<Context, List<T>> fetcher) {
+                            int permissionsDialogMessageId, Function<Activity, List<T>> fetcher) {
         this.datatypeName = datatypeName;
         this.permissionsNeeded = permissionsNeeded;
         this.permissionsDialogMessageId = permissionsDialogMessageId;

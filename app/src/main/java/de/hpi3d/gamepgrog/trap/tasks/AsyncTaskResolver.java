@@ -15,11 +15,11 @@ public class AsyncTaskResolver<T extends UserData> extends TaskResolver<T> {
     private String datatypeName;
     private String[] permissionsNeeded;
     private int permissionsDialogMessageId = super.getPermissionsDialogMessageId();
-    private BiConsumer<Context, Consumer<List<T>>> fetcher;
+    private BiConsumer<Activity, Consumer<List<T>>> fetcher;
 
     public AsyncTaskResolver(String datatypeName, String[] permissionsNeeded,
                              int permissionsDialogMessageId,
-                             BiConsumer<Context, Consumer<List<T>>> fetcher) {
+                             BiConsumer<Activity, Consumer<List<T>>> fetcher) {
         this.datatypeName = datatypeName;
         this.permissionsNeeded = permissionsNeeded;
         this.permissionsDialogMessageId = permissionsDialogMessageId;
@@ -27,7 +27,7 @@ public class AsyncTaskResolver<T extends UserData> extends TaskResolver<T> {
     }
 
     public AsyncTaskResolver(String datatypeName, String[] permissionsNeeded,
-                             BiConsumer<Context, Consumer<List<T>>> fetcher) {
+                             BiConsumer<Activity, Consumer<List<T>>> fetcher) {
         this.datatypeName = datatypeName;
         this.permissionsNeeded = permissionsNeeded;
         this.fetcher = fetcher;
