@@ -42,7 +42,12 @@ public class DisplayableRecyclerViewAdapter extends RecyclerView.Adapter<Display
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.displayable = displayableList.get(position);
-        holder.displayableTextView.setText(displayableList.get(position).getDisplayString());
+        Displayable correspondingDisplayable = displayableList.get(position);
+        holder.displayableTextView.setText(correspondingDisplayable.getDisplayString());
+
+        if(correspondingDisplayable instanceof Task && ((Task) correspondingDisplayable).getFinished()){
+            holder.displayableTextView.setEnabled(false);
+        }
     }
 
     @Override
@@ -72,6 +77,8 @@ public class DisplayableRecyclerViewAdapter extends RecyclerView.Adapter<Display
                     telegramWithTextIntent.putExtra(Intent.EXTRA_TEXT, "CUSTOM TELEGRAM MESSAGE HERE");
 
                     activity.startActivity(telegramWithTextIntent);
+
+                    displayableTextView.setEnabled(false);
                 }
             });
         }
