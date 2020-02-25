@@ -5,6 +5,8 @@ import android.app.Application;
 import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Debug;
+import android.util.Log;
 
 import org.greenrobot.greendao.AbstractDao;
 
@@ -106,6 +108,8 @@ public class StorageManager {
         storage.conversationStarted.reset();
         storage.clues.reset();
         storage.tasks.reset();
+        storage.botUrl.reset();
+        Log.d("StorageManager", "Reset Storage");
     }
 
     @SuppressWarnings("WeakerAccess")

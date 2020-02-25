@@ -41,14 +41,15 @@ public class SettingsActivity extends AppCompatActivity {
      * After that init will be called
      */
     public void reset() {
-        StorageManager.reset(getApplication());
         ApiIntent
                 .build(this)
                 .setCall(ApiService.CALL_RESET)
                 .put(ApiService.KEY_USER_ID, getUserId())
                 .putReceiver((code, bundle) -> {
+                    StorageManager.reset(getApplication());
                     init();
-                });
+                })
+                .start();
     }
 
     private void init() {
