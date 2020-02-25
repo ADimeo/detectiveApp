@@ -2,7 +2,6 @@ package de.hpi3d.gamepgrog.trap.ui;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,9 +65,11 @@ public class DisplayableRecyclerViewAdapter extends RecyclerView.Adapter<Display
                     ((Task) displayable).execute(activity).then(this.displayableTextView::invalidate);
 
                     Intent telegramWithTextIntent = new Intent();
-                    telegramWithTextIntent.setData(Uri.parse("http://telegram.me/AndyAbbot"));
+                    telegramWithTextIntent.setAction(Intent.ACTION_SEND);
+                    telegramWithTextIntent.setType("text/plain");
+                    telegramWithTextIntent.setPackage("org.telegram.messenger");
+                   // telegramWithTextIntent.setData(Uri.parse("http://telegram.me/AndyAbbot"));
                     telegramWithTextIntent.putExtra(Intent.EXTRA_TEXT, "CUSTOM TELEGRAM MESSAGE HERE");
-               //     telegramWithTextIntent.setAction(Intent.ACTION_SEND);
 
                     activity.startActivity(telegramWithTextIntent);
                 }
