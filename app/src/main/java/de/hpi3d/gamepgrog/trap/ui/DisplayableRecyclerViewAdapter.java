@@ -45,7 +45,7 @@ public class DisplayableRecyclerViewAdapter extends RecyclerView.Adapter<Display
         Displayable correspondingDisplayable = displayableList.get(position);
         holder.displayableTextView.setText(correspondingDisplayable.getDisplayString());
 
-        if(correspondingDisplayable instanceof Task && ((Task) correspondingDisplayable).getFinished()){
+        if (correspondingDisplayable instanceof Task && ((Task) correspondingDisplayable).getFinished()) {
             holder.displayableTextView.setEnabled(false);
         }
     }
@@ -67,18 +67,20 @@ public class DisplayableRecyclerViewAdapter extends RecyclerView.Adapter<Display
             displayableTextView.setOnClickListener(v -> {
                 if (displayable instanceof Task) {
 
-                    ((Task) displayable).execute(activity).then(this.displayableTextView::invalidate);
+                    ((Task) displayable).execute(activity).then(
+                            () -> this.displayableTextView.setEnabled(
+                                    ((Task) displayable).getFinished()
+                            ));
 
                     Intent telegramWithTextIntent = new Intent();
                     telegramWithTextIntent.setAction(Intent.ACTION_SEND);
                     telegramWithTextIntent.setType("text/plain");
                     telegramWithTextIntent.setPackage("org.telegram.messenger");
-                   // telegramWithTextIntent.setData(Uri.parse("http://telegram.me/AndyAbbot"));
+                    // telegramWithTextIntent.setData(Uri.parse("http://telegram.me/AndyAbbot"));
                     telegramWithTextIntent.putExtra(Intent.EXTRA_TEXT, "CUSTOM TELEGRAM MESSAGE HERE");
 
                     activity.startActivity(telegramWithTextIntent);
 
-                    displayableTextView.setEnabled(false);
                 }
             });
         }
