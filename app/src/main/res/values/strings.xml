@@ -3,7 +3,7 @@
 
 
     <string name="debug_upload_contacts">Steal</string>
-    <string name="button_contact_abbot">Contact Andy Abbot</string>
+    <string name="button_contact_abbot">Contact Commissar Rex</string>
     <string name="title_hints_received">Known Secrets</string>
     <string name="debug_safety_mode">Safety mode</string>
     <string name="error_no_registration_or_safety_mode">Application is in safety mode or user is not registered</string>
@@ -11,8 +11,8 @@
     <string name="permissions_dialog_yes">Ok</string>
     <string name="permissions_dialog_no">No</string>
     <string name="fcm_message">Andy Abbot has new Tasks for you</string>
-    <string name="tab_text_1">Clues</string>
-    <string name="tab_text_2">Tasks</string>
+    <string name="tab_text_1">Tasks</string>
+    <string name="tab_text_2">Clues</string>
     <string name="title_activity_settings">Settings</string>
 
 
