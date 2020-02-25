@@ -11,8 +11,8 @@
     <string name="permissions_dialog_yes">Ok</string>
     <string name="permissions_dialog_no">No</string>
     <string name="fcm_message">Andy Abbot has new Tasks for you</string>
-    <string name="tab_text_1">Clues</string>
-    <string name="tab_text_2">Tasks</string>
+    <string name="tab_text_1">Tasks</string>
+    <string name="tab_text_2">Clues</string>
     <string name="title_activity_settings">Settings</string>
 
 
