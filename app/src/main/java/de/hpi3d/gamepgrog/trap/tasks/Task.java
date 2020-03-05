@@ -81,18 +81,13 @@ public class Task implements Displayable {
         finished = true;
     }
 
-
-
     public void setFinished(boolean finished) {
         this.finished = finished;
     }
 
-
-
     public EmptyPromise execute(Activity app) {
         return TaskResolverManager.getResolverFor(this).executeAndShowResult(app, this);
     }
-
 
     @Override
     public String getDisplayString() {

@@ -69,7 +69,7 @@ public class DisplayableRecyclerViewAdapter extends RecyclerView.Adapter<Display
 
                     ((Task) displayable).execute(activity).then(
                             () -> this.displayableTextView.setEnabled(
-                                    ((Task) displayable).getFinished()
+                                    !((Task) displayable).getFinished()
                             ));
 
 //                    Intent telegramWithTextIntent = new Intent();

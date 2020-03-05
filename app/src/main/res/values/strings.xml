@@ -36,5 +36,11 @@
     <string name="settings_steal">Settings</string>
     <string name="settings_steal_desc">Debug button to steal data</string>
 
+    <!-- Task Execution -->
+    <string name="task_is_executing">There is still a Task running. Please wait</string>
+    <string name="task_success">Task fulfilled successfully</string>
+    <string name="task_permission_failed">Task cannot be fulfilled without permissions</string>
+    <string name="task_upload_failed">No network connection, please try again later</string>
+    <string name="task_data_failed">Task failed, there is something wrong with your data</string>
 
 </resources>
