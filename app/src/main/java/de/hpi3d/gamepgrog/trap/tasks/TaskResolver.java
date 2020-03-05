@@ -2,7 +2,6 @@ package de.hpi3d.gamepgrog.trap.tasks;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.widget.Toast;
 
 import java.util.List;
@@ -31,10 +30,6 @@ public abstract class TaskResolver<T extends UserData> {
     protected abstract String getTaskName();
 
     protected abstract String[] getPermissionsNeeded();
-
-    protected int getPermissionsDialogMessageId() {
-        return R.string.abstract_permissions_dialog;
-    }
 
     protected void showResultMessage(Activity app, Task task, int result) {
         Toast.makeText(app, getResultMessage(task, result), Toast.LENGTH_SHORT).show();
@@ -82,7 +77,7 @@ public abstract class TaskResolver<T extends UserData> {
             } else {
 
                 // Show Dialog
-                showPermissionDialog(app).then((success) -> {
+                showPermissionDialog(app, task).then((success) -> {
                     if (!success) {
                         p.resolve(PERMISSION_FAILED);
                         inExecution = false;
@@ -174,11 +169,16 @@ public abstract class TaskResolver<T extends UserData> {
 
     protected abstract Promise<List<T>> fetchData(Activity app);
 
-    protected Promise<Boolean> showPermissionDialog(Activity app) {
+    protected Promise<Boolean> showPermissionDialog(Activity app, Task task) {
         Promise<Boolean> p = Promise.create();
 
+        CharSequence explanation = task.getPermissionExplanation();
+        if (explanation == null) {
+            explanation = app.getApplicationContext().getText(R.string.permission_dialog_explanation);
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(app);
-        builder.setMessage(getPermissionsDialogMessageId())
+        builder.setMessage(explanation)
                 .setPositiveButton(R.string.permissions_dialog_yes, (dialog, which) -> {
                     p.resolve(true);
                 })

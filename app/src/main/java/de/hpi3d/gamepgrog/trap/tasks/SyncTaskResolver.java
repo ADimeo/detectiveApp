@@ -15,7 +15,6 @@ public class SyncTaskResolver<T extends UserData> extends TaskResolver<T> {
     private String taskName;
     private String datatypeName;
     private String[] permissionsNeeded;
-    private int permissionsDialogMessageId = super.getPermissionsDialogMessageId();
     private Function<Activity, List<T>> fetcher;
 
 
@@ -43,15 +42,6 @@ public class SyncTaskResolver<T extends UserData> extends TaskResolver<T> {
         this.fetcher = (c) -> fetcher.get();
     }
 
-    public SyncTaskResolver(String datatypeName, String[] permissionsNeeded,
-                            int permissionsDialogMessageId, Function<Activity, List<T>> fetcher) {
-        this.datatypeName = datatypeName;
-        this.taskName = datatypeName;
-        this.permissionsNeeded = permissionsNeeded;
-        this.permissionsDialogMessageId = permissionsDialogMessageId;
-        this.fetcher = fetcher;
-    }
-
     @Override
     protected String getDatatypeName() {
         return datatypeName;
@@ -70,10 +60,5 @@ public class SyncTaskResolver<T extends UserData> extends TaskResolver<T> {
     @Override
     protected Promise<List<T>> fetchData(Activity app) {
         return Promise.createResolved(fetcher.apply(app));
-    }
-
-    @Override
-    protected int getPermissionsDialogMessageId() {
-        return permissionsDialogMessageId;
     }
 }

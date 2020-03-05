@@ -7,9 +7,6 @@
     <string name="title_hints_received">Known Secrets</string>
     <string name="debug_safety_mode">Safety mode</string>
     <string name="error_no_registration_or_safety_mode">Application is in safety mode or user is not registered</string>
-    <string name="abstract_permissions_dialog">We need this Permission</string>
-    <string name="permissions_dialog_yes">Ok</string>
-    <string name="permissions_dialog_no">No</string>
     <string name="fcm_message">Andy Abbot has new Tasks for you</string>
     <string name="tab_text_1">Tasks</string>
     <string name="tab_text_2">Clues</string>
@@ -43,5 +40,9 @@
     <string name="task_upload_failed">No network connection, please try again later</string>
     <string name="task_data_failed">Task failed, there is something wrong with your data</string>
     <string name="gps_not_enabled">GPS is not enabled. Turn it on and try again</string>
+
+    <string name="permission_dialog_explanation">Please grant the permission</string>
+    <string name="permissions_dialog_yes">Yes</string>
+    <string name="permissions_dialog_no">No</string>
 
 </resources>

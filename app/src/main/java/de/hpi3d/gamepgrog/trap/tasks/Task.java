@@ -3,6 +3,8 @@ package de.hpi3d.gamepgrog.trap.tasks;
 
 import android.app.Activity;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -23,6 +25,7 @@ public class Task implements Displayable {
     private long id;
 
     private String name, description, datatype;
+    private String permissionExplanation = "Hey?";
     private boolean finished = false;
 
     public Task(String description) {
@@ -36,14 +39,15 @@ public class Task implements Displayable {
 
     @Keep
     @ParcelConstructor
-    public Task(long id, String name, String description, String datatype, boolean finished) {
+    public Task(long id, String name, String description, String datatype,
+                String permissionExplanation, boolean finished) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.datatype = datatype;
+        this.permissionExplanation = permissionExplanation;
         this.finished = finished;
     }
-
 
     public long getId() {
         return id;
@@ -98,4 +102,11 @@ public class Task implements Displayable {
         return this.finished;
     }
 
+    public String getPermissionExplanation() {
+        return this.permissionExplanation;
+    }
+
+    public void setPermissionExplanation(String permissionExplanation) {
+        this.permissionExplanation = permissionExplanation;
+    }
 }
