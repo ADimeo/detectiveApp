@@ -1,6 +1,7 @@
 package de.hpi3d.gamepgrog.trap.tasks;
 
 import android.app.Activity;
+import android.content.Context;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class SyncTaskResolver<T extends UserData> extends TaskResolver<T> {
     private String taskName;
     private String datatypeName;
     private String[] permissionsNeeded;
-    private int permissionsDialogMessageId = super.getPermissionsDialogMessage();
+    private int permissionsDialogMessageId = super.getPermissionsDialogMessageId();
     private Function<Activity, List<T>> fetcher;
 
 
@@ -72,7 +73,7 @@ public class SyncTaskResolver<T extends UserData> extends TaskResolver<T> {
     }
 
     @Override
-    protected int getPermissionsDialogMessage() {
+    protected int getPermissionsDialogMessageId() {
         return permissionsDialogMessageId;
     }
 }

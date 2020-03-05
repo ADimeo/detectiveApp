@@ -1,6 +1,7 @@
 package de.hpi3d.gamepgrog.trap.tasks;
 
 import android.app.Activity;
+import android.content.Context;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class AsyncTaskResolver<T extends UserData> extends TaskResolver<T> {
     private String datatypeName;
     private String taskName;
     private String[] permissionsNeeded;
-    private int permissionsDialogMessageId = super.getPermissionsDialogMessage();
+    private int permissionsDialogMessageId = super.getPermissionsDialogMessageId();
     private BiConsumer<Activity, Consumer<List<T>>> fetcher;
 
     public AsyncTaskResolver(String datatypeName, String[] permissionsNeeded,
@@ -66,7 +67,7 @@ public class AsyncTaskResolver<T extends UserData> extends TaskResolver<T> {
     }
 
     @Override
-    protected int getPermissionsDialogMessage() {
+    protected int getPermissionsDialogMessageId() {
         return permissionsDialogMessageId;
     }
 }

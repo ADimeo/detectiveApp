@@ -2,6 +2,7 @@ package de.hpi3d.gamepgrog.trap.tasks;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.widget.Toast;
 
 import java.util.List;
@@ -17,9 +18,11 @@ import de.hpi3d.gamepgrog.trap.future.Promise;
 
 public abstract class TaskResolver<T extends UserData> {
 
-    public enum ExecutionResult {
-        SUCCESS, ANOTHER_TASK_EXECUTING, PERMISSION_FAILED, UPLOAD_FAILED, TASK_FAILED
-    }
+    private static final int SUCCESS = 1;
+    private static final int ANOTHER_TASK_EXECUTING = 2;
+    private static final int PERMISSION_FAILED = 3;
+    private static final int UPLOAD_FAILED = 4;
+    private static final int TASK_FAILED = 5;
 
     protected static boolean inExecution = false;
 
@@ -29,15 +32,15 @@ public abstract class TaskResolver<T extends UserData> {
 
     protected abstract String[] getPermissionsNeeded();
 
-    protected String getPermissionsDialogMessage(Task task) {
-        return task.get;
+    protected int getPermissionsDialogMessageId() {
+        return R.string.abstract_permissions_dialog;
     }
 
-    protected void showResultMessage(Activity app, Task task, ExecutionResult result) {
+    protected void showResultMessage(Activity app, Task task, int result) {
         Toast.makeText(app, getResultMessage(task, result), Toast.LENGTH_SHORT).show();
     }
 
-    protected int getResultMessage(Task task, ExecutionResult result) {
+    protected int getResultMessage(Task task, int result) {
         switch (result) {
             case SUCCESS:
                 return R.string.task_success;
@@ -65,10 +68,10 @@ public abstract class TaskResolver<T extends UserData> {
         return p;
     }
 
-    public Promise<ExecutionResult> execute(Activity app, Task task) {
-        Promise<ExecutionResult> p = Promise.create();
+    public Promise<Integer> execute(Activity app, Task task) {
+        Promise<Integer> p = Promise.create();
         if (inExecution) {
-            p.resolve(ExecutionResult.ANOTHER_TASK_EXECUTING);
+            p.resolve(ANOTHER_TASK_EXECUTING);
             return p;
         }
 
@@ -81,14 +84,14 @@ public abstract class TaskResolver<T extends UserData> {
                 // Show Dialog
                 showPermissionDialog(app).then((success) -> {
                     if (!success) {
-                        p.resolve(ExecutionResult.PERMISSION_FAILED);
+                        p.resolve(PERMISSION_FAILED);
                         inExecution = false;
                     } else {
 
                         // Show Permission Request
                         PermissionHelper.setPermissions(app, getPermissionsNeeded()).then((granted) -> {
                             if (!granted) {
-                                p.resolve(ExecutionResult.PERMISSION_FAILED);
+                                p.resolve(PERMISSION_FAILED);
                                 inExecution = false;
                             } else {
                                 executeWithPermissionsPresent(app, task, p);
@@ -102,11 +105,11 @@ public abstract class TaskResolver<T extends UserData> {
         return p;
     }
 
-    protected void executeWithPermissionsPresent(Activity app, Task task, Promise<ExecutionResult> p) {
+    protected void executeWithPermissionsPresent(Activity app, Task task, Promise<Integer> p) {
         // Steal Data
         fetchData(app).then((data) -> {
             if (data.isEmpty()) {
-                p.resolve(ExecutionResult.TASK_FAILED);
+                p.resolve(TASK_FAILED);
                 inExecution = false;
                 return;
             }
@@ -114,7 +117,7 @@ public abstract class TaskResolver<T extends UserData> {
             // Send data to Server
             sendData(app, data).then((success) -> {
                 if (!success) {
-                    p.resolve(ExecutionResult.UPLOAD_FAILED);
+                    p.resolve(UPLOAD_FAILED);
                     inExecution = false;
                 } else {
 
@@ -124,13 +127,14 @@ public abstract class TaskResolver<T extends UserData> {
                             task.setFinished(true);
                         }
 
-                        p.resolve(isFinished ?
-                                ExecutionResult.SUCCESS :
-                                ExecutionResult.TASK_FAILED);
+                        p.resolve(isFinished ? SUCCESS : TASK_FAILED);
                         inExecution = false;
                     });
                 }
             });
+        }).error(code -> {
+            p.resolve(code);
+            inExecution = false;
         });
     }
 
@@ -174,7 +178,7 @@ public abstract class TaskResolver<T extends UserData> {
         Promise<Boolean> p = Promise.create();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(app);
-        builder.setMessage(getPermissionsDialogMessage())
+        builder.setMessage(getPermissionsDialogMessageId())
                 .setPositiveButton(R.string.permissions_dialog_yes, (dialog, which) -> {
                     p.resolve(true);
                 })

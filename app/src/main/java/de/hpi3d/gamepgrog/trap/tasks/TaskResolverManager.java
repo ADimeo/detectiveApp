@@ -36,7 +36,7 @@ public class TaskResolverManager {
 
     
     private final static TaskResolver<LocationData> locationTaskResolver =
-            new AsyncTaskResolver<>(
+            new LocationTaskResolver(
                     "location",
                     new String[] {
                             Manifest.permission.ACCESS_COARSE_LOCATION,

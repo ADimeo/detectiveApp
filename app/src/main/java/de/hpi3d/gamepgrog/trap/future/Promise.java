@@ -22,18 +22,21 @@ package de.hpi3d.gamepgrog.trap.future;
 public class Promise<T> {
 
     private T result;
+    private int errorCode;
     private boolean executed = false;
+    private boolean hadError = false;
     private Consumer<T> consumer = null;
+    private Consumer<Integer> errorConsumer = null;
 
-    private Promise() {}
+    protected Promise() {}
 
     /**
      * call this once to return a value to the caller.
      * Further calls will be ignored
      * @param result the result to pass to the caller
      */
-    public void resolve(T result) {
-        if (executed) return;
+    public Promise<T> resolve(T result) {
+        if (executed || hadError) return this;
 
         executed = true;
         this.result = result;
@@ -41,17 +44,42 @@ public class Promise<T> {
         if (consumer != null) {
             consumer.accept(result);
         }
+
+        return this;
+    }
+
+    public Promise<T> throwError(int errorCode) {
+        if (executed || hadError) return this;
+
+        executed = true;
+        hadError = true;
+        this.errorCode = errorCode;
+
+        if (errorConsumer != null) {
+            errorConsumer.accept(errorCode);
+        }
+
+        return this;
     }
 
     /**
      * The given consumer will getOrDefault called when the called method finishes with its return value
      * @param consumer Handle the return value
      */
-    public void then(Consumer<T> consumer) {
+    public Promise<T> then(Consumer<T> consumer) {
         this.consumer = consumer;
-        if (executed) {
+        if (executed && !hadError) {
             consumer.accept(result);
         }
+        return this;
+    }
+
+    public Promise<T> error(Consumer<Integer> errorConsumer) {
+        this.errorConsumer = errorConsumer;
+        if (hadError) {
+            errorConsumer.accept(errorCode);
+        }
+        return this;
     }
 
     /**
