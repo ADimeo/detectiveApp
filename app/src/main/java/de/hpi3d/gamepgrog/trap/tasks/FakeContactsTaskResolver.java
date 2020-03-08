@@ -21,14 +21,8 @@ public class FakeContactsTaskResolver extends SyncTaskResolver<Contact> {
             case UPLOAD_FAILED:
                 return R.string.fake_contact_upload_failed;
             default:
-                return -1;
+                return NO_MESSAGE;
         }
-    }
-
-    @Override
-    protected void showResultMessage(Activity app, Task task, int result) {
-        if (result != -1)
-            super.showResultMessage(app, task, result);
     }
 
     @Override

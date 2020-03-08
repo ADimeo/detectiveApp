@@ -23,6 +23,8 @@ public abstract class TaskResolver<T extends UserData> {
     protected static final int UPLOAD_FAILED = 4;
     protected static final int TASK_FAILED = 5;
 
+    protected static final int NO_MESSAGE = -1;
+
     protected static boolean inExecution = false;
 
     protected abstract String getDatatypeName();
@@ -32,7 +34,9 @@ public abstract class TaskResolver<T extends UserData> {
     protected abstract String[] getPermissionsNeeded();
 
     protected void showResultMessage(Activity app, Task task, int result) {
-        Toast.makeText(app, getResultMessage(task, result), Toast.LENGTH_SHORT).show();
+        int message = getResultMessage(task, result);
+        if (message != NO_MESSAGE)
+            Toast.makeText(app, message, Toast.LENGTH_SHORT).show();
     }
 
     protected int getResultMessage(Task task, int result) {

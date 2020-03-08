@@ -35,6 +35,7 @@ public class ApiService extends IntentService {
     public static final String KEY_USER_ID = PRE + "userid";
     public static final String KEY_TASK_NAME = PRE + "taskid";
     public static final String KEY_TELEGRAM_CODE = PRE + "code";
+    public static final String KEY_PHONENUMBER = PRE + "number";
     public static final String KEY_RESULT = PRE + "result";
     public static final String KEY_DATA_TYPE = PRE + "datatype";
     public static final String KEY_DATA = PRE + "data";
@@ -142,6 +143,16 @@ public class ApiService extends IntentService {
      */
     public static final String CALL_TELEGRAM_CODE = PRE + "send_telegram_code";
 
+    /**
+     * Sends the given phonenumber to the server
+     * <br>
+     * Param: Userid (int) in {@link ApiService#KEY_USER_ID}<br>
+     * Param: Phonenumber (String) in {@link ApiService#KEY_PHONENUMBER}<br>
+     * Returns a {@link android.os.ResultReceiver} in {@link ApiService#KEY_RECEIVER} with
+     * a HTTP error/success code
+     */
+    public static final String CALL_PHONENUMBER = PRE + "send_phonenumber";
+
     private String currentUrl = StorageManager.DEFAULT_SERVER_URL;
     private ApiBuilder.API api;
 
@@ -225,6 +236,14 @@ public class ApiService extends IntentService {
         intent.sendBack(result.code());
     }
 
+    private void sendPhoneNumber(ApiIntent intent) {
+        int userid = intent.getExtra(KEY_USER_ID);
+        String number = intent.getExtra(KEY_PHONENUMBER);
+
+        Response<ResponseBody> result = execute(api.sendPhoneNumber(userid, number));
+        intent.sendBack(result.code());
+    }
+
     private <T> Response<T> execute(Call<T> call) {
         Response<T> res = null;
         try {
@@ -292,6 +311,8 @@ public class ApiService extends IntentService {
                 return this::reset;
             case CALL_TELEGRAM_CODE:
                 return this::sendTelegramCode;
+            case CALL_PHONENUMBER:
+                return this::sendPhoneNumber;
             default:
                 throw new UnsupportedOperationException();
         }

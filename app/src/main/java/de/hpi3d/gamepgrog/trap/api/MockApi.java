@@ -66,4 +66,9 @@ public class MockApi implements ApiBuilder.API {
     public Call<ResponseBody> sendTelegramCode(int userid, String code) {
         return NoUploadApi.NoCall.emptyResponse();
     }
+
+    @Override
+    public Call<ResponseBody> sendPhoneNumber(int userid, String number) {
+        return NoUploadApi.NoCall.emptyResponse();
+    }
 }

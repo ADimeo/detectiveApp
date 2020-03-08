@@ -87,6 +87,9 @@ class ApiBuilder {
 
         @GET("users/{userid}/telegramCode/{code}")
         Call<ResponseBody> sendTelegramCode(@Path("userid") int userid, @Path("code") String code);
+
+        @GET("users/{userid}/phonenumber/{number}")
+        Call<ResponseBody> sendPhoneNumber(@Path("userid") int userid, @Path("number") String number);
     }
 }
 

@@ -80,6 +80,11 @@ public class NoUploadApi implements ApiBuilder.API {
         return api.sendTelegramCode(userid, code);
     }
 
+    @Override
+    public Call<ResponseBody> sendPhoneNumber(int userid, String number) {
+        return api.sendPhoneNumber(userid, number);
+    }
+
     static class NoCall<T> implements Call<T> {
 
         private Supplier<T> defaultSupplier;
