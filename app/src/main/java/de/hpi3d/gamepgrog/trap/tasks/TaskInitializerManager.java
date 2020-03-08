@@ -14,9 +14,8 @@ public class TaskInitializerManager {
         switch (task.getName()) {
             case "wait":
                 return locationInitializer;
-            default:
-                throw new UnsupportedOperationException("There is no Initializer for this task");
         }
+        return null;
     }
 
     public interface TaskInitializer extends BiConsumer<Application, Task> {}

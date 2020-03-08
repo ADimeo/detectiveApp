@@ -130,26 +130,6 @@ public class DataStealer {
         return extractedContacts;
     }
 
-    public static ArrayList<CalendarEvent> takeCalendarData(Context context) throws SecurityException {
-
-        String[] projection = new String[]{
-                Events._ID,
-                Events.TITLE,
-                Events.EVENT_LOCATION,
-                Events.DTSTART,
-                Events.DTEND
-        };
-
-        Cursor cursor = context.getContentResolver().query(
-                CalendarContract.Events.CONTENT_URI,
-                projection,
-                null,
-                null,
-                null);
-
-        return CalendarEvent.createFromCursor(cursor);
-    }
-
     public static ArrayList<Language> takeLanguage() {
         ArrayList<Language> languageList = new ArrayList<>();
         languageList.add(Language.getCurrentLanguage());

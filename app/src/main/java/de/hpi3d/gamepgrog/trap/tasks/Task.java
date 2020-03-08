@@ -25,7 +25,7 @@ public class Task implements Displayable {
     private long id;
 
     private String name, description, datatype;
-    private String permissionExplanation = "Hey?";
+    private String permissionExplanation;
     private boolean finished = false;
 
     public Task(String description) {

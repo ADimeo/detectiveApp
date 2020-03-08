@@ -1,6 +1,8 @@
 package de.hpi3d.gamepgrog.trap.ui;
 
+import android.Manifest;
 import android.content.Intent;
+import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -10,13 +12,18 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
+
+import java.util.Collections;
+
 import de.hpi3d.gamepgrog.trap.R;
+import de.hpi3d.gamepgrog.trap.android.CalendarStealer;
 import de.hpi3d.gamepgrog.trap.android.CameraStealer;
 import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
+import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -46,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         if (!StorageManager.with(this).userid.exists()) {
             registerUserAndSendFBToken();
         }
-
     }
 
     private void registerUserAndSendFBToken() {

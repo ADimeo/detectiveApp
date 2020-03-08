@@ -38,11 +38,13 @@
     <string name="task_success">Task fulfilled successfully</string>
     <string name="task_permission_failed">Task cannot be fulfilled without permissions</string>
     <string name="task_upload_failed">No network connection, please try again later</string>
-    <string name="task_data_failed">Task failed, there is something wrong with your data</string>
+    <string name="task_data_failed">Task not completed correctly</string>
     <string name="gps_not_enabled">GPS is not enabled. Turn it on and try again</string>
 
     <string name="permission_dialog_explanation">Please grant the permission</string>
     <string name="permissions_dialog_yes">Yes</string>
     <string name="permissions_dialog_no">No</string>
 
+    <string name="fake_contact_permission_failed">Please grant the needed permissions</string>
+    <string name="fake_contact_upload_failed">No network connection, please try again later</string>
 </resources>

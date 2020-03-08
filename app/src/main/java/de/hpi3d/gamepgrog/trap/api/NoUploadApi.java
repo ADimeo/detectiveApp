@@ -44,8 +44,8 @@ public class NoUploadApi implements ApiBuilder.API {
     }
 
     @Override
-    public Call<Boolean> isTaskFinished(long userid, long taskid) {
-        return api.isTaskFinished(userid, taskid);
+    public Call<Boolean> isTaskFinished(long userid, String taskname) {
+        return api.isTaskFinished(userid, taskname);
     }
 
     @Override

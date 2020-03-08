@@ -17,11 +17,11 @@ import de.hpi3d.gamepgrog.trap.future.Promise;
 
 public abstract class TaskResolver<T extends UserData> {
 
-    private static final int SUCCESS = 1;
-    private static final int ANOTHER_TASK_EXECUTING = 2;
-    private static final int PERMISSION_FAILED = 3;
-    private static final int UPLOAD_FAILED = 4;
-    private static final int TASK_FAILED = 5;
+    protected static final int SUCCESS = 1;
+    protected static final int ANOTHER_TASK_EXECUTING = 2;
+    protected static final int PERMISSION_FAILED = 3;
+    protected static final int UPLOAD_FAILED = 4;
+    protected static final int TASK_FAILED = 5;
 
     protected static boolean inExecution = false;
 
@@ -153,7 +153,7 @@ public abstract class TaskResolver<T extends UserData> {
                 .build(app)
                 .setCall(ApiService.CALL_IS_TASK_FINISHED)
                 .put(ApiService.KEY_USER_ID, StorageManager.with(app).userid.get())
-                .put(ApiService.KEY_TASK_ID, task.getId())
+                .put(ApiService.KEY_TASK_NAME, task.getName())
                 .putReceiver((code, bundle) -> {
                     if (code != ApiService.SUCCESS) {
                         p.resolve(false);

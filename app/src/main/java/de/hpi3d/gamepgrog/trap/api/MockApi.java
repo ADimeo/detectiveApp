@@ -33,7 +33,7 @@ public class MockApi implements ApiBuilder.API {
     }
 
     @Override
-    public Call<Boolean> isTaskFinished(long userid, long taskid) {
+    public Call<Boolean> isTaskFinished(long userid, String taskname) {
         return new NoUploadApi.NoCall<>(() -> false);
     }
 

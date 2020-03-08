@@ -15,6 +15,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 
 import java.security.InvalidParameterException;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 

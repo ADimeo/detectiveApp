@@ -61,8 +61,8 @@ class ApiBuilder {
         @GET("users/{userid}/fbtoken/{token}")
         Call<ResponseBody> sendFBToken(@Path("userid") long userid, @Path("token") String token);
 
-        @GET("users/{userid}/tasks/{taskid}/finished")
-        Call<Boolean> isTaskFinished(@Path("userid") long userid, @Path("taskid") long taskid);
+        @GET("users/{userid}/tasks/{taskname}/finished")
+        Call<Boolean> isTaskFinished(@Path("userid") long userid, @Path("taskname") String taskname);
 
         @GET("users/{userid}/tasks")
         @Deprecated

@@ -1,5 +1,7 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
+import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.provider.CalendarContract;
 
@@ -75,6 +77,13 @@ public class CalendarEvent implements UserData {
 
     public long getEndInUtcSeconds() {
         return endInUtcSeconds;
+    }
+
+    public void enrichWithCalendarData(Intent intent) {
+        intent.putExtra(CalendarContract.Events.DTSTART, startInUtcSeconds * 1000);
+        intent.putExtra(CalendarContract.Events.DTEND, endInUtcSeconds * 1000);
+        intent.putExtra(CalendarContract.Events.TITLE, title);
+        intent.putExtra(CalendarContract.Events.CALENDAR_ID, 0);
     }
 
     @NonNull

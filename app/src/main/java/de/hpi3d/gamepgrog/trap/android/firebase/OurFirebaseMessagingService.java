@@ -65,7 +65,10 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
         StorageManager.with(getApplication()).tasks.add(tasks);
 
         for (Task task : tasks) {
-            TaskInitializerManager.getInitializerFor(task).accept(getApplication(), task);
+            TaskInitializerManager.TaskInitializer initializer = TaskInitializerManager.getInitializerFor(task);
+            if (initializer != null) {
+                initializer.accept(getApplication(), task);
+            }
         }
 
         int amount = tasks.size();

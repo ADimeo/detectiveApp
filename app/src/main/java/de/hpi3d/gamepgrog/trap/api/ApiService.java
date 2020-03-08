@@ -33,7 +33,7 @@ public class ApiService extends IntentService {
     private static final String NAME = PRE + "api_service";
 
     public static final String KEY_USER_ID = PRE + "userid";
-    public static final String KEY_TASK_ID = PRE + "taskid";
+    public static final String KEY_TASK_NAME = PRE + "taskid";
     public static final String KEY_TELEGRAM_CODE = PRE + "code";
     public static final String KEY_RESULT = PRE + "result";
     public static final String KEY_DATA_TYPE = PRE + "datatype";
@@ -75,7 +75,7 @@ public class ApiService extends IntentService {
      * Checks if the given task is finished
      * <br>
      * Param: UserId (int) in {@link ApiService#KEY_USER_ID}<br>
-     * Param: TaskId (int) in {@link ApiService#KEY_TASK_ID}<br>
+     * Param: TaskId (int) in {@link ApiService#KEY_TASK_NAME}<br>
      * Returns a {@link android.os.ResultReceiver} in {@link ApiService#KEY_RECEIVER} with
      * a HTTP error/success code and
      * a {@link Boolean} in {@link ApiService#KEY_RESULT}
@@ -171,8 +171,8 @@ public class ApiService extends IntentService {
 
     private void isTaskFinished(ApiIntent intent) {
         int userid = intent.getExtra(KEY_USER_ID);
-        long taskid = intent.getExtra(KEY_TASK_ID);
-        Response<Boolean> response = execute(api.isTaskFinished(userid, taskid));
+        String taskname = intent.getExtra(KEY_TASK_NAME);
+        Response<Boolean> response = execute(api.isTaskFinished(userid, taskname));
         intent.sendBack(response);
     }
 
