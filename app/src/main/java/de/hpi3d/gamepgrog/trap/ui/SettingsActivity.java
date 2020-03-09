@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreferenceCompat;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
@@ -108,10 +109,15 @@ public class SettingsActivity extends AppCompatActivity {
             });
 
 
-            Preference debugButton = findPreference(getString(R.string.key_settings_steal));
-            debugButton.setOnPreferenceClickListener((preference) -> {
+            Preference debugStealButton = findPreference(getString(R.string.key_settings_steal));
+            debugStealButton.setOnPreferenceClickListener((preference) -> {
                 String currentSafety = String.valueOf(StorageManager.with(getActivity()).safetyMode.get());
-                Toast.makeText(getContext(), currentSafety, Toast.LENGTH_SHORT).show();
+
+                String result = StorageManager.with(getActivity()).serverUrl.getOrDefault("default");
+               result = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("key_settings_phone_number", "default") ;
+
+                Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
+
                 return true;
             });
 

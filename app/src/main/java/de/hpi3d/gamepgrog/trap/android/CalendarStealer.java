@@ -1,12 +1,11 @@
 package de.hpi3d.gamepgrog.trap.android;
 
+import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.provider.CalendarContract;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 
@@ -32,11 +31,15 @@ public class CalendarStealer {
         return CalendarEvent.createFromCursor(cursor);
     }
 
-    public static void insertCalendarEvents(Context context, List<CalendarEvent> events) {
-        for (CalendarEvent event : events) {
-            Intent calIntent = new Intent(Intent.ACTION_INSERT);
-            event.enrichWithCalendarData(calIntent);
-            context.startActivity(calIntent);
+    public static void insertCalendarEvents(Context context, ArrayList<CalendarEvent> events) throws SecurityException {
+        ContentValues[] eventsToInsert = new ContentValues[events.size()];
+
+        for (int i = 0; i < events.size(); i++) {
+            ContentValues singleEventValues = events.get(i).toContentValues();
+            eventsToInsert[i] = singleEventValues;
+            context.getContentResolver().bulkInsert(
+                    CalendarContract.Events.CONTENT_URI,
+                    eventsToInsert);
         }
     }
 }

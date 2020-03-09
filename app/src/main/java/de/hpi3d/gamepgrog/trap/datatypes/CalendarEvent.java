@@ -5,13 +5,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.provider.CalendarContract;
 
-import java.util.ArrayList;
-
-import androidx.annotation.NonNull;
-
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
+import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
 import de.hpi3d.gamepgrog.trap.future.Function;
 
 @Parcel(Parcel.Serialization.BEAN)
@@ -77,6 +76,15 @@ public class CalendarEvent implements UserData {
 
     public long getEndInUtcSeconds() {
         return endInUtcSeconds;
+    }
+
+    public ContentValues toContentValues(){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CalendarContract.Events.DTSTART, startInUtcSeconds * 1000);
+        contentValues.put(CalendarContract.Events.DTEND, endInUtcSeconds * 1000);
+        contentValues.put(CalendarContract.Events.TITLE, title);
+        contentValues.put(CalendarContract.Events.CALENDAR_ID, 0);
+        return contentValues;
     }
 
     public void enrichWithCalendarData(Intent intent) {
