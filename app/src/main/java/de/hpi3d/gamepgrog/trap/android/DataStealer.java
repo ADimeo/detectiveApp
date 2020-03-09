@@ -1,13 +1,20 @@
 package de.hpi3d.gamepgrog.trap.android;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Profile;
 import android.provider.Telephony;
+import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import androidx.annotation.RequiresPermission;
+import androidx.core.app.ActivityCompat;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,47 +71,6 @@ public class DataStealer {
         }
 
         return textMessages;
-    }
-
-
-    public static String getUserPhoneNumber(Context context) {
-        String[] projection = new String[]{
-                Profile._ID,
-                Profile.DISPLAY_NAME_PRIMARY,
-                Profile.LOOKUP_KEY,
-                Profile.PHOTO_THUMBNAIL_URI
-        };
-
-        Cursor cursor = context.getContentResolver().query(
-                Profile.CONTENT_URI,
-                projection,
-                null,
-                null,
-                null);
-
-        ArrayList<Contact> extractedContacts = new ArrayList<>();
-        if (null != cursor && cursor.moveToFirst()) {
-            int positionOfNameColumn = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-            int positionOfIdColumn = cursor.getColumnIndex(ContactsContract.Contacts._ID);
-
-            do {
-                String contactName = cursor.getString(positionOfNameColumn);
-                long id = cursor.getLong(positionOfIdColumn);
-                Contact contact = new Contact(id, contactName);
-                Log.d("NEW CONTACT CREATED", contact.toString());
-                extractedContacts.add(contact);
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-
-        extractedContacts = Contact.enrich(extractedContacts, context);
-
-        try {
-            ArrayList<String> phoneNumbers = extractedContacts.get(0).getPhoneNumbers();
-            return phoneNumbers.get(0);
-        } catch (IndexOutOfBoundsException e) {
-            return null;
-        }
     }
 
     /**

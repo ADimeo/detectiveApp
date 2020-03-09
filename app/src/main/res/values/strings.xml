@@ -20,6 +20,7 @@
 
 
     <string name="key_settings_safety_mode">key_safety_mode</string>
+    <string name="key_change_number">key_change_number</string>
 
 
     <!-- Preferences -->
@@ -27,6 +28,7 @@
     <string name="title_settings_general">General settings</string>
 
     <string name="server_url">Server URL</string>
+    <string name="change_number">"Your number"</string>
 
     <string name="settings_reset">Reset</string>
     <string name="settings_reset_desc">Calls the "reset" endpoint on the server</string>

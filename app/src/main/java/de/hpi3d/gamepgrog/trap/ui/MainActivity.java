@@ -19,6 +19,7 @@ import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.android.CalendarStealer;
 import de.hpi3d.gamepgrog.trap.android.CameraStealer;
 import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
+import de.hpi3d.gamepgrog.trap.android.PhoneStealer;
 import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;

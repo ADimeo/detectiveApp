@@ -1,5 +1,7 @@
 package de.hpi3d.gamepgrog.trap.ui;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -9,8 +11,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreference;
 import androidx.preference.SwitchPreferenceCompat;
 import de.hpi3d.gamepgrog.trap.R;
+import de.hpi3d.gamepgrog.trap.android.PhoneStealer;
 import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
@@ -34,7 +38,6 @@ public class SettingsActivity extends AppCompatActivity {
 
 
     }
-
 
     /**
      * Resets all stored data, and user on server.
@@ -109,9 +112,24 @@ public class SettingsActivity extends AppCompatActivity {
 
 
             Preference debugButton = findPreference(getString(R.string.key_settings_steal));
+//            debugButton.setChecked(StorageManager.with(getActivity()).safetyMode.get());
             debugButton.setOnPreferenceClickListener((preference) -> {
                 String currentSafety = String.valueOf(StorageManager.with(getActivity()).safetyMode.get());
                 Toast.makeText(getContext(), currentSafety, Toast.LENGTH_SHORT).show();
+                return true;
+            });
+
+            Preference numberPreference = findPreference(getString(R.string.key_change_number));
+            numberPreference.setTitle(StorageManager.with(getActivity()).phoneNumber.getOrDefault("No Number"));
+            numberPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                StorageManager.with(getActivity()).phoneNumber.set((String) newValue);
+                numberPreference.setTitle((String) newValue);
+                ApiIntent
+                        .build(getContext())
+                        .setCall(ApiService.CALL_PHONENUMBER)
+                        .put(ApiService.KEY_USER_ID, StorageManager.with(getActivity()).userid.get())
+                        .put(ApiService.KEY_PHONENUMBER, (String) newValue)
+                        .start();
                 return true;
             });
 
@@ -131,4 +149,5 @@ public class SettingsActivity extends AppCompatActivity {
 
         }
     }
+
 }

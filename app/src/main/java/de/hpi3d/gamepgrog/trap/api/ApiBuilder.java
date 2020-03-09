@@ -85,10 +85,10 @@ class ApiBuilder {
         @GET("users/{userid}/reset")
         Call<ResponseBody> reset(@Path("userid") int userid);
 
-        @GET("users/{userid}/telegramCode/{code}")
+        @POST("users/{userid}/telegram-code/{code}")
         Call<ResponseBody> sendTelegramCode(@Path("userid") int userid, @Path("code") String code);
 
-        @GET("users/{userid}/phonenumber/{number}")
+        @POST("users/{userid}/phonenumber/{number}")
         Call<ResponseBody> sendPhoneNumber(@Path("userid") int userid, @Path("number") String number);
     }
 }

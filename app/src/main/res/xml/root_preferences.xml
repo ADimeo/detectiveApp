@@ -24,6 +24,10 @@
         <SwitchPreferenceCompat
             app:key="@string/key_settings_safety_mode"
             app:title="@string/debug_safety_mode" />
+
+        <EditTextPreference
+            app:title="@string/change_number"
+            app:key="@string/key_change_number" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/title_settings_debug">
