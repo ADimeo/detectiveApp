@@ -1,7 +1,5 @@
 package de.hpi3d.gamepgrog.trap.ui;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -11,15 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.SwitchPreference;
 import androidx.preference.SwitchPreferenceCompat;
+
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.android.PhoneStealer;
 import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
-import de.hpi3d.gamepgrog.trap.api.ApiIntent;
-import de.hpi3d.gamepgrog.trap.api.ApiService;
+import de.hpi3d.gamepgrog.trap.api.ApiManager;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
-import de.hpi3d.gamepgrog.trap.datatypes.User;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -44,15 +39,10 @@ public class SettingsActivity extends AppCompatActivity {
      * After that init will be called
      */
     public void reset() {
-        ApiIntent
-                .build(this)
-                .setCall(ApiService.CALL_RESET)
-                .put(ApiService.KEY_USER_ID, getUserId())
-                .putReceiver((code, bundle) -> {
-                    StorageManager.reset(getApplication());
-                    init();
-                })
-                .start();
+        ApiManager.api(this).reset(getUserId()).call(() -> {
+            StorageManager.reset(getApplication());
+            init();
+        });
     }
 
     private void init() {
@@ -64,28 +54,19 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void registerUserAndSendFBToken() {
-        ApiIntent
-                .build(this)
-                .setCall(ApiService.CALL_REGISTER)
-                .putReceiver((code, bundle) -> {
-                    if (code == ApiService.SUCCESS) {
-                        User user = ApiIntent.getResult(bundle);
+        ApiManager.api(this).register().call((user, code) -> {
+            StorageManager.with(this).userid.set(user.getUserId());
+            StorageManager.with(this).botUrl.set(user.getRegisterURL());
 
-                        // Save new user id in db
-                        StorageManager.with(this).userid.set(user.getUserId());
-                        StorageManager.with(this).botUrl.set(user.getRegisterURL());
+            // Get fb token
+            String token = StorageManager.with(this).fbtoken.getOrDefault(null);
 
-                        // Get fb token
-                        String token = StorageManager.with(this).fbtoken.getOrDefault(null);
-
-                        // If null, do nothing, it will getOrDefault send when it is updated
-                        if (token != null) {
-                            // Send gb token
-                            OurFirebaseMessagingService.sendNewToken(this, user.getUserId(), token);
-                        }
-                    }
-                })
-                .start();
+            // If null, do nothing, it will getOrDefault send when it is updated
+            if (token != null) {
+                // Send gb token
+                OurFirebaseMessagingService.sendNewToken(getApplication(), user.getUserId(), token);
+            }
+        });
     }
 
 
@@ -124,17 +105,16 @@ public class SettingsActivity extends AppCompatActivity {
             numberPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 StorageManager.with(getActivity()).phoneNumber.set((String) newValue);
                 numberPreference.setTitle((String) newValue);
-                ApiIntent
-                        .build(getContext())
-                        .setCall(ApiService.CALL_PHONENUMBER)
-                        .put(ApiService.KEY_USER_ID, StorageManager.with(getActivity()).userid.get())
-                        .put(ApiService.KEY_PHONENUMBER, (String) newValue)
-                        .start();
+                ApiManager.api(getActivity()).sendPhoneNumber(
+                        StorageManager.with(getActivity()).userid.get(),
+                        (String) newValue
+                ).call();
                 return true;
             });
 
 
             SwitchPreferenceCompat safetyPreference = findPreference(getString(R.string.key_settings_safety_mode));
+            safetyPreference.setChecked(StorageManager.with(getActivity()).safetyMode.get());
             safetyPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 StorageManager.with(getActivity()).safetyMode.set((boolean) newValue);
                 return true;

