@@ -15,6 +15,8 @@ import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
 import de.hpi3d.gamepgrog.trap.api.ApiManager;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
+import de.hpi3d.gamepgrog.trap.future.BiConsumer;
+import de.hpi3d.gamepgrog.trap.future.Consumer;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -83,6 +85,9 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+
+            StorageManager storage = StorageManager.with(getActivity());
+
             Preference resetServerButton = findPreference(getString(R.string.key_settings_reset));
             resetServerButton.setOnPreferenceClickListener((preference) -> {
                 String currentUrl = StorageManager.with(getActivity()).botUrl.get();
@@ -91,42 +96,47 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             });
 
+            createPreference(
+                    R.string.key_change_number,
+                    EditTextPreference::setText,
+                    storage.phoneNumber,
+                    number ->
+                        ApiManager.api(getActivity()).sendPhoneNumber(storage.userid.get(), number));
 
-            Preference debugButton = findPreference(getString(R.string.key_settings_steal));
-//            debugButton.setChecked(StorageManager.with(getActivity()).safetyMode.get());
-            debugButton.setOnPreferenceClickListener((preference) -> {
-                String currentSafety = String.valueOf(StorageManager.with(getActivity()).safetyMode.get());
-                Toast.makeText(getContext(), currentSafety, Toast.LENGTH_SHORT).show();
-                return true;
-            });
+            createPreference(
+                    R.string.key_settings_safety_mode,
+                    SwitchPreferenceCompat::setChecked,
+                    storage.safetyMode);
 
-            Preference numberPreference = findPreference(getString(R.string.key_change_number));
-            numberPreference.setTitle(StorageManager.with(getActivity()).phoneNumber.getOrDefault("No Number"));
-            numberPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                StorageManager.with(getActivity()).phoneNumber.set((String) newValue);
-                numberPreference.setTitle((String) newValue);
-                ApiManager.api(getActivity()).sendPhoneNumber(
-                        StorageManager.with(getActivity()).userid.get(),
-                        (String) newValue
-                ).call();
-                return true;
-            });
+            createPreference(
+                    R.string.key_settings_url,
+                    EditTextPreference::setText,
+                    storage.serverUrl);
+        }
 
+        private <T extends Preference, K> T createPreference(
+                int id,
+                BiConsumer<T, K> setter,
+                StorageManager.Preference<K> storage) {
+            return createPreference(id, setter, storage, d -> {});
+        }
 
-            SwitchPreferenceCompat safetyPreference = findPreference(getString(R.string.key_settings_safety_mode));
-            safetyPreference.setChecked(StorageManager.with(getActivity()).safetyMode.get());
-            safetyPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                StorageManager.with(getActivity()).safetyMode.set((boolean) newValue);
-                return true;
-            });
-
-
-            EditTextPreference serverUrlPreference = findPreference(getString(R.string.key_settings_url));
-            serverUrlPreference.setOnPreferenceChangeListener(((preference, newValue) -> {
-                StorageManager.with(getActivity()).botUrl.set((String) newValue);
-                return true;
-            }));
-
+        private <T extends Preference, K> T createPreference(
+                int id,
+                BiConsumer<T, K> setter,
+                StorageManager.Preference<K> storage,
+                Consumer<K> changed) {
+            T preference = findPreference(getString(id));
+            if (preference != null) {
+                setter.accept(preference, storage.get());
+                preference.setOnPreferenceChangeListener((p, o) -> {
+                    K value = (K) o;
+                    storage.set(value);
+                    changed.accept(value);
+                    return true;
+                });
+            }
+            return preference;
         }
     }
 
