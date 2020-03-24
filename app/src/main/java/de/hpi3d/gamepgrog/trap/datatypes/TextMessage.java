@@ -1,13 +1,13 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
-import androidx.annotation.NonNull;
-
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+
+import androidx.annotation.NonNull;
 
 
 @Parcel(Parcel.Serialization.BEAN)
@@ -30,7 +30,6 @@ public class TextMessage implements UserData, Comparable {
     }
 
     public static HashMap<String, ArrayList<TextMessage>> orderByAddress(ArrayList<TextMessage> messages) {
-
         HashMap<String, ArrayList<TextMessage>> messagesByAddress = new HashMap<>();
         for (TextMessage message : messages) {
             String address = message.address;
