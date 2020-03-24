@@ -1,7 +1,8 @@
 package de.hpi3d.gamepgrog.trap.api;
 
-import android.app.Activity;
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import de.hpi3d.gamepgrog.trap.future.BiConsumer;
@@ -51,12 +52,18 @@ public class ApiCall<R> {
         call.enqueue(new Callback<R>() {
             @Override
             public void onResponse(Call<R> call, Response<R> response) {
-                result.accept(response.body(), response.code());
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(() -> {
+                    result.accept(response.body(), response.code());
+                });
             }
 
             @Override
             public void onFailure(Call<R> call, Throwable t) {
-                result.accept(null, FAILURE);
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(() -> {
+                    result.accept(null, FAILURE);
+                });
             }
         });
     }

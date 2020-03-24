@@ -80,8 +80,8 @@ public class ApiManager {
         @GET("users/{userid}/tasks")
         ApiCall<List<Task>> fetchTasks(@Path("userid") long userid);
 
-        @UploadsData
         @POST("users/{userid}/data/{datatype}")
+        @UploadsData
         ApiCall<ResponseBody> addData(@Path("userid") int userid,
                                    @Path("datatype") String datatype,
                                    @Body List<UserData> data);
