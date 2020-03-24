@@ -4,11 +4,9 @@ package de.hpi3d.gamepgrog.trap.api;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Service;
-import android.content.Context;
 
 import java.util.List;
 
-import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
@@ -92,10 +90,6 @@ public class ApiManager {
         ApiCall<ResponseBody> uploadImage(@Path("userid") int userid,
                                        @Part MultipartBody.Part file,
                                        @Part("name") RequestBody body);
-
-        @Deprecated
-        @GET("users/{userid}/clues")
-        ApiCall<List<Clue>> getClues(@Path("userid") int userid);
 
         @GET("users/{userid}/reset")
         ApiCall<ResponseBody> reset(@Path("userid") int userid);

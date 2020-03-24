@@ -5,10 +5,9 @@ import android.app.AlertDialog;
 import android.widget.Toast;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.R;
+import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.api.ApiCall;
 import de.hpi3d.gamepgrog.trap.api.ApiManager;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;

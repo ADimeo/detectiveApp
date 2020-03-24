@@ -7,14 +7,14 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.android.CameraStealer;
 import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
-import de.hpi3d.gamepgrog.trap.api.ApiIntent;
-import de.hpi3d.gamepgrog.trap.api.ApiService;
+import de.hpi3d.gamepgrog.trap.api.ApiCall;
+import de.hpi3d.gamepgrog.trap.api.ApiManager;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
-import de.hpi3d.gamepgrog.trap.datatypes.User;
 
 /**
  * Main view. Contains
@@ -28,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Call the App with "--ez MOCKAPI true" to enable the MockApi
-        StorageManager.with(this).useMockApi.set(getIntent().getBooleanExtra("MOCKAPI", false));
         setContentView(R.layout.activity_main);
         init();
     }
@@ -51,28 +49,22 @@ public class MainActivity extends AppCompatActivity {
      * Firebase initialisation: get and upload our token.
      */
     private void registerUserAndSendFBToken() {
-        ApiIntent
-                .build(this)
-                .setCall(ApiService.CALL_REGISTER)
-                .putReceiver((code, bundle) -> {
-                    if (code == ApiService.SUCCESS) {
-                        User user = ApiIntent.getResult(bundle);
+        ApiManager.api(this).register().call((user, code) -> {
+            if (code == ApiCall.SUCCESS) {
+                // Save new user id in db
+                StorageManager.with(this).userid.set(user.getUserId());
+                StorageManager.with(this).botUrl.set(user.getRegisterURL());
 
-                        // Save new user id in db
-                        StorageManager.with(this).userid.set(user.getUserId());
-                        StorageManager.with(this).botUrl.set(user.getRegisterURL());
+                // Get fb token
+                String token = StorageManager.with(this).fbtoken.getOrDefault(null);
 
-                        // Get fb token
-                        String token = StorageManager.with(this).fbtoken.getOrDefault(null);
-
-                        // If null, do nothing, it will getOrDefault send when it is updated
-                        if (token != null) {
-                            // Send gb token
-                            OurFirebaseMessagingService.sendNewToken(this, user.getUserId(), token);
-                        }
-                    }
-                })
-                .start();
+                // If null, do nothing, it will getOrDefault send when it is updated
+                if (token != null) {
+                    // Send gb token
+                    OurFirebaseMessagingService.sendNewToken(getApplication(), user.getUserId(), token);
+                }
+            }
+        });
     }
 
     @Override

@@ -1,7 +1,6 @@
 package de.hpi3d.gamepgrog.trap.tasks;
 
 import android.app.Activity;
-import android.content.Context;
 
 import java.util.List;
 

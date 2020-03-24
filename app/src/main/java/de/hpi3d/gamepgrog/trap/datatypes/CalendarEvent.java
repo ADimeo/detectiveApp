@@ -5,12 +5,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.provider.CalendarContract;
 
+import androidx.annotation.NonNull;
+
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
 import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
 import de.hpi3d.gamepgrog.trap.future.Function;
 
 @Parcel(Parcel.Serialization.BEAN)
