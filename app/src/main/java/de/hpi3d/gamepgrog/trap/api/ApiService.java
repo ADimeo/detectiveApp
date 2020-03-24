@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.List;
 
 import androidx.annotation.Nullable;
-import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.Image;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
@@ -114,15 +113,6 @@ public class ApiService extends IntentService {
      */
     public static final String CALL_UPLOAD_IMAGE = PRE + "upload_image";
 
-    /**
-     * Fetches Clues for the User
-     * <br>
-     * Param: Userid (int) in {@link ApiService#KEY_USER_ID}<br>
-     * Returns a {@link android.os.ResultReceiver} in {@link ApiService#KEY_RECEIVER} with
-     * a HTTP error/success code and
-     * a {@link List} of {@link Clue}s in {@link ApiService#KEY_RESULT}
-     */
-    public static final String CALL_GET_CLUES = PRE + "get_clues";
 
     /**
      * Resets the User
@@ -215,11 +205,7 @@ public class ApiService extends IntentService {
         intent.sendBack(result.code());
     }
 
-    private void getClues(ApiIntent intent) {
-        int userid = intent.getExtra(KEY_USER_ID);
-        Response<List<Clue>> clues = execute(api.getClues(userid));
-        intent.sendBack(clues);
-    }
+
 
     private void reset(ApiIntent intent) {
         int userid = intent.getExtra(KEY_USER_ID);
@@ -301,8 +287,6 @@ public class ApiService extends IntentService {
                 return this::uploadImage;
             case CALL_FETCH_TASKS:
                 return this::fetchTasks;
-            case CALL_GET_CLUES:
-                return this::getClues;
             case CALL_IS_TASK_FINISHED:
                 return this::isTaskFinished;
             case CALL_SEND_FB_TOKEN:

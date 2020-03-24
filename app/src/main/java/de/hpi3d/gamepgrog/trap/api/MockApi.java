@@ -1,9 +1,7 @@
 package de.hpi3d.gamepgrog.trap.api;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
@@ -52,10 +50,7 @@ public class MockApi implements ApiBuilder.API {
         return NoUploadApi.NoCall.emptyResponse();
     }
 
-    @Override
-    public Call<List<Clue>> getClues(int userid) {
-        return new NoUploadApi.NoCall<>(ArrayList::new);
-    }
+
 
     @Override
     public Call<ResponseBody> reset(int userid) {

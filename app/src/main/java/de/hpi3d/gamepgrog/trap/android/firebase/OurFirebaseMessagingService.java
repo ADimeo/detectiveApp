@@ -17,7 +17,6 @@ import de.hpi3d.gamepgrog.trap.android.NotificationHelper;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
-import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.tasks.Task;
 import de.hpi3d.gamepgrog.trap.tasks.TaskInitializerManager;
 
@@ -37,9 +36,7 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
                 case FirebaseDataParser.CALL_NEW_TASKS:
                     onTasksReceived(FirebaseDataParser.parseTasks(data));
                     return;
-                case FirebaseDataParser.CALL_NEW_CLUE:
-                    onClueReceived(FirebaseDataParser.parseClue(data));
-                    return;
+
                 case FirebaseDataParser.CALL_GET_TELEGRAM:
                     onTelegramReceived();
                     return;
@@ -81,12 +78,6 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
                 title, message);
     }
 
-    private void onClueReceived(Clue clue) {
-        StorageManager.with(getApplication()).clues.add(clue);
-        NotificationHelper.sendNotification(getApplicationContext(),
-                "You received a new Clue",
-                "Open the App to view it");
-    }
 
     @Override
     public void onNewToken(@NonNull String s) {

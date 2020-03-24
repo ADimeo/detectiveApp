@@ -3,11 +3,10 @@ package de.hpi3d.gamepgrog.trap.api;
 
 import java.util.List;
 
-import de.hpi3d.gamepgrog.trap.datatypes.Clue;
-import de.hpi3d.gamepgrog.trap.tasks.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
+import de.hpi3d.gamepgrog.trap.tasks.Task;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -79,8 +78,6 @@ class ApiBuilder {
                                        @Part MultipartBody.Part file,
                                        @Part("name") RequestBody body);
 
-        @GET("users/{userid}/clues")
-        Call<List<Clue>> getClues(@Path("userid") int userid);
 
         @GET("users/{userid}/reset")
         Call<ResponseBody> reset(@Path("userid") int userid);

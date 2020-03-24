@@ -4,12 +4,11 @@ import android.util.Log;
 
 import java.util.List;
 
-import de.hpi3d.gamepgrog.trap.datatypes.Clue;
-import de.hpi3d.gamepgrog.trap.tasks.Task;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
 import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
 import de.hpi3d.gamepgrog.trap.future.Supplier;
+import de.hpi3d.gamepgrog.trap.tasks.Task;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -65,10 +64,6 @@ public class NoUploadApi implements ApiBuilder.API {
         return NoCall.emptyResponse();
     }
 
-    @Override
-    public Call<List<Clue>> getClues(int userid) {
-        return api.getClues(userid);
-    }
 
     @Override
     public Call<ResponseBody> reset(int userid) {

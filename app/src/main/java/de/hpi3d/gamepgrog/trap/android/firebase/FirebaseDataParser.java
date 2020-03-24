@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.tasks.Task;
 
 class FirebaseDataParser {
@@ -22,8 +21,6 @@ class FirebaseDataParser {
 
     private static final Type TYPE_TASKS = new TypeToken<ArrayList<Task>>() {
     }.getType();
-    private static final Type TYPE_CLUE = new TypeToken<Clue>() {
-    }.getType();
 
 
     static boolean isValid(Map<String, String> data) {
@@ -36,9 +33,7 @@ class FirebaseDataParser {
         return data.get(KEY_CALL);
     }
 
-    static Clue parseClue(Map<String, String> data) {
-        return new Gson().fromJson(data.get("value"), TYPE_CLUE);
-    }
+
 
     static ArrayList<Task> parseTasks(Map<String, String> data) {
         return new Gson().fromJson(data.get("value"), TYPE_TASKS);
