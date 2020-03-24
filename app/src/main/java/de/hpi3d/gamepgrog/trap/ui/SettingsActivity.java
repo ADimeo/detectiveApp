@@ -1,7 +1,5 @@
 package de.hpi3d.gamepgrog.trap.ui;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -11,16 +9,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.SwitchPreference;
 import androidx.preference.SwitchPreferenceCompat;
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.android.PhoneStealer;
 import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 
+/**
+ * Activity for our Settings.
+ */
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
@@ -40,8 +39,11 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     /**
-     * Resets all stored data, and user on server.
-     * After that init will be called
+     * Calls "reset" endpoint on server.
+     * <p>
+     * This endpoint resets the whole server back to
+     * intitial state.
+     * Calls init after reset
      */
     public void reset() {
         ApiIntent
@@ -55,14 +57,24 @@ public class SettingsActivity extends AppCompatActivity {
                 .start();
     }
 
+    /**
+     * Wrapper around registerUserAndSendFBToken.
+     * Makes sure that we don't call it while our
+     * user isn't properly registered by our server.
+     * <p>
+     * Mirrors method in MainActivity, but rule of three.
+     */
     private void init() {
         OurFirebaseMessagingService.init(getApplication());
-
         if (!StorageManager.with(this).userid.exists()) {
             registerUserAndSendFBToken();
         }
     }
 
+    /**
+     * Firebase initialisation: get and upload our token.
+     * Mirrors method in MainActivity, but rule of three.
+     */
     private void registerUserAndSendFBToken() {
         ApiIntent
                 .build(this)
@@ -89,6 +101,11 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Returns user ID from storage manager
+     *
+     * @return users ID
+     */
     private int getUserId() {
         return StorageManager.with(this).userid.get();
     }

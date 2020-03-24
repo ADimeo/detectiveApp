@@ -1,35 +1,28 @@
 package de.hpi3d.gamepgrog.trap.ui;
 
-import android.Manifest;
 import android.content.Intent;
-import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
-import java.util.Collections;
-
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.android.CalendarStealer;
 import de.hpi3d.gamepgrog.trap.android.CameraStealer;
 import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
-import de.hpi3d.gamepgrog.trap.android.PhoneStealer;
 import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
 import de.hpi3d.gamepgrog.trap.api.ApiIntent;
 import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
-import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 
+/**
+ * Main view. Contains
+ * - DisplayableList, a fragment with a list of displayables.
+ * - ButtonsFragment, a fragment with buttons
+ */
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,17 +30,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Call the App with "--ez MOCKAPI true" to enable the MockApi
         StorageManager.with(this).useMockApi.set(getIntent().getBooleanExtra("MOCKAPI", false));
-
         setContentView(R.layout.activity_main);
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
-
         init();
     }
 
+    /**
+     * Wrapper around registerUserAndSendFBToken.
+     * Makes sure that we don't call it while our
+     * user isn't properly registered by our server.
+     */
     private void init() {
         OurFirebaseMessagingService.init(getApplication());
 
@@ -56,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Firebase initialisation: get and upload our token.
+     */
     private void registerUserAndSendFBToken() {
         ApiIntent
                 .build(this)
