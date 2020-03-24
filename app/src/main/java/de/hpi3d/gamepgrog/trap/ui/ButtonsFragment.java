@@ -44,7 +44,7 @@ public class ButtonsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_buttons, container, false);
 
         upButton = view.findViewById(R.id.button_temporary_telegram);
         upButton.setOnClickListener((View v) -> {

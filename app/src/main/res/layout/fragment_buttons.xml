@@ -12,6 +12,7 @@
 
         <Button
             android:id="@+id/button_temporary_telegram"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/button_contact_abbot" />
