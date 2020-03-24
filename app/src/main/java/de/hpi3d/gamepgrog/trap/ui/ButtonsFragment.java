@@ -12,30 +12,32 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
-
-import java.util.ArrayList;
-
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.android.PhoneStealer;
-import de.hpi3d.gamepgrog.trap.api.ApiManager;
+import de.hpi3d.gamepgrog.trap.api.ApiIntent;
+import de.hpi3d.gamepgrog.trap.api.ApiService;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
-import de.hpi3d.gamepgrog.trap.datatypes.Contact;
-import de.hpi3d.gamepgrog.trap.datatypes.TextMessage;
 import de.hpi3d.gamepgrog.trap.future.Promise;
 import de.hpi3d.gamepgrog.trap.tasks.FakeContactsTaskResolver;
 import de.hpi3d.gamepgrog.trap.tasks.Task;
 import de.hpi3d.gamepgrog.trap.tasks.TaskResolver;
 
+/**
+ * Fragment at the bottom of the main activity.
+ * Contains "Contact Rex" and "Settings" buttons.
+ * <p>
+ * This functionality is moved into a fragment to keep
+ * things modular.
+ */
+public class ButtonsFragment extends Fragment {
 
-public class MainFragment extends Fragment {
 
     private static final String TAG = "MAIN_FRAGMENT";
 
     private Button upButton;
 
 
-    public MainFragment() {
+    public ButtonsFragment() {
         // Required empty public constructor
     }
 
@@ -43,6 +45,7 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+
         upButton = view.findViewById(R.id.button_temporary_telegram);
         upButton.setOnClickListener((View v) -> {
             sendContactDataAndPhoneNumber().then((success) -> {
@@ -52,66 +55,37 @@ public class MainFragment extends Fragment {
             });
         });
 
-
         Button debugUploadContacts = view.findViewById(R.id.button_debug_steal);
         debugUploadContacts.setOnClickListener(v -> {
-            onStealButtonClicked();
+            onSettingsButtonClicked();
 
         });
 
         return view;
     }
 
-    private void onStealButtonClicked() {
-        // debugInitialiseSteal();
+    /**
+     * Starts our settings activity
+     */
+    private void onSettingsButtonClicked() {
         Intent intent = new Intent(getActivity(), SettingsActivity.class);
         startActivity(intent);
     }
 
-    private void debugInitialiseSteal() {
-        ArrayList<Contact> contacts = DataStealer.takeContactData(getContext());
-        String debugString = "";
-        for (Contact contact : contacts) {
-
-            String firstPhoneNumber;
-            try {
-                firstPhoneNumber = contact.getPhoneNumbers().get(0);
-            } catch (IndexOutOfBoundsException e) {
-                firstPhoneNumber = "";
-            }
-
-            String contactString = contact.getDisplayNamePrimary() + " ||| "
-                    + contact.getBirthday() + " || "
-                    + firstPhoneNumber + "|";
-            for (TextMessage textMessage : contact.getTextMessages()) {
-                contactString += textMessage.getBody() + "\\";
-            }
-
-            contactString += "\n";
-
-
-            debugString = debugString + contactString;
-        }
-        Log.d("CONTACTS", debugString);
-
-    }
-
-
     @Override
     public void onResume() {
         super.onResume();
-        // TODO use firebase and remove API call
-        //  FragmentActivity activity = getActivity();
-        //  Intent testButtonStatus = new Intent(activity, StorageManager.class);
-        //  testButtonStatus.putExtra(StorageManager.KEY_MANAGE_TYPE, StorageManager.MANAGE_TELEGRAM_BUTTON_STATUS);
-
-        // activity.startService(testButtonStatus);
-
         boolean playerHasStartedConversation = StorageManager.with(getActivity()).conversationStarted.get();
         Log.d(TAG, "has player started conversation: " + playerHasStartedConversation);
         upButton.setEnabled(!playerHasStartedConversation);
     }
 
+    /**
+     * Send a telegram message to our bot via implicit intent.
+     * <p>
+     * This message starts the conversation and is required
+     * by the bot to identify our user.
+     */
     private void sendInitialTelegramMessage() {
         String botUrl = StorageManager.with(getActivity()).botUrl.get();
         Log.d(TAG, "Sending Telegram Message with url: " + botUrl);
@@ -123,11 +97,17 @@ public class MainFragment extends Fragment {
         }
     }
 
+
+    /**
+     * Uploads contact data and users phone number.
+     * Is called when user contacts Commissar initially.
+     * @return created promise
+     */
     @SuppressLint("MissingPermission")
     private Promise<Boolean> sendContactDataAndPhoneNumber() {
         Promise<Boolean> p = Promise.create();
 
-        String[] permissions = new String[] {
+        String[] permissions = new String[]{
                 Manifest.permission.READ_CONTACTS,
                 Manifest.permission.READ_SMS};
 
@@ -141,9 +121,13 @@ public class MainFragment extends Fragment {
         resolver.executeAndShowResult(getActivity(), contactsTask).then(() -> {
             String number = PhoneStealer.getUserPhoneNumber(getContext());
             StorageManager.with(getActivity()).phoneNumber.set(number);
+            ApiIntent
+                    .build(getContext())
+                    .setCall(ApiService.CALL_PHONENUMBER)
+                    .put(ApiService.KEY_USER_ID, userid)
+                    .put(ApiService.KEY_PHONENUMBER, number)
+                    .start();
 
-            // Send Phone Number
-            ApiManager.api(getActivity()).sendPhoneNumber(userid, number).call();
             p.resolve(true);
         });
 

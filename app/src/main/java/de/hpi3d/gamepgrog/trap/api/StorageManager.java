@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.CustomApplication;
-import de.hpi3d.gamepgrog.trap.datatypes.Clue;
 import de.hpi3d.gamepgrog.trap.datatypes.LocationData;
 import de.hpi3d.gamepgrog.trap.future.Function;
 import de.hpi3d.gamepgrog.trap.future.TriConsumer;
@@ -55,7 +54,6 @@ public class StorageManager {
     public final Preference<String> phoneNumber;
     public final Preference<String> serverUrl;
     public final DaoPreferences<Task> tasks;
-    public final DaoPreferences<Clue> clues;
     public final DaoPreferences<LocationData> locations;
 
     private StorageManager(Application app) {
@@ -88,7 +86,6 @@ public class StorageManager {
                 SharedPreferences::getString,
                 SharedPreferences.Editor::putString);
         tasks = new DaoPreferences<>(app, DaoSession::getTaskDao);
-        clues = new DaoPreferences<>(app, DaoSession::getClueDao);
         locations = new DaoPreferences<>(app, DaoSession::getLocationDataDao);
     }
 
@@ -108,7 +105,6 @@ public class StorageManager {
         StorageManager storage = with(app);
         storage.userid.reset();
         storage.conversationStarted.reset();
-        storage.clues.reset();
         storage.tasks.reset();
         storage.botUrl.reset();
         Log.d("StorageManager", "Reset Storage");

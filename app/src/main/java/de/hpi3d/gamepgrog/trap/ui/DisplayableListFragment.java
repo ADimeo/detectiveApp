@@ -16,15 +16,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hpi3d.gamepgrog.trap.CustomApplication;
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.datatypes.ClueDao;
 import de.hpi3d.gamepgrog.trap.datatypes.Displayable;
 import de.hpi3d.gamepgrog.trap.tasks.DaoSession;
 import de.hpi3d.gamepgrog.trap.tasks.TaskDao;
 
+
+/**
+ * List of displayables, right now only tasks.
+ * Build for extensibility, since earlier prototype versions
+ * included clues, a different displayable. While
+ * this architecture of being able to display arbitrary
+ * displayables isn't needed anymore rolling it back would
+ * be silly.
+ */
 public class DisplayableListFragment extends Fragment {
 
     public static final String KEY_WHAT_TO_DISPLAY = "key_display_type";
-    public static final String DISPLAY_CLUES = "display_clues";
     public static final String DISPLAY_TASKS = "display_tasks";
 
     private String whatToDisplay = "";
@@ -49,15 +56,13 @@ public class DisplayableListFragment extends Fragment {
             whatToDisplay = getArguments().getString(KEY_WHAT_TO_DISPLAY);
         }
 
+        // Choose different display type here
         DaoSession daoSession = ((CustomApplication) getActivity().getApplication()).getDaoSession();
-        if (DISPLAY_CLUES.equals(whatToDisplay)) {
-            ClueDao clueDao = daoSession.getClueDao();
-            this.currentDisplayable = new ArrayList<>(clueDao.queryBuilder().list());
-        } else if (DISPLAY_TASKS.equals(whatToDisplay)) {
+        if (DISPLAY_TASKS.equals(whatToDisplay)) {
             TaskDao taskDao = daoSession.getTaskDao();
             this.currentDisplayable = new ArrayList<>(taskDao.queryBuilder().list());
         } else {
-            throw new IllegalArgumentException("Can only display clues or tasks");
+            throw new IllegalArgumentException("display type not valid");
         }
 
     }
@@ -66,7 +71,6 @@ public class DisplayableListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_displayable_list, container, false);
-
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -77,10 +81,8 @@ public class DisplayableListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, numberOfColumns));
             }
-
             recyclerView.setAdapter(new DisplayableRecyclerViewAdapter(currentDisplayable, getActivity()));
         }
-
         Log.d("ON_CREATE_VIEW", Arrays.toString(currentDisplayable.toArray(new Displayable[0])));
         return view;
     }
