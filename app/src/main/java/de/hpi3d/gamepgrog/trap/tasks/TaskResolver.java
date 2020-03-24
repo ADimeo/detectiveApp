@@ -6,12 +6,13 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
 import de.hpi3d.gamepgrog.trap.R;
-import de.hpi3d.gamepgrog.trap.api.ApiIntent;
-import de.hpi3d.gamepgrog.trap.api.ApiService;
+import de.hpi3d.gamepgrog.trap.android.PermissionHelper;
+import de.hpi3d.gamepgrog.trap.api.ApiCall;
+import de.hpi3d.gamepgrog.trap.api.ApiManager;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
+import de.hpi3d.gamepgrog.trap.future.ArrayExt;
 import de.hpi3d.gamepgrog.trap.future.EmptyPromise;
 import de.hpi3d.gamepgrog.trap.future.Promise;
 
@@ -139,35 +140,21 @@ public abstract class TaskResolver<T extends UserData> {
 
     protected Promise<Boolean> sendData(Activity app, List<T> data) {
         Promise<Boolean> p = Promise.create();
-        ApiIntent
-                .build(app)
-                .setCall(ApiService.CALL_ADD_DATA)
-                .put(ApiService.KEY_USER_ID, StorageManager.with(app).userid.get())
-                .put(ApiService.KEY_DATA_TYPE, getDatatypeName())
-                .put(ApiService.KEY_DATA, data)
-                .putReceiver((code, bundle) -> p.resolve(code == ApiService.SUCCESS))
-                .start();
+        ApiManager.api(app).addData(
+                StorageManager.with(app).userid.get(),
+                getDatatypeName(),
+                ArrayExt.map(data, d -> (UserData) d)
+        ).call((result, code) -> p.resolve(code == ApiCall.SUCCESS));
         return p;
     }
 
     protected Promise<Boolean> isTaskFinished(Activity app, Task task) {
         Promise<Boolean> p = Promise.create();
 
-        ApiIntent
-                .build(app)
-                .setCall(ApiService.CALL_IS_TASK_FINISHED)
-                .put(ApiService.KEY_USER_ID, StorageManager.with(app).userid.get())
-                .put(ApiService.KEY_TASK_NAME, task.getName())
-                .putReceiver((code, bundle) -> {
-                    if (code != ApiService.SUCCESS) {
-                        p.resolve(false);
-                    } else {
-                        boolean result = ApiIntent.getResult(bundle);
-                        p.resolve(result);
-                    }
-                })
-                .start();
-
+        ApiManager.api(app).isTaskFinished(
+                StorageManager.with(app).userid.get(),
+                task.getName()
+        ).call((result, code) -> p.resolve(code == ApiCall.SUCCESS && result));
         return p;
     }
 

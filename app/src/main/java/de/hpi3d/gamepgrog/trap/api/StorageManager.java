@@ -40,7 +40,6 @@ public class StorageManager {
     private static final String KEY_CONVERSATION_HAS_STARTED = "key_conversation_has_started";
     private static final String KEY_SAFETY_MODE = "key_safety_mode"; // Also defined in strings.xml
     private static final String KEY_SERVER_URL = "key_server_url";
-    private static final String KEY_MOCK_API = "key_mock_api";
     private static final String KEY_PHONE_NUMBER = "key_phone_number";
 
     private static final String KEY_FIREBASE_KEY = "key_firebase_key";
@@ -52,7 +51,6 @@ public class StorageManager {
     public final Preference<String> botUrl;
     public final Preference<Boolean> conversationStarted;
     public final Preference<Boolean> safetyMode;
-    public final Preference<Boolean> useMockApi;
     public final Preference<String> phoneNumber;
     public final Preference<String> serverUrl;
     public final DaoPreferences<Task> tasks;
@@ -83,10 +81,6 @@ public class StorageManager {
                 app, DEFAULT_SERVER_URL, KEY_SERVER_URL,
                 SharedPreferences::getString,
                 SharedPreferences.Editor::putString);
-        useMockApi = new Preference<>(
-                app, false, KEY_MOCK_API,
-                SharedPreferences::getBoolean,
-                SharedPreferences.Editor::putBoolean);
         phoneNumber = new Preference<>(
                 app, "", KEY_PHONE_NUMBER,
                 SharedPreferences::getString,

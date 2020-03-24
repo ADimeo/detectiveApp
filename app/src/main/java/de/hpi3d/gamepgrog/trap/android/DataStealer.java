@@ -1,26 +1,16 @@
 package de.hpi3d.gamepgrog.trap.android;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.provider.CalendarContract;
-import android.provider.CalendarContract.Events;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Profile;
 import android.provider.Telephony;
-import android.telephony.TelephonyManager;
 import android.util.Log;
-
-import androidx.annotation.RequiresPermission;
-import androidx.core.app.ActivityCompat;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.Language;
 import de.hpi3d.gamepgrog.trap.datatypes.TextMessage;

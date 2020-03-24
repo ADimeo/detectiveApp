@@ -50,4 +50,8 @@
     <string name="fake_contact_permission_failed">Please grant the needed permissions</string>
     <string name="fake_contact_upload_failed">No network connection, please try again later</string>
     <string name="fake_contact_dialog_explanation">To contact Rex we need access to your contacts</string>
+
+    <!-- Firebase -->
+    <string name="notification_new">Detective Rex has a new Task for you</string>
+    <string name="notification_new_detail">Open the app to see it</string>
 </resources>

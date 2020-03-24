@@ -1,7 +1,6 @@
 package de.hpi3d.gamepgrog.trap.tasks;
 
 import android.app.Activity;
-import android.location.LocationManager;
 
 import java.util.List;
 

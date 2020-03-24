@@ -8,6 +8,8 @@ import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.util.LongSparseArray;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.common.util.ArrayUtils;
 
 import org.parceler.Parcel;
@@ -17,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
 import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.future.BiConsumer;
 

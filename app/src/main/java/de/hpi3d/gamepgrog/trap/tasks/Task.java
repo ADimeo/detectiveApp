@@ -3,8 +3,6 @@ package de.hpi3d.gamepgrog.trap.tasks;
 
 import android.app.Activity;
 
-import com.google.gson.annotations.SerializedName;
-
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;

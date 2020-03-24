@@ -1,6 +1,10 @@
 package de.hpi3d.gamepgrog.trap.api;
 
 
+import android.app.Activity;
+import android.app.Application;
+import android.app.Service;
+
 import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.datatypes.User;
@@ -12,9 +16,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -28,12 +30,21 @@ import retrofit2.http.Path;
  *
  * @see <a href="https://github.com/EatingBacon/gameprog-detective-game/wiki/API">ApiBuilder Doku</a>
  */
-class ApiBuilder {
+public class ApiManager {
 
     private static OkHttpClient client = null;
 
+    public static ServerApi api(Service a) {
+        return api(a.getApplication());
+    }
 
-    static API build(String url) {
+    public static ServerApi api(Activity a) {
+        return api(a.getApplication());
+    }
+
+    public static ServerApi api(Application app) {
+        String url = StorageManager.with(app).serverUrl.get();
+
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         if (client == null) {
@@ -44,49 +55,52 @@ class ApiBuilder {
         return new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addCallAdapterFactory(ApiCallAdapter.Factory.create(app))
                 .client(client)
                 .build()
-                .create(API.class);
+                .create(ServerApi.class);
     }
 
-    public interface API {
+    public interface ServerApi {
         @GET("users/create")
-        Call<User> register();
+        ApiCall<User> register();
 
         @GET("users/{userid}")
-        Call<UserStatus> getUserStatus(@Path("userid") long userid);
+        ApiCall<UserStatus> getUserStatus(@Path("userid") long userid);
 
         @GET("users/{userid}/fbtoken/{token}")
-        Call<ResponseBody> sendFBToken(@Path("userid") long userid, @Path("token") String token);
+        ApiCall<ResponseBody> sendFBToken(@Path("userid") long userid, @Path("token") String token);
 
         @GET("users/{userid}/tasks/{taskname}/finished")
-        Call<Boolean> isTaskFinished(@Path("userid") long userid, @Path("taskname") String taskname);
+        ApiCall<Boolean> isTaskFinished(@Path("userid") long userid, @Path("taskname") String taskname);
 
-        @GET("users/{userid}/tasks")
         @Deprecated
-        Call<List<Task>> fetchTasks(@Path("userid") long userid);
+        @GET("users/{userid}/tasks")
+        ApiCall<List<Task>> fetchTasks(@Path("userid") long userid);
 
         @POST("users/{userid}/data/{datatype}")
-        Call<ResponseBody> addData(@Path("userid") int userid,
+        @UploadsData
+        ApiCall<ResponseBody> addData(@Path("userid") int userid,
                                    @Path("datatype") String datatype,
                                    @Body List<UserData> data);
 
+        @UploadsData
         @Multipart
         @POST("users/{userid}/data/image")
-        Call<ResponseBody> uploadImage(@Path("userid") int userid,
+        ApiCall<ResponseBody> uploadImage(@Path("userid") int userid,
                                        @Part MultipartBody.Part file,
                                        @Part("name") RequestBody body);
 
-
         @GET("users/{userid}/reset")
-        Call<ResponseBody> reset(@Path("userid") int userid);
+        ApiCall<ResponseBody> reset(@Path("userid") int userid);
 
+        @UploadsData
         @POST("users/{userid}/telegram-code/{code}")
-        Call<ResponseBody> sendTelegramCode(@Path("userid") int userid, @Path("code") String code);
+        ApiCall<ResponseBody> sendTelegramCode(@Path("userid") int userid, @Path("code") String code);
 
+        @UploadsData
         @POST("users/{userid}/phonenumber/{number}")
-        Call<ResponseBody> sendPhoneNumber(@Path("userid") int userid, @Path("number") String number);
+        ApiCall<ResponseBody> sendPhoneNumber(@Path("userid") int userid, @Path("number") String number);
     }
 }
 

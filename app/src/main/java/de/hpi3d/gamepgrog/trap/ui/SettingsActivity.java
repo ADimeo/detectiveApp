@@ -10,12 +10,13 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
+
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
-import de.hpi3d.gamepgrog.trap.api.ApiIntent;
-import de.hpi3d.gamepgrog.trap.api.ApiService;
+import de.hpi3d.gamepgrog.trap.api.ApiManager;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
-import de.hpi3d.gamepgrog.trap.datatypes.User;
+import de.hpi3d.gamepgrog.trap.future.BiConsumer;
+import de.hpi3d.gamepgrog.trap.future.Consumer;
 
 /**
  * Activity for our Settings.
@@ -46,15 +47,10 @@ public class SettingsActivity extends AppCompatActivity {
      * Calls init after reset
      */
     public void reset() {
-        ApiIntent
-                .build(this)
-                .setCall(ApiService.CALL_RESET)
-                .put(ApiService.KEY_USER_ID, getUserId())
-                .putReceiver((code, bundle) -> {
-                    StorageManager.reset(getApplication());
-                    init();
-                })
-                .start();
+        ApiManager.api(this).reset(getUserId()).call(() -> {
+            StorageManager.reset(getApplication());
+            init();
+        });
     }
 
     /**
@@ -76,28 +72,19 @@ public class SettingsActivity extends AppCompatActivity {
      * Mirrors method in MainActivity, but rule of three.
      */
     private void registerUserAndSendFBToken() {
-        ApiIntent
-                .build(this)
-                .setCall(ApiService.CALL_REGISTER)
-                .putReceiver((code, bundle) -> {
-                    if (code == ApiService.SUCCESS) {
-                        User user = ApiIntent.getResult(bundle);
+        ApiManager.api(this).register().call((user, code) -> {
+            StorageManager.with(this).userid.set(user.getUserId());
+            StorageManager.with(this).botUrl.set(user.getRegisterURL());
 
-                        // Save new user id in db
-                        StorageManager.with(this).userid.set(user.getUserId());
-                        StorageManager.with(this).botUrl.set(user.getRegisterURL());
+            // Get fb token
+            String token = StorageManager.with(this).fbtoken.getOrDefault(null);
 
-                        // Get fb token
-                        String token = StorageManager.with(this).fbtoken.getOrDefault(null);
-
-                        // If null, do nothing, it will getOrDefault send when it is updated
-                        if (token != null) {
-                            // Send gb token
-                            OurFirebaseMessagingService.sendNewToken(this, user.getUserId(), token);
-                        }
-                    }
-                })
-                .start();
+            // If null, do nothing, it will getOrDefault send when it is updated
+            if (token != null) {
+                // Send gb token
+                OurFirebaseMessagingService.sendNewToken(getApplication(), user.getUserId(), token);
+            }
+        });
     }
 
 
@@ -119,6 +106,9 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+
+            StorageManager storage = StorageManager.with(getActivity());
+
             Preference resetServerButton = findPreference(getString(R.string.key_settings_reset));
             resetServerButton.setOnPreferenceClickListener((preference) -> {
                 String currentUrl = StorageManager.with(getActivity()).botUrl.get();
@@ -127,43 +117,47 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             });
 
+            createPreference(
+                    R.string.key_change_number,
+                    EditTextPreference::setText,
+                    storage.phoneNumber,
+                    number ->
+                        ApiManager.api(getActivity()).sendPhoneNumber(storage.userid.get(), number));
 
-            Preference debugButton = findPreference(getString(R.string.key_settings_steal));
-//            debugButton.setChecked(StorageManager.with(getActivity()).safetyMode.get());
-            debugButton.setOnPreferenceClickListener((preference) -> {
-                String currentSafety = String.valueOf(StorageManager.with(getActivity()).safetyMode.get());
-                Toast.makeText(getContext(), currentSafety, Toast.LENGTH_SHORT).show();
-                return true;
-            });
+            createPreference(
+                    R.string.key_settings_safety_mode,
+                    SwitchPreferenceCompat::setChecked,
+                    storage.safetyMode);
 
-            Preference numberPreference = findPreference(getString(R.string.key_change_number));
-            numberPreference.setTitle(StorageManager.with(getActivity()).phoneNumber.getOrDefault("No Number"));
-            numberPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                StorageManager.with(getActivity()).phoneNumber.set((String) newValue);
-                numberPreference.setTitle((String) newValue);
-                ApiIntent
-                        .build(getContext())
-                        .setCall(ApiService.CALL_PHONENUMBER)
-                        .put(ApiService.KEY_USER_ID, StorageManager.with(getActivity()).userid.get())
-                        .put(ApiService.KEY_PHONENUMBER, (String) newValue)
-                        .start();
-                return true;
-            });
+            createPreference(
+                    R.string.key_settings_url,
+                    EditTextPreference::setText,
+                    storage.serverUrl);
+        }
 
+        private <T extends Preference, K> T createPreference(
+                int id,
+                BiConsumer<T, K> setter,
+                StorageManager.Preference<K> storage) {
+            return createPreference(id, setter, storage, d -> {});
+        }
 
-            SwitchPreferenceCompat safetyPreference = findPreference(getString(R.string.key_settings_safety_mode));
-            safetyPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                StorageManager.with(getActivity()).safetyMode.set((boolean) newValue);
-                return true;
-            });
-
-
-            EditTextPreference serverUrlPreference = findPreference(getString(R.string.key_settings_url));
-            serverUrlPreference.setOnPreferenceChangeListener(((preference, newValue) -> {
-                StorageManager.with(getActivity()).botUrl.set((String) newValue);
-                return true;
-            }));
-
+        private <T extends Preference, K> T createPreference(
+                int id,
+                BiConsumer<T, K> setter,
+                StorageManager.Preference<K> storage,
+                Consumer<K> changed) {
+            T preference = findPreference(getString(id));
+            if (preference != null) {
+                setter.accept(preference, storage.get());
+                preference.setOnPreferenceChangeListener((p, o) -> {
+                    K value = (K) o;
+                    storage.set(value);
+                    changed.accept(value);
+                    return true;
+                });
+            }
+            return preference;
         }
     }
 

@@ -1,13 +1,13 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
+import androidx.annotation.NonNull;
+
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
-
-import androidx.annotation.NonNull;
 
 
 @Parcel(Parcel.Serialization.BEAN)
