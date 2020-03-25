@@ -7,8 +7,20 @@ import android.telephony.TelephonyManager;
 
 import androidx.annotation.RequiresPermission;
 
+/**
+ * Stealer for users phone number
+ */
 public class PhoneStealer {
 
+    /**
+     * Returns users phone number.
+     * <p>
+     * Ideally, at least. SIM-Card vendors have locked this down a lot in recent years,
+     * and on some devices this won't work.
+     *
+     * @param context to access storage
+     * @return users phone number
+     */
     @SuppressLint("HardwareIds")
     @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
     public static String getUserPhoneNumber(Context context) {

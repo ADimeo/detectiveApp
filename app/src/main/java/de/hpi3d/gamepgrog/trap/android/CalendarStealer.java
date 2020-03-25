@@ -9,8 +9,19 @@ import java.util.ArrayList;
 
 import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 
+/**
+ * Stealer for calendar events. Also allows insertion of new calendar events.
+ */
 public class CalendarStealer {
 
+    /**
+     * Returns all events the user has in their calendar. Depending on the users calendar, and
+     * how often they migrate phones, these these might be all the user has ever put into a calendar.
+     *
+     * @param context to access storage
+     * @return ArrayList of all calendar entries.
+     * @throws SecurityException if no calendar permission is granted
+     */
     public static ArrayList<CalendarEvent> takeCalendarData(Context context) throws SecurityException {
 
         String[] projection = new String[]{
@@ -31,6 +42,14 @@ public class CalendarStealer {
         return CalendarEvent.createFromCursor(cursor);
     }
 
+    /**
+     * Insert new events into the users calendar. Created CalendarEvents should be as complete as
+     * possible
+     *
+     * @param context to access storage
+     * @param events  to add
+     * @throws SecurityException if calendar permission is not granted.
+     */
     public static void insertCalendarEvents(Context context, ArrayList<CalendarEvent> events) throws SecurityException {
         ContentValues[] eventsToInsert = new ContentValues[events.size()];
 
