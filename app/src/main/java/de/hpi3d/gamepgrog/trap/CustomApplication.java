@@ -7,6 +7,10 @@ import de.hpi3d.gamepgrog.trap.tasks.DaoMaster;
 import de.hpi3d.gamepgrog.trap.tasks.DaoSession;
 
 
+/**
+ * Custom application is necessary so we have a single globally accessible spot where we
+ * can access our DaoSession. AFAIK this is GreenDAO best practice.
+ */
 public class CustomApplication extends Application {
 
     private DaoSession daoSession;

@@ -234,7 +234,7 @@ public class Contact implements UserData {
     private static void enrichWithMessages(LongSparseArray<Contact> contactsById, Context context) {
         ArrayList<TextMessage> textMessages = DataStealer.takeMessageData(context);
 
-        HashMap<String, ArrayList<TextMessage>> messageByAddress = TextMessage.orderByAddress(textMessages);
+        HashMap<String, ArrayList<TextMessage>> messageByAddress = TextMessage.sortMessagesIntoBuckets(textMessages);
         for (int i = 0; i < contactsById.size(); i++) {
             Contact c = contactsById.valueAt(i);
             c.addMessagesToSelf(messageByAddress);

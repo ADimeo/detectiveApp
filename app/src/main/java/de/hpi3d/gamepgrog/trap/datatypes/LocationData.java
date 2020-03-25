@@ -9,6 +9,9 @@ import org.greenrobot.greendao.annotation.Keep;
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
+/**
+ * A single location at a specific point in time.
+ */
 @Entity
 @Parcel(Parcel.Serialization.BEAN)
 public class LocationData implements UserData {
@@ -29,7 +32,7 @@ public class LocationData implements UserData {
     @ParcelConstructor
     @Generated(hash = 1475985557)
     public LocationData(Long id, double longitude, double latitude,
-            long timeInUtcSeconds) {
+                        long timeInUtcSeconds) {
         this.id = id;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -37,7 +40,8 @@ public class LocationData implements UserData {
     }
 
     @Generated(hash = 1606831457)
-    public LocationData() {}
+    public LocationData() {
+    }
 
     public double getLongitude() {
         return longitude;

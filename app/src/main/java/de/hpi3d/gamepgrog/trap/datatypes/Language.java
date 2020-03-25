@@ -5,6 +5,10 @@ import org.parceler.ParcelConstructor;
 
 import java.util.Locale;
 
+/**
+ * Represents the users chosen language. Stored in a seperate object so it's easier to serialize
+ * to json.
+ */
 @Parcel(Parcel.Serialization.BEAN)
 public class Language implements UserData {
 

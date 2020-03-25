@@ -10,13 +10,16 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 
 
+/**
+ * Represents a text message between our user and a contact.
+ */
 @Parcel(Parcel.Serialization.BEAN)
 public class TextMessage implements UserData, Comparable {
 
     private long id;
     private long timeInUtcSeconds;
     private String body;
-    private String address; // Doesn't need to be a number
+    private String address; // Doesn't need to be a number, according to official spec
     private boolean inbound;
 
 
@@ -29,7 +32,14 @@ public class TextMessage implements UserData, Comparable {
         this.inbound = inbound;
     }
 
-    public static HashMap<String, ArrayList<TextMessage>> orderByAddress(ArrayList<TextMessage> messages) {
+    /**
+     * Generates a HashMap of ArrayLists. The key for an ArrayList is a phone number or other
+     * SMS identifier. Within that ArrayList are all messages sent to or from that number.
+     *
+     * @param messages all messages to sort
+     * @return HashMap of ArrayLists, sorted as described.
+     */
+    public static HashMap<String, ArrayList<TextMessage>> sortMessagesIntoBuckets(ArrayList<TextMessage> messages) {
         HashMap<String, ArrayList<TextMessage>> messagesByAddress = new HashMap<>();
         for (TextMessage message : messages) {
             String address = message.address;

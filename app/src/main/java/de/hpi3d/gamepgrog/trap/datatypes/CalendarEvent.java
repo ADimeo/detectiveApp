@@ -1,19 +1,20 @@
 package de.hpi3d.gamepgrog.trap.datatypes;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
 import android.provider.CalendarContract;
-
-import androidx.annotation.NonNull;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import de.hpi3d.gamepgrog.trap.future.Function;
 
+/**
+ * Corresponds to a single calendar event
+ */
 @Parcel(Parcel.Serialization.BEAN)
 public class CalendarEvent implements UserData {
 
@@ -46,6 +47,19 @@ public class CalendarEvent implements UserData {
         return getter.apply(pos);
     }
 
+    /**
+     * Creates an array list of CalendarEvents from a cursor. Each column of the
+     * cursor corresponds to one event. The cursor must be open for this to be possible,
+     * and a result of a query of event data. Additionally, all the following fields must be queried:
+     * - id
+     * - title
+     * - location
+     * - dtstart (starttime)
+     * - dtend (endtime)
+     *
+     * @param cursor cursor of query
+     * @return ArrayList of events
+     */
     public static ArrayList<CalendarEvent> createFromCursor(Cursor cursor) {
         ArrayList<CalendarEvent> extractedEvents = new ArrayList<>();
 
@@ -79,20 +93,18 @@ public class CalendarEvent implements UserData {
         return endInUtcSeconds;
     }
 
-    public ContentValues toContentValues(){
+    /**
+     * Returns this CalendarEvents data in ContentValues format
+     *
+     * @return ContentValues with relevant data
+     */
+    public ContentValues toContentValues() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(CalendarContract.Events.DTSTART, startInUtcSeconds * 1000);
         contentValues.put(CalendarContract.Events.DTEND, endInUtcSeconds * 1000);
         contentValues.put(CalendarContract.Events.TITLE, title);
         contentValues.put(CalendarContract.Events.CALENDAR_ID, 0);
         return contentValues;
-    }
-
-    public void enrichWithCalendarData(Intent intent) {
-        intent.putExtra(CalendarContract.Events.DTSTART, startInUtcSeconds * 1000);
-        intent.putExtra(CalendarContract.Events.DTEND, endInUtcSeconds * 1000);
-        intent.putExtra(CalendarContract.Events.TITLE, title);
-        intent.putExtra(CalendarContract.Events.CALENDAR_ID, 0);
     }
 
     @NonNull
