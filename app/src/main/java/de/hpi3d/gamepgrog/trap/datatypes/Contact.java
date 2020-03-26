@@ -55,7 +55,7 @@ public class Contact implements UserData {
     }
 
     @ParcelConstructor
-    public Contact(long id, String displayNamePrimary, String homeAddress, String email, String organisation, String birthday, ArrayList<String> phoneNumbers) {
+    public Contact(long id, String displayNamePrimary, String homeAddress, String organisation, String birthday, ArrayList<String> phoneNumbers) {
         this.id = id;
         this.displayNamePrimary = displayNamePrimary;
         this.homeAddress = homeAddress;

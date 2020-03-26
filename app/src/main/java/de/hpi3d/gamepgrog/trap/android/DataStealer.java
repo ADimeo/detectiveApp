@@ -117,7 +117,6 @@ public class DataStealer {
                 String contactName = cursor.getString(positionOfNameColumn);
                 long id = cursor.getLong(positionOfIdColumn);
                 Contact contact = new Contact(id, contactName);
-                Log.d("NEW CONTACT CREATED", contact.toString());
                 extractedContacts.add(contact);
             } while (cursor.moveToNext());
             cursor.close();

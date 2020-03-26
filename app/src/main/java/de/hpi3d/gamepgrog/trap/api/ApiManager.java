@@ -9,8 +9,6 @@ import java.util.List;
 
 import de.hpi3d.gamepgrog.trap.datatypes.User;
 import de.hpi3d.gamepgrog.trap.datatypes.UserData;
-import de.hpi3d.gamepgrog.trap.datatypes.UserStatus;
-import de.hpi3d.gamepgrog.trap.tasks.Task;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -65,18 +63,11 @@ public class ApiManager {
         @GET("users/create")
         ApiCall<User> register();
 
-        @GET("users/{userid}")
-        ApiCall<UserStatus> getUserStatus(@Path("userid") long userid);
-
         @GET("users/{userid}/fbtoken/{token}")
         ApiCall<ResponseBody> sendFBToken(@Path("userid") long userid, @Path("token") String token);
 
         @GET("users/{userid}/tasks/{taskname}/finished")
         ApiCall<Boolean> isTaskFinished(@Path("userid") long userid, @Path("taskname") String taskname);
-
-        @Deprecated
-        @GET("users/{userid}/tasks")
-        ApiCall<List<Task>> fetchTasks(@Path("userid") long userid);
 
         @POST("users/{userid}/data/{datatype}")
         @UploadsData

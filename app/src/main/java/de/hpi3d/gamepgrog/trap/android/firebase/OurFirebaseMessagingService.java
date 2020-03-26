@@ -36,11 +36,9 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
                 case FirebaseDataParser.CALL_NEW_TASKS:
                     onTasksReceived(FirebaseDataParser.parseTasks(data));
                     return;
-
                 case FirebaseDataParser.CALL_GET_TELEGRAM:
                     onTelegramReceived();
                     return;
-
             }
         }
 
@@ -68,7 +66,6 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
         NotificationHelper.sendNotification(getApplicationContext(),
                 getString(R.string.notification_new), getString(R.string.notification_new_detail));
     }
-
 
     @Override
     public void onNewToken(@NonNull String s) {
@@ -102,5 +99,4 @@ public class OurFirebaseMessagingService extends FirebaseMessagingService {
                     setNewToken(app, token);
                 });
     }
-
 }

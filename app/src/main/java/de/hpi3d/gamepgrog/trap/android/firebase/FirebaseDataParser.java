@@ -13,7 +13,6 @@ import de.hpi3d.gamepgrog.trap.tasks.Task;
 class FirebaseDataParser {
 
     public static final String CALL_NEW_TASKS = "newTasks";
-    public static final String CALL_NEW_CLUE = "newClue";
     public static final String CALL_GET_TELEGRAM = "getTelegramCode";
 
     private static final String KEY_CALL = "call";
@@ -26,14 +25,12 @@ class FirebaseDataParser {
     static boolean isValid(Map<String, String> data) {
         return data.containsKey(KEY_CALL)
                 && data.containsKey(KEY_VALUE)
-                && Arrays.asList(CALL_NEW_TASKS, CALL_NEW_CLUE, CALL_GET_TELEGRAM).contains(data.get("call"));
+                && Arrays.asList(CALL_NEW_TASKS, CALL_GET_TELEGRAM).contains(data.get("call"));
     }
 
     static String getCall(Map<String, String> data) {
         return data.get(KEY_CALL);
     }
-
-
 
     static ArrayList<Task> parseTasks(Map<String, String> data) {
         return new Gson().fromJson(data.get("value"), TYPE_TASKS);
