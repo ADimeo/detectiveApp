@@ -5,7 +5,6 @@ import android.Manifest;
 import java.util.Arrays;
 import java.util.List;
 
-import de.hpi3d.gamepgrog.trap.android.CalendarStealer;
 import de.hpi3d.gamepgrog.trap.android.CameraStealer;
 import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.android.LocationStealer;
@@ -31,7 +30,7 @@ public class TaskResolverManager {
                     new String[]{
                             Manifest.permission.READ_CALENDAR,
                             Manifest.permission.WRITE_CALENDAR},
-                    CalendarStealer::takeCalendarData);
+                    DataStealer::takeCalendarData);
 
     private final static TaskResolver<Language> languageResolver =
             new SyncTaskResolver<>(
