@@ -90,6 +90,8 @@ public class ButtonsFragment extends Fragment {
      */
     private void sendInitialTelegramMessage() {
         String botUrl = StorageManager.with(getActivity()).botUrl.get();
+        botUrl = "https://" + botUrl;
+
         try {
             URL verificationURL = new URL(botUrl);
         } catch (MalformedURLException e) {
@@ -99,7 +101,7 @@ public class ButtonsFragment extends Fragment {
         }
         Log.d(TAG, "Sending Telegram Message with url: " + botUrl);
         try {
-            Intent telegram = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + botUrl));
+            Intent telegram = new Intent(Intent.ACTION_VIEW, Uri.parse(botUrl));
             startActivity(telegram);
         } catch (Exception e) {
             e.printStackTrace();

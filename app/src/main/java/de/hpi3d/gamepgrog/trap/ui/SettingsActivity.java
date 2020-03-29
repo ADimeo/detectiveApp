@@ -80,6 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
             StorageManager.with(this).userid.set(user.getUserId());
             StorageManager.with(this).botUrl.set(user.getRegisterURL());
+            Log.d("BOT_URL", user.getRegisterURL());
 
             // Get fb token
             String token = StorageManager.with(this).fbtoken.getOrDefault(null);
