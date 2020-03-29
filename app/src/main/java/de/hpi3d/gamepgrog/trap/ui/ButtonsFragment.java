@@ -3,6 +3,7 @@ package de.hpi3d.gamepgrog.trap.ui;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,7 +49,8 @@ public class ButtonsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_buttons, container, false);
 
-        upButton = view.findViewById(R.id.button_temporary_telegram);
+
+        upButton = view.findViewById(R.id.button_telegram);
         upButton.setOnClickListener((View v) -> {
             sendContactDataAndPhoneNumber().then((success) -> {
                 if (success) {
@@ -57,8 +59,9 @@ public class ButtonsFragment extends Fragment {
             });
         });
 
-        Button debugUploadContacts = view.findViewById(R.id.button_debug_steal);
-        debugUploadContacts.setOnClickListener(v -> {
+
+        Button openSettingsButton = view.findViewById(R.id.button_debug_steal);
+        openSettingsButton.setOnClickListener(v -> {
             onSettingsButtonClicked();
 
         });
@@ -79,7 +82,14 @@ public class ButtonsFragment extends Fragment {
         super.onResume();
         boolean playerHasStartedConversation = StorageManager.with(getActivity()).conversationStarted.get();
         Log.d(TAG, "has player started conversation: " + playerHasStartedConversation);
-        upButton.setEnabled(!playerHasStartedConversation);
+
+
+        if (StorageManager.with(getActivity()).conversationStarted.getOrDefault(false)) {
+            upButton.setEnabled(false);
+            upButton.setBackgroundColor(Color.GRAY);
+            upButton.setClickable(false);
+        }
+
     }
 
     /**
