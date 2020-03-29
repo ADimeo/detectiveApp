@@ -2,15 +2,13 @@
     <string name="app_name">Detective Game</string>
 
 
-    <string name="debug_upload_contacts">Settings</string>
-    <string name="button_contact_abbot">Contact Commissar Rex</string>
-    <string name="title_hints_received">Known Secrets</string>
-    <string name="debug_safety_mode">Safety mode</string>
-    <string name="error_no_registration_or_safety_mode">Application is in safety mode or user is not registered</string>
-    <string name="fcm_message">Andy Abbot has new Tasks for you</string>
-    <string name="tab_text_1">Tasks</string>
-    <string name="tab_text_2">Clues</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="debug_upload_contacts">Einstellungen</string>
+    <string name="button_contact_abbot">Kommissar kontaktieren</string>
+    <string name="debug_safety_mode">Sicherheitsmodus mode</string>
+    <string name="error_no_registration_or_safety_mode">App ist im Sicherheitsmodus oder Nutzer ist unregistriert</string>
+    <string name="fcm_message">Der Kommissar hat eine neue Aufgabe</string>
+    <string name="tab_text_1">Aufgaben</string>
+    <string name="title_activity_settings">Einstellungen</string>
 
 
     <!-- Keys-->
@@ -18,40 +16,39 @@
     <string name="key_settings_steal">steal_stuff</string>
     <string name="key_settings_url">server_url</string>
 
-
     <string name="key_settings_safety_mode">key_safety_mode</string>
     <string name="key_change_number">key_change_number</string>
 
 
     <!-- Preferences -->
-    <string name="title_settings_debug">Debug settings</string>
-    <string name="title_settings_general">General settings</string>
+    <string name="title_settings_debug">Entwicklereinstellungen</string>
+    <string name="title_settings_general">Allgemeine Einstellungen</string>
 
     <string name="server_url">Server URL</string>
-    <string name="change_number">"Your number"</string>
+    <string name="change_number">Deine Handynummer</string>
 
-    <string name="settings_reset">Reset</string>
-    <string name="settings_reset_desc">Calls the "reset" endpoint on the server</string>
-    <string name="settings_steal">Steal</string>
-    <string name="settings_steal_desc">Debug button to steal data</string>
+    <string name="settings_reset">Zurücksetzen</string>
+    <string name="settings_reset_desc">Ruft den "reset" endpoint des Servers auf</string>
+    <string name="settings_steal">Daten stehlen</string>
+    <string name="settings_steal_desc">Debug Button zum stehlen von Daten</string>
 
     <!-- Task Execution -->
-    <string name="task_is_executing">There is still a Task running. Please wait</string>
-    <string name="task_success">Task fulfilled successfully</string>
-    <string name="task_permission_failed">Task cannot be fulfilled without permissions</string>
-    <string name="task_upload_failed">No network connection, please try again later</string>
-    <string name="task_data_failed">Task not completed correctly</string>
-    <string name="gps_not_enabled">GPS is not enabled. Turn it on and try again</string>
+    <string name="task_is_executing">Eine andere Aufgabe wird gerade bearbeitet.</string>
+    <string name="task_success">Aufgabe erfolgreich erfüllt</string>
+    <string name="task_permission_failed">Aufgabe kann ohne Android Erlaubnis nicht erfüllt werden</string>
+    <string name="task_upload_failed">Kein Internet, bitte versuche es später noch einmal</string>
+    <string name="task_data_failed">Aufgabe ist nicht erfüllt.</string>
+    <string name="gps_not_enabled">GPS ist nicht aktiv. Bitte aktivieren und nochmal versuchen.</string>
 
-    <string name="permission_dialog_explanation">Please grant the permission</string>
-    <string name="permissions_dialog_yes">Yes</string>
-    <string name="permissions_dialog_no">No</string>
+    <string name="permission_dialog_explanation">Erlaubnis erteilen?</string>
+    <string name="permissions_dialog_yes">Ja</string>
+    <string name="permissions_dialog_no">Nein</string>
 
-    <string name="fake_contact_permission_failed">Please grant the needed permissions</string>
-    <string name="fake_contact_upload_failed">No network connection, please try again later</string>
-    <string name="fake_contact_dialog_explanation">To contact Rex we need access to your contacts</string>
+    <string name="fake_contact_permission_failed">Bitte erlaube den Zugriff auf die nötigen Daten</string>
+    <string name="fake_contact_upload_failed">Keine Netzwerkverbindung, bitte versuch es es noch einmal</string>
+    <string name="fake_contact_dialog_explanation">Wir können Kommissar Rex nur deinem Kontaktbuch hinzufügen wenn wir Zugriff auf deine Kontakte haben.</string>
 
     <!-- Firebase -->
-    <string name="notification_new">Detective Rex has a new Task for you</string>
-    <string name="notification_new_detail">Open the app to see it</string>
+    <string name="notification_new">Der Kommisar hat eine neue Aufgabe für dich.</string>
+    <string name="notification_new_detail">Öffne die App um sie zu sehen</string>
 </resources>

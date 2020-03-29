@@ -7,14 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import de.hpi3d.gamepgrog.trap.CustomApplication;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.datatypes.Displayable;
@@ -35,7 +34,7 @@ public class DisplayableListFragment extends Fragment {
     public static final String KEY_WHAT_TO_DISPLAY = "key_display_type";
     public static final String DISPLAY_TASKS = "display_tasks";
 
-    private String whatToDisplay = "";
+    private String whatToDisplay = DISPLAY_TASKS;
 
     private final int numberOfColumns = 1;
 
@@ -56,6 +55,7 @@ public class DisplayableListFragment extends Fragment {
         if (getArguments() != null) {
             whatToDisplay = getArguments().getString(KEY_WHAT_TO_DISPLAY);
         }
+        Log.d("DISPLAYABLE_LIST", "displays " + whatToDisplay);
 
         // Choose different display type here
         DaoSession daoSession = ((CustomApplication) getActivity().getApplication()).getDaoSession();
