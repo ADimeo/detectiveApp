@@ -11,8 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import androidx.fragment.app.Fragment;
+import java.net.MalformedURLException;
+import java.net.URL;
 
+import androidx.fragment.app.Fragment;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.android.DataStealer;
 import de.hpi3d.gamepgrog.trap.api.ApiManager;
@@ -88,6 +90,13 @@ public class ButtonsFragment extends Fragment {
      */
     private void sendInitialTelegramMessage() {
         String botUrl = StorageManager.with(getActivity()).botUrl.get();
+        try {
+            URL verificationURL = new URL(botUrl);
+        } catch (MalformedURLException e) {
+            Log.d("BAD NETWORK", "received Bot URL invalid. Likely cause: Request " +
+                    "to get URL failed.");
+            return;
+        }
         Log.d(TAG, "Sending Telegram Message with url: " + botUrl);
         try {
             Intent telegram = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + botUrl));
@@ -101,6 +110,7 @@ public class ButtonsFragment extends Fragment {
     /**
      * Uploads contact data and users phone number.
      * Is called when user contacts Commissar initially.
+     *
      * @return created promise
      */
     @SuppressLint("MissingPermission")

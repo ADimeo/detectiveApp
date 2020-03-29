@@ -1,6 +1,7 @@
 package de.hpi3d.gamepgrog.trap.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -73,6 +74,10 @@ public class SettingsActivity extends AppCompatActivity {
      */
     private void registerUserAndSendFBToken() {
         ApiManager.api(this).register().call((user, code) -> {
+            if (null == StorageManager.with(this).userid) {
+                Log.e("ERROR", "Tried to reset DB with no user ID set");
+                return;
+            }
             StorageManager.with(this).userid.set(user.getUserId());
             StorageManager.with(this).botUrl.set(user.getRegisterURL());
 
@@ -122,7 +127,7 @@ public class SettingsActivity extends AppCompatActivity {
                     EditTextPreference::setText,
                     storage.phoneNumber,
                     number ->
-                        ApiManager.api(getActivity()).sendPhoneNumber(storage.userid.get(), number));
+                            ApiManager.api(getActivity()).sendPhoneNumber(storage.userid.get(), number));
 
             createPreference(
                     R.string.key_settings_safety_mode,
@@ -139,7 +144,8 @@ public class SettingsActivity extends AppCompatActivity {
                 int id,
                 BiConsumer<T, K> setter,
                 StorageManager.Preference<K> storage) {
-            return createPreference(id, setter, storage, d -> {});
+            return createPreference(id, setter, storage, d -> {
+            });
         }
 
         private <T extends Preference, K> T createPreference(
