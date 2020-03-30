@@ -30,7 +30,7 @@ public class NotificationHelper {
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(c, CHANNEL_ID)
                         .setContentTitle(messageTitle)
-                        .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+                        .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentText(messageBody)
                         .setAutoCancel(true)
                         .setContentIntent(pendingIntent);
