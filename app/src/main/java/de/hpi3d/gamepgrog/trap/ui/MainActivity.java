@@ -44,9 +44,6 @@ public class MainActivity extends AppCompatActivity {
         if (!StorageManager.with(this).userid.exists()) {
             registerUserAndSendFBToken();
         }
-
-        new Task(100, "Bla", "Bla2", "image",
-                "Weeee neeeeed thissss", false).execute(this);
     }
 
     /**
