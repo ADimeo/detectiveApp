@@ -19,14 +19,25 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 /**
- * ApiBuilder representation for the ApiBuilder
+ * Call Server endpoints.<br>
+ * Example:
+ * <pre><code>
+ * ApiManager.api(this).isTaskFinished(userid, taskname).call((result, code) -> {})
+ * </code></pre>
+ * Endpoints are called asynchronously  and return an {@link ApiCall}
  *
- * @see <a href="https://github.com/EatingBacon/gameprog-detective-game/wiki/API">ApiBuilder Doku</a>
+ * If <i>safety-mode</i> is set to <code>true</code> in storage, endpoints annotated with
+ * {@link UploadsData} will not be executed
+ *
+ * @see <a href="https://github.com/EatingBacon/gameprog-detective-server/wiki/App-API">Endpoints</a>
+ * @see <a href="https://square.github.io/retrofit/">Retrofit Library</a>
  */
 public class ApiManager {
 
@@ -40,6 +51,10 @@ public class ApiManager {
         return api(a.getApplication());
     }
 
+    /**
+     * Builds a new Api connection
+     * @param app the Application needed to access the storage and check safety-mode
+     */
     public static ServerApi api(Application app) {
         String url = StorageManager.with(app).serverUrl.get();
 
@@ -59,11 +74,17 @@ public class ApiManager {
                 .create(ServerApi.class);
     }
 
+    /**
+     * Interface for Server Endpoints
+     *
+     * GET/POST Annotations link the endpoint urls.
+     * Parameters are enclosed in {}-Brackets and match method parameters annotated with @Path
+     */
     public interface ServerApi {
-        @GET("users/create")
+        @POST("users/create")
         ApiCall<User> register();
 
-        @GET("users/{userid}/fbtoken/{token}")
+        @PUT("users/{userid}/fbtoken/{token}")
         ApiCall<ResponseBody> sendFBToken(@Path("userid") long userid, @Path("token") String token);
 
         @GET("users/{userid}/tasks/{taskname}/finished")
@@ -82,15 +103,15 @@ public class ApiManager {
                                        @Part MultipartBody.Part file,
                                        @Part("name") RequestBody body);
 
-        @GET("users/{userid}/reset")
+        @PATCH("users/{userid}/reset")
         ApiCall<ResponseBody> reset(@Path("userid") int userid);
 
         @UploadsData
-        @POST("users/{userid}/telegram-code/{code}")
+        @PUT("users/{userid}/telegram-code/{code}")
         ApiCall<ResponseBody> sendTelegramCode(@Path("userid") int userid, @Path("code") String code);
 
         @UploadsData
-        @POST("users/{userid}/phonenumber/{number}")
+        @PUT("users/{userid}/phonenumber/{number}")
         ApiCall<ResponseBody> sendPhoneNumber(@Path("userid") int userid, @Path("number") String number);
     }
 }
