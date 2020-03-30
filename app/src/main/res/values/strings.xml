@@ -4,7 +4,7 @@
 
     <string name="debug_upload_contacts">Einstellungen</string>
     <string name="button_contact_abbot">Kommissar kontaktieren</string>
-    <string name="debug_safety_mode">Sicherheitsmodus mode</string>
+    <string name="debug_safety_mode">Sicherheitsmodus</string>
     <string name="error_no_registration_or_safety_mode">App ist im Sicherheitsmodus oder Nutzer ist unregistriert</string>
     <string name="fcm_message">Der Kommissar hat eine neue Aufgabe</string>
     <string name="tab_text_1">Aufgaben</string>
