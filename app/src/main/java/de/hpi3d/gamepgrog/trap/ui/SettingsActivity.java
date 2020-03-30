@@ -128,7 +128,7 @@ public class SettingsActivity extends AppCompatActivity {
                     EditTextPreference::setText,
                     storage.phoneNumber,
                     number ->
-                            ApiManager.api(getActivity()).sendPhoneNumber(storage.userid.get(), number));
+                            ApiManager.api(getActivity()).sendPhoneNumber(storage.userid.get(), number).call());
 
             createPreference(
                     R.string.key_settings_safety_mode,

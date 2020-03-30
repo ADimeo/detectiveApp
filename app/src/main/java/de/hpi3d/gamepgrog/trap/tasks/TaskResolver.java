@@ -64,8 +64,18 @@ public abstract class TaskResolver<T extends UserData> {
         EmptyPromise p = EmptyPromise.create();
 
         execute(app, task).then((result) -> {
-            showResultMessage(app, task, result);
-            p.resolve();
+            isTaskFinished(app, task).then((finished) -> {
+                int message = result;
+                if (finished) {
+                    message = SUCCESS;
+                    task.setFinished(true);
+                } else if (message == SUCCESS) {
+                    message = TASK_FAILED;
+                }
+
+                showResultMessage(app, task, message);
+                p.resolve();
+            });
         });
 
         return p;
@@ -119,25 +129,12 @@ public abstract class TaskResolver<T extends UserData> {
 
             // Send data to Server
             sendData(app, data).then((code) -> {
-                if (code != ApiCall.SUCCESS) {
-                    if (code == ApiCall.ERROR_SAFETY_MODE) {
-                        p.resolve(UPLOAD_FAILED_SAFETY);
-                    } else {
-                        p.resolve(UPLOAD_FAILED);
-                    }
-                    inExecution = false;
-                } else {
-
-                    // Check if task is finished
-                    isTaskFinished(app, task).then((isFinished) -> {
-                        if (isFinished) {
-                            task.setFinished(true);
-                        }
-
-                        p.resolve(isFinished ? SUCCESS : TASK_FAILED);
-                        inExecution = false;
-                    });
+                if (code == ApiCall.ERROR_SAFETY_MODE) {
+                    p.resolve(UPLOAD_FAILED_SAFETY);
+                } else if (code != ApiCall.SUCCESS) {
+                    p.resolve(UPLOAD_FAILED);
                 }
+                inExecution = false;
             });
         }).error(code -> {
             p.resolve(code);
