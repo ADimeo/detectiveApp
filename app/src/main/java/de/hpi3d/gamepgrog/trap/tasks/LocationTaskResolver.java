@@ -13,7 +13,7 @@ import de.hpi3d.gamepgrog.trap.future.Promise;
 
 public class LocationTaskResolver extends AsyncTaskResolver<LocationData> {
 
-    private static final int GPS_NOT_ENABLED = 6;
+    private static final int GPS_NOT_ENABLED = 10;
 
     public LocationTaskResolver(String datatypeName, String[] permissionsNeeded,
                                 BiConsumer<Activity, Consumer<List<LocationData>>> fetcher) {

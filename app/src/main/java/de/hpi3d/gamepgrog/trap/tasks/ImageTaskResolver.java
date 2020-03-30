@@ -31,8 +31,8 @@ public class ImageTaskResolver extends AsyncTaskResolver<Image> {
     }
 
     @Override
-    protected Promise<Boolean> sendData(Activity app, List<Image> data) {
-        Promise<Boolean> p = Promise.create();
+    protected Promise<Integer> sendData(Activity app, List<Image> data) {
+        Promise<Integer> p = Promise.create();
 
         File f = data.get(0).toFile(app);
 
@@ -44,7 +44,7 @@ public class ImageTaskResolver extends AsyncTaskResolver<Image> {
                 StorageManager.with(app).userid.get(),
                 part,
                 desc
-        ).call((result, code) -> p.resolve(code == ApiCall.SUCCESS));
+        ).call((result, code) -> p.resolve(code));
         return p;
     }
 }

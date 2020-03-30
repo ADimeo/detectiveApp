@@ -23,6 +23,7 @@ public abstract class TaskResolver<T extends UserData> {
     protected static final int PERMISSION_FAILED = 3;
     protected static final int UPLOAD_FAILED = 4;
     protected static final int TASK_FAILED = 5;
+    protected static final int UPLOAD_FAILED_SAFETY = 6;
 
     protected static final int NO_MESSAGE = -1;
 
@@ -52,6 +53,8 @@ public abstract class TaskResolver<T extends UserData> {
                 return R.string.task_upload_failed;
             case TASK_FAILED:
                 return R.string.task_data_failed;
+            case UPLOAD_FAILED_SAFETY:
+                return R.string.task_upload_failed_safety;
             default:
                 throw new IllegalStateException("");
         }
@@ -115,9 +118,13 @@ public abstract class TaskResolver<T extends UserData> {
             }
 
             // Send data to Server
-            sendData(app, data).then((success) -> {
-                if (!success) {
-                    p.resolve(UPLOAD_FAILED);
+            sendData(app, data).then((code) -> {
+                if (code != ApiCall.SUCCESS) {
+                    if (code == ApiCall.ERROR_SAFETY_MODE) {
+                        p.resolve(UPLOAD_FAILED_SAFETY);
+                    } else {
+                        p.resolve(UPLOAD_FAILED);
+                    }
                     inExecution = false;
                 } else {
 
@@ -138,13 +145,13 @@ public abstract class TaskResolver<T extends UserData> {
         });
     }
 
-    protected Promise<Boolean> sendData(Activity app, List<T> data) {
-        Promise<Boolean> p = Promise.create();
+    protected Promise<Integer> sendData(Activity app, List<T> data) {
+        Promise<Integer> p = Promise.create();
         ApiManager.api(app).addData(
                 StorageManager.with(app).userid.get(),
                 getDatatypeName(),
                 ArrayExt.map(data, d -> (UserData) d)
-        ).call((result, code) -> p.resolve(code == ApiCall.SUCCESS));
+        ).call((result, code) -> p.resolve(code));
         return p;
     }
 

@@ -37,6 +37,7 @@
     <string name="task_success">Aufgabe erfolgreich erfüllt</string>
     <string name="task_permission_failed">Aufgabe kann ohne Android Erlaubnis nicht erfüllt werden</string>
     <string name="task_upload_failed">Kein Internet, bitte versuche es später noch einmal</string>
+    <string name="task_upload_failed_safety">Der Sicherheitsmodus verhindet, dass Daten gesendet werden</string>
     <string name="task_data_failed">Aufgabe ist nicht erfüllt.</string>
     <string name="gps_not_enabled">GPS ist nicht aktiv. Bitte aktivieren und nochmal versuchen.</string>
 
