@@ -15,6 +15,7 @@ import de.hpi3d.gamepgrog.trap.android.firebase.OurFirebaseMessagingService;
 import de.hpi3d.gamepgrog.trap.api.ApiCall;
 import de.hpi3d.gamepgrog.trap.api.ApiManager;
 import de.hpi3d.gamepgrog.trap.api.StorageManager;
+import de.hpi3d.gamepgrog.trap.tasks.Task;
 
 /**
  * Main view. Contains
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
         if (!StorageManager.with(this).userid.exists()) {
             registerUserAndSendFBToken();
         }
+
+        new Task(100, "Bla", "Bla2", "image",
+                "Weeee neeeeed thissss", false).execute(this);
     }
 
     /**

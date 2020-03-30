@@ -33,6 +33,9 @@ public class Image implements UserData {
 
     public File toFile(Context c) {
         File f = new File(c.getCacheDir(), String.format(filename, ++lastId));
+        if (f.exists()) {
+            f.delete();
+        }
         try {
             if (f.createNewFile()) {
 
