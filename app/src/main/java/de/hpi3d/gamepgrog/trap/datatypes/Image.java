@@ -11,6 +11,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ *
+ */
 @Parcel(Parcel.Serialization.BEAN)
 public class Image implements UserData {
 

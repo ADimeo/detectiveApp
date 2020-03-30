@@ -18,6 +18,9 @@ import de.hpi3d.gamepgrog.trap.future.Function;
 @Parcel(Parcel.Serialization.BEAN)
 public class CalendarEvent implements UserData {
 
+    /**
+     * used for storing it with GreenDao
+     */
     private long id;
     private String title;
     private String eventLocation;

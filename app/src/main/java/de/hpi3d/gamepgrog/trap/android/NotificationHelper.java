@@ -12,16 +12,21 @@ import androidx.core.app.NotificationCompat;
 import de.hpi3d.gamepgrog.trap.R;
 import de.hpi3d.gamepgrog.trap.ui.MainActivity;
 
+/**
+ * Helper for sending android notifications
+ */
 public class NotificationHelper {
 
     private static final String CHANNEL_ID = "de.hpi3d.gamepgrog.trap.fcmnotification";
 
     public static void sendNotification(Context c, String messageTitle, String messageBody) {
+        // Intent to open when the notification is clicked
         Intent intent = new Intent(c, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
+        // Builds a new notification with title, icon, body
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(c, CHANNEL_ID)
                         .setContentTitle(messageTitle)
@@ -41,6 +46,7 @@ public class NotificationHelper {
             notificationManager.createNotificationChannel(channel);
         }
 
+        // Show the notification
         notificationManager.notify(0, notificationBuilder.build());
     }
 }

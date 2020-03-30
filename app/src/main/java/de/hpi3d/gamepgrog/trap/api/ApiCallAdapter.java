@@ -10,6 +10,12 @@ import retrofit2.Call;
 import retrofit2.CallAdapter;
 import retrofit2.Retrofit;
 
+/**
+ * Builds a {@link ApiCall}
+ * @param <R> the return type
+ * @see <a href="https://android.jlelse.eu/building-your-own-retrofit-call-adapter-b198169bab69">
+ *     Tutorial for CallAdapters in Retrofit</a>
+ */
 public class ApiCallAdapter<R> implements CallAdapter<R, ApiCall<R>> {
 
     private Type responseType;
@@ -32,6 +38,9 @@ public class ApiCallAdapter<R> implements CallAdapter<R, ApiCall<R>> {
         return new ApiCall<>(call, app, uploadsData);
     }
 
+    /**
+     * Factory for {@link CallAdapter}
+     */
     public static class Factory extends CallAdapter.Factory {
 
         private Application app;
@@ -40,6 +49,9 @@ public class ApiCallAdapter<R> implements CallAdapter<R, ApiCall<R>> {
             this.app = app;
         }
 
+        /**
+         * Called by Retrofit on initialization for each return type
+         */
         @Override
         public CallAdapter<?, ?> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {
             try {

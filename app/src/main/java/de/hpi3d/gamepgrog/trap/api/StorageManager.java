@@ -29,10 +29,12 @@ import de.hpi3d.gamepgrog.trap.tasks.Task;
  * StorageManager.with(application).userid.set(42);
  * }
  * </pre>
- * Can be reset
+ * Can be reset with {@link #reset(Application)}
+ * <br>
+ * Primitive types are stored using {@link SharedPreferences},
+ * and objects using <a href="https://greenrobot.org/greendao/">GreenDao</a>
  */
 public class StorageManager {
-
 
     private static final String KEY_USER_ID = "key_user_id";
     private static final String KEY_BOT_URL = "key_bot_url";
@@ -56,6 +58,9 @@ public class StorageManager {
     public final DaoPreferences<Task> tasks;
     public final DaoPreferences<LocationData> locations;
 
+    /**
+     * Inits all preferences
+     */
     private StorageManager(Application app) {
         userid = new Preference<>(
                 app, -1, KEY_USER_ID,
@@ -101,6 +106,9 @@ public class StorageManager {
         return with(activity.getApplication());
     }
 
+    /**
+     * Resets all preferences to their default values
+     */
     public static void reset(Application app) {
         StorageManager storage = with(app);
         storage.userid.reset();
@@ -110,6 +118,9 @@ public class StorageManager {
         Log.d("StorageManager", "Reset Storage");
     }
 
+    /**
+     * wrapper around a preference
+     */
     @SuppressWarnings("WeakerAccess")
     public static class Preference<T> {
 

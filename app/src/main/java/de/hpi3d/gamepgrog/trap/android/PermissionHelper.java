@@ -15,12 +15,25 @@ import de.hpi3d.gamepgrog.trap.future.ArrayExt;
 import de.hpi3d.gamepgrog.trap.future.Consumer;
 import de.hpi3d.gamepgrog.trap.future.Promise;
 
+/**
+ * Helper methods for Permissions
+ */
 public class PermissionHelper {
 
+    /**
+     * Stores the requests until {@link Activity#onRequestPermissionsResult(int, String[], int[])}
+     * is called
+     */
     @SuppressLint("UseSparseArrays")
     private static Map<Integer, Consumer<Boolean>> permissionCallbacks = new HashMap<>();
     private static int lastPermissionsIndex = 0;
 
+    /**
+     * Tries to set the given permissions
+     * @param permissions Permissions to grant from <code>Manifest.permissions.*</code>
+     * @return a promise which is executed when android notifies the result.
+     * true if permissions are granted
+     */
     public static Promise<Boolean> setPermissions(Activity app, String[] permissions) {
         Promise<Boolean> p = Promise.create();
 
@@ -41,6 +54,9 @@ public class PermissionHelper {
         return ++lastPermissionsIndex;
     }
 
+    /**
+     * Has to be called by {@link Activity#onRequestPermissionsResult(int, String[], int[])}
+     */
     public static void onPermission(int requestCode, int[] grantResults) {
         boolean isGranted = ArrayExt.allMatch(ArrayExt.toIntList(grantResults), PermissionHelper::isGranted);
 
@@ -50,6 +66,9 @@ public class PermissionHelper {
         }
     }
 
+    /**
+     * Checks if permissions are present
+     */
     public static boolean hasPermissions(Context c, String[] permissions) {
         return ArrayExt.allMatch(permissions, (permission) -> hasPermission(c, permission));
     }

@@ -11,6 +11,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Wrapper for {@link Call}, build be {@link ApiCallAdapter}.
+ * Executes calls asynchronously.
+ * Endpoints annotated with {@link UploadsData} will not be called if safety-mode is on
+ */
 public class ApiCall<R> {
 
     private static final String TAG = "ApiCall";
@@ -41,7 +46,15 @@ public class ApiCall<R> {
         call((data, code) -> result.accept(data));
     }
 
+    /**
+     * Executes the call.<br>
+     * @param result will get called with the return object and
+     *               return code (HTTP-Code or FAILURE || ERROR_SAFETY_MODE).
+     *               If code != {@link #SUCCESS}, value might be <code>null</code>
+     */
     public void call(BiConsumer<R, Integer> result) {
+
+        // Check safety mode
         boolean safetyMode = StorageManager.with(app).safetyMode.get();
         if (safetyMode && uploadsData) {
             Log.d(TAG, "Safety Mode is on. Blocked Data Upload");
