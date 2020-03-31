@@ -133,6 +133,8 @@ public abstract class TaskResolver<T extends UserData> {
                     p.resolve(UPLOAD_FAILED_SAFETY);
                 } else if (code != ApiCall.SUCCESS) {
                     p.resolve(UPLOAD_FAILED);
+                } else {
+                    p.resolve(SUCCESS);
                 }
                 inExecution = false;
             });
