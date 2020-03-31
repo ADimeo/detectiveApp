@@ -58,10 +58,13 @@ public class StorageManager {
     public final DaoPreferences<Task> tasks;
     public final DaoPreferences<LocationData> locations;
 
+    private Application app;
+
     /**
      * Inits all preferences
      */
     private StorageManager(Application app) {
+        this.app = app;
         userid = new Preference<>(
                 app, -1, KEY_USER_ID,
                 SharedPreferences::getInt,
@@ -116,6 +119,10 @@ public class StorageManager {
         storage.tasks.reset();
         storage.botUrl.reset();
         Log.d("StorageManager", "Reset Storage");
+    }
+
+    public void reset() {
+        reset(app);
     }
 
     /**

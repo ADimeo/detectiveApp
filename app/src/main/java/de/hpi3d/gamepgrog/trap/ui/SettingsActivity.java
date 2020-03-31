@@ -141,7 +141,11 @@ public class SettingsActivity extends AppCompatActivity {
             createPreference(
                     R.string.key_settings_url,
                     EditTextPreference::setText,
-                    storage.serverUrl);
+                    storage.serverUrl,
+                    newUrl -> {
+                        storage.reset();
+                        ((SettingsActivity) getActivity()).init();
+                    });
         }
 
         /**
