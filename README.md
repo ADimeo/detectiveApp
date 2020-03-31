@@ -1,23 +1,22 @@
-# App for the Gameprog Detective Game
+# App für das Detective Game
 
-The App uses this Server: [https://github.com/EatingBacon/gameprog-detective-server/](https://github.com/EatingBacon/gameprog-detective-server/)
+Ein Projekt im Rahmen des Game Programming Seminars am HPI im Wintersemester 2019.
 
-An introduction to the Project and the Game are [here](https://github.com/EatingBacon/gameprog-detective-server/blob/master/README.md) (in German).
+Dieses Readme beschreibt nur die App. Eine komplette Projektbeschreibung, sowie Installationsanweisungen für den Server befinden sich im [Server Repo](https://github.com/EatingBacon/gameprog-detective-server/)
 
 ### App Setup
-To get the App running, take the latest Release (Server and App Version should match).  
-Install the Apk ([How to install an Apk](https://www.androidpit.com/android-for-beginners-what-is-an-apk-file#howto)).  
-You also need to have installed and setup Telegram for this App to work.
-If you don't have a running server, start the App with `--ez MOCKAPI true`
+Um die App zu starten, muss erst das neuste [Release](https://github.com/ADimeo/gameprog-detective-app/releases) heruntergeladen und [installiert werden](https://www.androidpit.com/android-for-beginners-what-is-an-apk-file#howto) (App und Server Version müssen übereinstimmen.  
+Damit die App funktioniert muss die Telegram App installiert sein.
 
-### How to use
-*(If you don't want the App to upload your Contacts, Calendar Events and more over a insecure connection to our Server, check the "Safety Mode" Switch on)*
+### Verwendung
+*Zu Beginn ist der Sicherheitsmodus aktiviert. Dieser verhindert das Hochladen von persönlichen Daten (über http), macht das Spiel aber unspielbar (Siehe [Spielen ohne freigeben persönlicher Daten](https://github.com/EatingBacon/gameprog-detective-server/#spielen-ohne-freigeben-pers%C3%B6nlicher-daten)). Der Sicherheitsmodus kann in den Einstellungen der App deaktiviert werden*
 
-After first opening the App, click *Contact Andy Abbot*. 
-This will open a Telegram Chat, where you can talk with him. 
-When he gives you Tasks, the App will show a Notification and you can complete the Tasks in the App
+Nach dem ersten Öffnen der App gelangt man durch den Klick auf *Kommissar kontaktieren* in einen neuen Telegram Chat.
+Der Kommissar gibt immer wieder Aufgaben, welche in der App gelöst werden können.
+Die App wird beim Klick auf Aufgaben eine Nachricht geben, ob diese erfolgreich gelöst wurde, oder ob ein Fehler auftrat.
 
-### Settings
-**Server URL**: Change the Server URL (works dynamically, butr you may have to reset, since the new Server doesn't store your User)   
-**Safety Mode**: If on, the App will not upload any of your data. This also means Tasks cannot be finished   
-**Reset**: Resets all your Data the App and the Server stored from you
+### Einstellungen
+**Server URL**: Ändert die Server URL (funktioniert dynamisch, aber es muss möglicherweise resetet werden, da der neue Server nicht den alten Benutzer erkennt)   
+**Safety Mode**: Falls an wird die App keine Daten hochladen und Aufgaben können nicht beendet werden
+**Phone Number**: Falls die App die Nummer nicht richtig erkannt hat, kann sie hier geändert werden
+**Reset**: Löscht alle Daten des momentanen Benutzers im Server und in der App und legt einen neuen an
