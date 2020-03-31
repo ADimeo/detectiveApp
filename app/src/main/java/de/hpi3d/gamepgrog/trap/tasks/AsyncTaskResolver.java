@@ -9,6 +9,9 @@ import de.hpi3d.gamepgrog.trap.future.BiConsumer;
 import de.hpi3d.gamepgrog.trap.future.Consumer;
 import de.hpi3d.gamepgrog.trap.future.Promise;
 
+/**
+ * Resolver for Tasks where the fetching of Data is asynchronous
+ */
 public class AsyncTaskResolver<T extends UserData> extends TaskResolver<T> {
 
     private String datatypeName;
@@ -47,6 +50,9 @@ public class AsyncTaskResolver<T extends UserData> extends TaskResolver<T> {
         return permissionsNeeded;
     }
 
+    /**
+     * Calls the given fetcher asynchronously
+     */
     @Override
     protected Promise<List<T>> fetchData(Activity app) {
         Promise<List<T>> p = Promise.create();

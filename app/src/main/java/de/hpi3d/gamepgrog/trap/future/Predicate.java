@@ -2,6 +2,9 @@ package de.hpi3d.gamepgrog.trap.future;
 
 import java.util.Objects;
 
+/**
+ * Brings <a href="https://developer.android.com/reference/java/util/function/Predicate">Predicate</a> to Api level < 24
+ */
 public interface Predicate<T> {
 
     boolean test(T t);

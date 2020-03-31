@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 
 /**
  * Represents a text message between our user and a contact.
+ * @see <a href="https://github.com/EatingBacon/gameprog-detective-server/wiki/Spied-User-Data#textmessage>TextMessage Specification</a>
  */
 @Parcel(Parcel.Serialization.BEAN)
 public class TextMessage implements UserData, Comparable {

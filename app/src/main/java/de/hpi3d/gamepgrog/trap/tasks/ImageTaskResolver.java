@@ -30,12 +30,17 @@ public class ImageTaskResolver extends AsyncTaskResolver<Image> {
         super(datatypeName, permissionsNeeded, fetcher);
     }
 
+    /**
+     * Sends image
+     */
     @Override
     protected Promise<Integer> sendData(Activity app, List<Image> data) {
         Promise<Integer> p = Promise.create();
 
+        // Create file
         File f = data.get(0).toFile(app);
 
+        // Create Request for Api
         RequestBody body = RequestBody.create(MediaType.parse("image/png"), f);
         MultipartBody.Part part = MultipartBody.Part.createFormData("image", f.getName(), body);
         RequestBody desc = RequestBody.create(MediaType.parse("text/plain"), "image-type");

@@ -15,6 +15,15 @@ import java.util.Random;
 import de.hpi3d.gamepgrog.trap.datatypes.Displayable;
 import de.hpi3d.gamepgrog.trap.future.EmptyPromise;
 
+/**
+ * Task is send from the server to fulfill by the user.
+ * Each Tasks has a required datatype which will be fetched by a Data stealer.
+ * Tasks are executed by a {@link TaskResolver}.
+ * Resolvers are registered in {@link TaskResolverManager}.
+ * Some Tasks need initialization, which is done by the {@link TaskInitializerManager}
+ *
+ * @see <a href="https://github.com/EatingBacon/gameprog-detective-server/wiki/Task">Specification</a>
+ */
 @Entity
 @Parcel(Parcel.Serialization.BEAN)
 public class Task implements Displayable {

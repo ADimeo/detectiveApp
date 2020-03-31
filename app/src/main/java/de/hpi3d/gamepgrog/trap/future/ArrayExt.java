@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Brings some stream methods to Api < 24
+ */
 public class ArrayExt {
 
     public static List<Integer> toIntList(int[] array) {

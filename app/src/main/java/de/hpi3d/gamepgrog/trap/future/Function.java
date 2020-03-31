@@ -1,5 +1,8 @@
 package de.hpi3d.gamepgrog.trap.future;
 
+/**
+ * Brings <a href="https://developer.android.com/reference/java/util/function/Function">Function</a> to Api level < 24
+ */
 public interface Function<T, R> {
 
     R apply(T t);

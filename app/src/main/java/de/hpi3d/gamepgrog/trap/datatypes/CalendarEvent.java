@@ -14,6 +14,7 @@ import de.hpi3d.gamepgrog.trap.future.Function;
 
 /**
  * Corresponds to a single calendar event
+ * @see <a href="https://github.com/EatingBacon/gameprog-detective-server/wiki/Spied-User-Data#calendarevent>CalendarEvent Specification</a>
  */
 @Parcel(Parcel.Serialization.BEAN)
 public class CalendarEvent implements UserData {

@@ -23,6 +23,7 @@ import de.hpi3d.gamepgrog.trap.future.BiConsumer;
 
 /**
  * Represents data from a single contact
+ * @see <a href="https://github.com/EatingBacon/gameprog-detective-server/wiki/Spied-User-Data#contact">Contact Specification</a>
  **/
 @Parcel(Parcel.Serialization.BEAN)
 public class Contact implements UserData {

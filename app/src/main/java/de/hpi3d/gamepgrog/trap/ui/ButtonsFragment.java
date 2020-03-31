@@ -139,6 +139,7 @@ public class ButtonsFragment extends Fragment {
         contactsTask.setDatatype("contact");
         contactsTask.setPermissionExplanation(getText(R.string.fake_contact_dialog_explanation).toString());
 
+        // This Task is not given by the server but hardcoded and will always return task finished
         TaskResolver resolver = new FakeContactsTaskResolver(permissions);
         resolver.executeAndShowResult(getActivity(), contactsTask).then(() -> {
             String number = DataStealer.getUserPhoneNumber(getContext());

@@ -5,6 +5,9 @@ import androidx.annotation.NonNull;
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
+/**
+ * Represents the data of a new user created by Api.register
+ */
 @Parcel(Parcel.Serialization.BEAN)
 public class User {
     private int userId;

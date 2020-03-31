@@ -11,6 +11,9 @@ import de.hpi3d.gamepgrog.trap.future.BiConsumer;
 import de.hpi3d.gamepgrog.trap.future.Consumer;
 import de.hpi3d.gamepgrog.trap.future.Promise;
 
+/**
+ * Overrides {@link AsyncTaskResolver} and adds a warning if GPS is disabled
+ */
 public class LocationTaskResolver extends AsyncTaskResolver<LocationData> {
 
     private static final int GPS_NOT_ENABLED = 10;
@@ -20,6 +23,9 @@ public class LocationTaskResolver extends AsyncTaskResolver<LocationData> {
         super(datatypeName, permissionsNeeded, fetcher);
     }
 
+    /**
+     * Custom error message if gps is disabled
+     */
     @Override
     protected int getResultMessage(Task task, int result) {
         if (result == GPS_NOT_ENABLED) {
@@ -28,6 +34,9 @@ public class LocationTaskResolver extends AsyncTaskResolver<LocationData> {
         return super.getResultMessage(task, result);
     }
 
+    /**
+     * throws error if gps is not enabled
+     */
     @Override
     protected Promise<List<LocationData>> fetchData(Activity app) {
         Promise<List<LocationData>> p = Promise.create();

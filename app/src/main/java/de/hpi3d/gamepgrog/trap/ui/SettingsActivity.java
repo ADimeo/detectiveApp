@@ -36,8 +36,6 @@ public class SettingsActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-
     }
 
     /**
@@ -109,20 +107,23 @@ public class SettingsActivity extends AppCompatActivity {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
         }
 
+        /**
+         * Creates Preference UI
+         */
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
             StorageManager storage = StorageManager.with(getActivity());
 
+            // Reset button -> Calls SettingsActivity#reset
             Preference resetServerButton = findPreference(getString(R.string.key_settings_reset));
             resetServerButton.setOnPreferenceClickListener((preference) -> {
-                String currentUrl = StorageManager.with(getActivity()).botUrl.get();
-                Toast.makeText(getContext(), currentUrl, Toast.LENGTH_SHORT).show();
                 ((SettingsActivity) getActivity()).reset();
                 return true;
             });
 
+            // Phone number Preferences -> Will be stored in file and send to Api
             createPreference(
                     R.string.key_change_number,
                     EditTextPreference::setText,
@@ -130,17 +131,22 @@ public class SettingsActivity extends AppCompatActivity {
                     number ->
                             ApiManager.api(getActivity()).sendPhoneNumber(storage.userid.get(), number).call());
 
+            // Safety Mode Preferences -> Will be stored in file
             createPreference(
                     R.string.key_settings_safety_mode,
                     SwitchPreferenceCompat::setChecked,
                     storage.safetyMode);
 
+            // Server URL Preferences -> Will be stored in file
             createPreference(
                     R.string.key_settings_url,
                     EditTextPreference::setText,
                     storage.serverUrl);
         }
 
+        /**
+         * Wrapper method to help creation of preferences
+         */
         private <T extends Preference, K> T createPreference(
                 int id,
                 BiConsumer<T, K> setter,
@@ -149,6 +155,9 @@ public class SettingsActivity extends AppCompatActivity {
             });
         }
 
+        /**
+         * Wrapper method to help creation of preferences
+         */
         private <T extends Preference, K> T createPreference(
                 int id,
                 BiConsumer<T, K> setter,

@@ -11,6 +11,7 @@ import org.parceler.ParcelConstructor;
 
 /**
  * A single location at a specific point in time.
+ * @see <a href="https://github.com/EatingBacon/gameprog-detective-server/wiki/Spied-User-Data#location>LocationData Specification</a>
  */
 @Entity
 @Parcel(Parcel.Serialization.BEAN)

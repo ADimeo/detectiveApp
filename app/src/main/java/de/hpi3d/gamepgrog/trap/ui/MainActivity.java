@@ -19,8 +19,10 @@ import de.hpi3d.gamepgrog.trap.tasks.Task;
 
 /**
  * Main view. Contains
- * - DisplayableList, a fragment with a list of displayables.
- * - ButtonsFragment, a fragment with buttons
+ * <ul>
+ * <li>DisplayableList, a fragment with a list of displayables</li>
+ * <li>ButtonsFragment, a fragment with buttons</li>
+ * </ul>
  */
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {

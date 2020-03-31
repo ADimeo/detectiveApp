@@ -16,6 +16,14 @@ import de.hpi3d.gamepgrog.trap.future.ArrayExt;
 import de.hpi3d.gamepgrog.trap.future.EmptyPromise;
 import de.hpi3d.gamepgrog.trap.future.Promise;
 
+/**
+ * Executes a {@link Task}.<br>
+ * Registered in {@link TaskResolverManager}.<br>
+ * Depending of the type of data stealer use {@link SyncTaskResolver} or {@link AsyncTaskResolver}<br>
+ * Will first show the permission explanation to the user, than the real permission request.
+ * After that the data is fetched and send to the server and isTaskFinished is send.
+ * In the end a result message is shown
+ */
 public abstract class TaskResolver<T extends UserData> {
 
     protected static final int SUCCESS = 1;
@@ -30,17 +38,22 @@ public abstract class TaskResolver<T extends UserData> {
     protected static boolean inExecution = false;
 
     protected abstract String getDatatypeName();
-
     protected abstract String getTaskName();
-
     protected abstract String[] getPermissionsNeeded();
+    protected abstract Promise<List<T>> fetchData(Activity app);
 
+    /**
+     * Shows result message as {@link Toast}
+     */
     protected void showResultMessage(Activity app, Task task, int result) {
         int message = getResultMessage(task, result);
         if (message != NO_MESSAGE)
             Toast.makeText(app, message, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Matches result message to result code
+     */
     protected int getResultMessage(Task task, int result) {
         switch (result) {
             case SUCCESS:
@@ -60,6 +73,9 @@ public abstract class TaskResolver<T extends UserData> {
         }
     }
 
+    /**
+     * Executes the task and show the result message
+     */
     public EmptyPromise executeAndShowResult(Activity app, Task task) {
         EmptyPromise p = EmptyPromise.create();
 
@@ -81,6 +97,10 @@ public abstract class TaskResolver<T extends UserData> {
         return p;
     }
 
+    /**
+     * executes the task.
+     * @return a promise with result code
+     */
     public Promise<Integer> execute(Activity app, Task task) {
         Promise<Integer> p = Promise.create();
         if (inExecution) {
@@ -95,7 +115,7 @@ public abstract class TaskResolver<T extends UserData> {
             } else {
 
                 // Show Dialog
-                showPermissionDialog(app, task).then((success) -> {
+                showPermissionExplanation(app, task).then((success) -> {
                     if (!success) {
                         p.resolve(PERMISSION_FAILED);
                         inExecution = false;
@@ -144,6 +164,10 @@ public abstract class TaskResolver<T extends UserData> {
         });
     }
 
+    /**
+     * Sends fetched data to server
+     * @return http code
+     */
     protected Promise<Integer> sendData(Activity app, List<T> data) {
         Promise<Integer> p = Promise.create();
         ApiManager.api(app).addData(
@@ -154,6 +178,10 @@ public abstract class TaskResolver<T extends UserData> {
         return p;
     }
 
+    /**
+     * Sends isTaskFinished to api
+     * @return if task is finished
+     */
     protected Promise<Boolean> isTaskFinished(Activity app, Task task) {
         Promise<Boolean> p = Promise.create();
 
@@ -164,9 +192,10 @@ public abstract class TaskResolver<T extends UserData> {
         return p;
     }
 
-    protected abstract Promise<List<T>> fetchData(Activity app);
-
-    protected Promise<Boolean> showPermissionDialog(Activity app, Task task) {
+    /**
+     * Shows permission explanation as Dialog
+     */
+    protected Promise<Boolean> showPermissionExplanation(Activity app, Task task) {
         Promise<Boolean> p = Promise.create();
 
         CharSequence explanation = task.getPermissionExplanation();

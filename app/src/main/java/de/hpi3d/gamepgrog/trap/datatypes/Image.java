@@ -12,7 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- *
+ * @see <a href="https://github.com/EatingBacon/gameprog-detective-server/wiki/Spied-User-Data#image>Image Specification</a>
  */
 @Parcel(Parcel.Serialization.BEAN)
 public class Image implements UserData {

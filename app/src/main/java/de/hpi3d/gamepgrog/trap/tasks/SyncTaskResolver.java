@@ -9,6 +9,9 @@ import de.hpi3d.gamepgrog.trap.future.Function;
 import de.hpi3d.gamepgrog.trap.future.Promise;
 import de.hpi3d.gamepgrog.trap.future.Supplier;
 
+/**
+ * Resolver for tasks where Data fetching is synchronous
+ */
 public class SyncTaskResolver<T extends UserData> extends TaskResolver<T> {
 
     private String taskName;
@@ -56,6 +59,9 @@ public class SyncTaskResolver<T extends UserData> extends TaskResolver<T> {
         return permissionsNeeded;
     }
 
+    /**
+     * Use given fetcher to get data synchronously
+     */
     @Override
     protected Promise<List<T>> fetchData(Activity app) {
         return Promise.createResolved(fetcher.apply(app));

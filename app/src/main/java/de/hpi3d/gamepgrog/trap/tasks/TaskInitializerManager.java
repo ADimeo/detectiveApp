@@ -5,6 +5,9 @@ import android.app.Application;
 import de.hpi3d.gamepgrog.trap.android.LocationStealer;
 import de.hpi3d.gamepgrog.trap.future.BiConsumer;
 
+/**
+ * Initializes some tasks when they arrive
+ */
 public class TaskInitializerManager {
 
     private static TaskInitializer locationInitializer =
